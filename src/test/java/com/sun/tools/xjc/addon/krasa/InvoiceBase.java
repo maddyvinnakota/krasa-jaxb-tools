@@ -5,7 +5,7 @@ package com.sun.tools.xjc.addon.krasa;
  *
  * @see https://github.com/krasa/krasa-jaxb-tools/issues/38
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 public class InvoiceBase extends AnnotationsMojoTestHelper {
 
@@ -13,10 +13,10 @@ public class InvoiceBase extends AnnotationsMojoTestHelper {
         super("invoice", annotation);
     }
 
-    public void test() {
+    public void test() throws ClassNotFoundException {
         element("Invoice")
-                .annotationCanonicalName(getPkg() + ".validation.constraints.DecimalMin")
-                .annotationCanonicalName(getPkg() + ".validation.constraints.NotNull")
+                .annotationSimpleName("DecimalMin")
+                .annotationSimpleName("NotNull")
                 .attribute("amount")
                         .annotation("DecimalMin")
                             .assertParam("value", 0)

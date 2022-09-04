@@ -5,7 +5,7 @@ import java.math.BigInteger;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 public class NumbersBase extends AnnotationsMojoTestHelper {
 
@@ -13,12 +13,12 @@ public class NumbersBase extends AnnotationsMojoTestHelper {
         super("numbers", annotation);
     }
 
-    public void test() {
+    public void test() throws ClassNotFoundException {
         element("Numbers")
-                .annotationCanonicalName(getPkg() + ".validation.constraints.NotNull")
-                .annotationCanonicalName(getPkg() + ".validation.constraints.DecimalMax")
-                .annotationCanonicalName(getPkg() + ".validation.constraints.DecimalMin")
-                .annotationCanonicalName(getPkg() + ".validation.constraints.Digits")
+                .annotationSimpleName("NotNull")
+                .annotationSimpleName("DecimalMax")
+                .annotationSimpleName("DecimalMin")
+                .annotationSimpleName("Digits")
                 .attribute("decimalValue")
                         .assertClass(BigDecimal.class)
                         .annotation("NotNull").assertNoValues().end()

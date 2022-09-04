@@ -1,6 +1,11 @@
 package com.sun.tools.xjc.addon.krasa;
 
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -94,6 +99,24 @@ public enum ValidationAnnotation {
 
     };
 
+    private final List<Class<?>> classList;
+    private final Map<String, String> classMap;
+
+    private ValidationAnnotation() {
+        this.classList = Arrays.asList(
+                getValidClass(),
+                getNotNullClass(),
+                getSizeClass(),
+                getDigitsClass(),
+                getDecimalMinClass(),
+                getDecimalMaxClass(),
+                getPatternClass(),
+                getPatternListClass()
+        );
+        this.classMap = classList.stream()
+                .collect(Collectors.toMap(Class::getSimpleName, Class::getCanonicalName));
+    }
+
     public abstract Class<? extends Annotation> getValidClass();
 
     public abstract Class<? extends Annotation> getNotNullClass();
@@ -110,4 +133,11 @@ public enum ValidationAnnotation {
 
     public abstract Class<? extends Annotation> getPatternListClass();
 
+    public String getCanonicalClassName(String className) throws ClassNotFoundException {
+        String canonicalName = classMap.get(Objects.requireNonNull(className));
+        if (canonicalName == null) {
+            throw new ClassNotFoundException(className);
+        }
+        return canonicalName;
+    }
 }

@@ -1,6 +1,10 @@
 package com.sun.tools.xjc.addon.krasa;
 
-public abstract class ABaseTest extends RunXJC2MojoTestHelper {
+public abstract class ComplexBase extends RunXJC2MojoTestHelper {
+
+    public ComplexBase(ValidationAnnotation validation) {
+        super(validation);
+    }
 
     @Override
     public String getFolderName() {

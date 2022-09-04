@@ -2,7 +2,7 @@ package com.sun.tools.xjc.addon.krasa;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 public class StringsBase extends AnnotationsMojoTestHelper {
 
@@ -10,10 +10,10 @@ public class StringsBase extends AnnotationsMojoTestHelper {
         super("strings", annotation);
     }
 
-    public void test() {
+    public void test() throws ClassNotFoundException {
         element("Strings")
-                .annotationCanonicalName(getPkg() + ".validation.constraints.Size")
-                .annotationCanonicalName(getPkg() + ".validation.constraints.NotNull")
+                .annotationSimpleName("Size")
+                .annotationSimpleName("NotNull")
                 .attribute("address")
                         .annotation("Size")
                                 .assertParam("min", "21")

@@ -6,9 +6,9 @@ public class NillableBase extends AnnotationsMojoTestHelper {
         super("nillable", annotation);
     }
 
-    public void test() {
+    public void test() throws ClassNotFoundException {
         element("Nillable")
-                .annotationCanonicalName(getPkg() + ".validation.constraints.NotNull")
+                .annotationSimpleName("NotNull")
                 .attribute("notNullable")
                         .annotation("NotNull").assertNoValues()
                 .end()

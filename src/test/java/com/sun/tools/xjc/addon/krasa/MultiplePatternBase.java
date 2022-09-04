@@ -6,9 +6,9 @@ public class MultiplePatternBase extends AnnotationsMojoTestHelper {
         super("multiplePatterns", annotation);
     }
 
-    public void test() {
+    public void test() throws ClassNotFoundException {
         element("Multipattern")
-                .annotationCanonicalName(getPkg() + ".validation.constraints.Pattern")
+                .annotationSimpleName("Pattern")
                 .attribute("multiplePatterns")
                     .annotation("Pattern")
                         .assertParam("regexp", "([0-9])|([A-B])");

@@ -9,9 +9,9 @@ public class MultiplePatternsWithBase extends AnnotationsMojoTestHelper {
         super("multiplePatternsWithBase", annotation);
     }
 
-    public void test() {
+    public void test() throws ClassNotFoundException {
         List<String> annotations = element("MultiPatternWithBase")
-                .annotationCanonicalName(getPkg() + ".validation.constraints.Pattern")
+                .annotationSimpleName("Pattern")
                 .getAnnotations("multiplePatternsWithBase");
 
         assertFalse(annotations.isEmpty());

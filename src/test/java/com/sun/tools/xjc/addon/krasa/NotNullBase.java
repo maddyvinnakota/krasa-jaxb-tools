@@ -6,9 +6,9 @@ public class NotNullBase extends AnnotationsMojoTestHelper {
         super("notNull", annotation);
     }
 
-    public void test() {
+    public void test() throws ClassNotFoundException {
         element("NotNullType")
-            .annotationCanonicalName(getPkg() + ".validation.constraints.NotNull")
+            .annotationSimpleName("NotNull")
             .attribute("notNullString")
                 .annotation("NotNull")
                     .assertNoValues();

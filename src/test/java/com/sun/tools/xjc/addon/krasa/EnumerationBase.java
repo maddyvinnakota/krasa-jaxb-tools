@@ -11,9 +11,9 @@ public class EnumerationBase extends AnnotationsMojoTestHelper {
         super("enumeration", annotation);
     }
 
-    public void test() {
+    public void test() throws ClassNotFoundException {
         element("NaturalPerson")
-                .annotationCanonicalName(getPkg() + ".validation.constraints.Pattern")
+                .annotationSimpleName("Pattern")
                 .attribute("sex")
                         .annotation("Pattern")
                                 .assertParam("regexp", "(\\\\Qf\\\\E)|(\\\\Qm\\\\E)")

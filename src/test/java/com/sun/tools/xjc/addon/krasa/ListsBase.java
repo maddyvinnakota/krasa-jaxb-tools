@@ -6,7 +6,7 @@ package com.sun.tools.xjc.addon.krasa;
  * intended for the content of a collection.
  *
  * @see https://github.com/jirutka/validator-collection
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 public class ListsBase extends AnnotationsMojoTestHelper {
 
@@ -14,11 +14,11 @@ public class ListsBase extends AnnotationsMojoTestHelper {
         super("lists", annotation);
     }
 
-    public void testContainer() {
+    public void testContainer() throws ClassNotFoundException {
         element("Container")
-                .annotationCanonicalName(getPkg() + ".validation.Valid")
-                .annotationCanonicalName(getPkg() + ".validation.constraints.Size")
-                .annotationCanonicalName(getPkg() + ".validation.constraints.NotNull")
+                .annotationSimpleName("Valid")
+                .annotationCanonicalName("Size")
+                .annotationCanonicalName("NotNull")
                 .attribute("listOfString")
                         .annotation("Valid").assertNoValues()
                         .annotation("Size")

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,15 +30,11 @@ import org.jvnet.jaxb2.maven2.test.RunXJC2Mojo;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
 
     private final ValidationAnnotation validationAnnotation;
-
-    public RunXJC2MojoTestHelper() {
-        this(ValidationAnnotation.JAVAX);
-    }
 
     public RunXJC2MojoTestHelper(ValidationAnnotation validation) {
         this.validationAnnotation = validation;
@@ -56,6 +51,7 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
     }
 
     // artifact creation happens before test executions!
+    @Override
     public final void setUp() throws Exception {
         super.testExecute();
     }
@@ -84,13 +80,13 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
 
     @Override
     public List<String> getArgs() {
-        return Arrays.asList(
-                "-" + JaxbValidationsPlugins.PLUGIN_OPTION_NAME,
-                "-" + JaxbValidationsPlugins.TARGET_NAMESPACE_PARAMETER + "=" + getNamespace(),
-                "-" + JaxbValidationsPlugins.JSR_349 + "=true",
-                "-" + JaxbValidationsPlugins.GENERATE_STRING_LIST_ANNOTATIONS + "=true",
-                "-" + JaxbValidationsPlugins.VALIDATION_ANNOTATIONS + "=" + getAnnotation().name()
-        );
+        return Argument.builder()
+                .add(Argument.generateNotNullAnnotations, true)
+                .add(Argument.generateStringListAnnotations, true)
+                .add(Argument.targetNamespace, getNamespace())
+                .add(Argument.JSR_349, true)
+                .add(Argument.validationAnnotations, getAnnotation().name())
+                .getList();
     }
 
     /**
@@ -127,7 +123,13 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
             this.lines = lines;
         }
 
+        public ArtifactTester annotationSimpleName(String simpleName) throws ClassNotFoundException {
+            String canonicalName = validationAnnotation.getCanonicalClassName(simpleName);
+            return annotationCanonicalName(canonicalName);
+        }
+
         public ArtifactTester annotationCanonicalName(String canonicalName) {
+            Objects.requireNonNull(canonicalName);
             lines.stream()
                     .filter(s -> s.contains(canonicalName))
                     .findAny()

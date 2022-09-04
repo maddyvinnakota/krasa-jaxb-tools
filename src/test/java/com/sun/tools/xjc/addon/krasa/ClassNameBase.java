@@ -1,41 +1,30 @@
 package com.sun.tools.xjc.addon.krasa;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ClassNameBase extends RunXJC2MojoTestHelper {
+public class ClassNameBase extends AnnotationsMojoTestHelper {
 
-    private final String expectedClassName;
-
-    public ClassNameBase(ValidationAnnotation validation, String expectedClassName)
-    {
-        super(validation);
-        this.expectedClassName = expectedClassName;
-    }
-
-    @Override
-    public String getFolderName() {
-        return "notNull";
-    }
-
-    @Override
-    public String getNamespace() {
-        return "a";
+    public ClassNameBase(ValidationAnnotation validation) {
+        super("notNull", validation);
     }
 
     public void test() {
         element("NotNullType")
-            .attribute("notNullString")
+                .attribute("notNullString")
                 .annotation("NotNull")
-                    .assertParam("message", "NotNullType.notNullString {" + this.expectedClassName + ".message}");
+                .assertParam("message",
+                        "NotNullType.notNullString {" + getAnnotationLibraryName() + ".validation.constraints.NotNull.message}");
     }
 
     @Override
     public List<String> getArgs() {
-        final List<String> args = new ArrayList<String>(super.getArgs());
-        args.add("-XJsr303Annotations");
-        args.add("-XJsr303Annotations:notNullAnnotationsCustomMessages=ClassName");
-        args.add("-XJsr303Annotations:JSR_349=true");
-        return args;
+        return Argument.builder()
+                .add(Argument.notNullAnnotationsCustomMessages, "ClassName")
+                .add(Argument.JSR_349, true)
+                .add(Argument.generateNotNullAnnotations, true)
+                .add(Argument.generateStringListAnnotations, true)
+                .add(Argument.targetNamespace, getNamespace())
+                .add(Argument.validationAnnotations, getAnnotation().name())
+                .getList();
     }
 }

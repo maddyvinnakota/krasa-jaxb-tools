@@ -6,10 +6,10 @@ public abstract class ArrayBase extends AnnotationsMojoTestHelper {
         super("array", annotation);
     }
 
-    public void test() {
+    public void test() throws ClassNotFoundException {
         element("Array")
-                .annotationCanonicalName(getPkg() + ".validation.constraints.Size")
-                .annotationCanonicalName(getPkg() + ".validation.constraints.NotNull")
+                .annotationSimpleName("Size")
+                .annotationSimpleName("NotNull")
                 .attribute("arrayOfBytes")
                         .annotation("Size").assertParam("max", 18).end()
                         .annotation("NotNull").assertNoValues();

@@ -2,7 +2,7 @@ package com.sun.tools.xjc.addon.krasa;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 public class AnnotationsMojoTestHelper extends RunXJC2MojoTestHelper {
 
@@ -10,6 +10,7 @@ public class AnnotationsMojoTestHelper extends RunXJC2MojoTestHelper {
     private final ValidationAnnotation annotation;
 
     public AnnotationsMojoTestHelper(String folderName, ValidationAnnotation annotation) {
+        super(annotation);
         this.folderName = folderName;
         this.annotation = annotation;
     }
@@ -29,7 +30,7 @@ public class AnnotationsMojoTestHelper extends RunXJC2MojoTestHelper {
         return annotation;
     }
 
-    protected String getPkg() {
+    protected String getAnnotationLibraryName() {
         return getAnnotation().name().toLowerCase();
     }
 
