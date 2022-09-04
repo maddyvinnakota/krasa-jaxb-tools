@@ -41,15 +41,6 @@ import org.xml.sax.ErrorHandler;
  */
 public class JaxbValidationsPlugins extends Plugin {
 
-    static final String PLUGIN_OPTION_NAME = "XJsr303Annotations";
-    static final String TARGET_NAMESPACE_PARAMETER = PLUGIN_OPTION_NAME + ":targetNamespace";
-    static final String JSR_349 = PLUGIN_OPTION_NAME + ":JSR_349";
-    static final String GENERATE_NOT_NULL_ANNOTATIONS = PLUGIN_OPTION_NAME + ":generateNotNullAnnotations";
-    static final String NOT_NULL_ANNOTATIONS_CUSTOM_MESSAGES = PLUGIN_OPTION_NAME + ":notNullAnnotationsCustomMessages";
-    static final String VERBOSE = PLUGIN_OPTION_NAME + ":verbose";
-    static final String GENERATE_JPA_ANNOTATIONS = PLUGIN_OPTION_NAME + ":jpa";
-    static final String GENERATE_STRING_LIST_ANNOTATIONS = PLUGIN_OPTION_NAME + ":generateStringListAnnotations";
-    static final String VALIDATION_ANNOTATIONS = PLUGIN_OPTION_NAME + ":validationAnnotations";
     static final String NAMESPACE = "http://jaxb.dev.java.net/plugin/code-injector";
 
     private String targetNamespace = null;
@@ -65,58 +56,49 @@ public class JaxbValidationsPlugins extends Plugin {
 
     private ValidationAnnotation annotationFactory = ValidationAnnotation.JAVAX;
 
+    private boolean parsedArgument = false;
+
     @Override
     public String getOptionName() {
-        return PLUGIN_OPTION_NAME;
+        return Argument.PLUGIN_NAME;
     }
 
     @Override
-    public int parseArgument(Options opt, String[] args, int i)
+    public int parseArgument(Options opt, String[] args, int index)
             throws BadCommandLineException, IOException {
 
-        ArgumentParser argParser = new ArgumentParser(args[i]);
+        if (!parsedArgument) {
+            parsedArgument = true;
+            Argument.parse(args)
+                    .stringArgument(Argument.targetNamespace, v -> targetNamespace = v)
+                    .stringArgument(Argument.validationAnnotations,
+                            v -> annotationFactory = ValidationAnnotation.valueOf(v.toUpperCase()))
+                    .booleanArgument(Argument.JSR_349, v -> jsr349 = v)
+                    .booleanArgument(Argument.generateNotNullAnnotations, v -> notNullAnnotations = v)
+                    .booleanArgument(Argument.verbose, v -> verbose = v)
+                    .booleanArgument(Argument.jpa, v -> jpaAnnotations = v)
+                    .booleanArgument(Argument.generateStringListAnnotations,
+                            v -> generateStringListAnnotations = v)
+                    .stringArgument(Argument.notNullAnnotationsCustomMessages, value -> {
+                        notNullCustomMessages = Boolean.parseBoolean(value);
 
-        argParser.extractString(TARGET_NAMESPACE_PARAMETER)
-                .ifPresent(v -> targetNamespace = v);
-
-        argParser.extractString(VALIDATION_ANNOTATIONS)
-                .ifPresent(v -> annotationFactory = ValidationAnnotation.valueOf(v.toUpperCase()));
-
-        argParser.extractBoolean(JSR_349)
-                .ifPresent(v -> jsr349 = v);
-
-        argParser.extractBoolean(GENERATE_NOT_NULL_ANNOTATIONS)
-                .ifPresent(v -> notNullAnnotations = v);
-
-        argParser.extractBoolean(VERBOSE)
-                .ifPresent(v -> verbose = v);
-
-        argParser.extractBoolean(GENERATE_JPA_ANNOTATIONS)
-                .ifPresent(v -> jpaAnnotations = v);
-
-        argParser.extractBoolean(GENERATE_STRING_LIST_ANNOTATIONS)
-                .ifPresent(v -> generateStringListAnnotations = v);
-
-        argParser.extractString(NOT_NULL_ANNOTATIONS_CUSTOM_MESSAGES)
-                .ifPresent(value -> {
-                    notNullCustomMessages = Boolean.parseBoolean(value);
-
-                    if (!notNullCustomMessages) {
-                        if (value.equalsIgnoreCase("classname")) {
-                            notNullCustomMessages = true;
-                            notNullPrefixFieldName = true;
-                            notNullPrefixClassName = true;
-                        } else if (value.equalsIgnoreCase("fieldname")) {
-                            notNullCustomMessages = true;
-                            notNullPrefixFieldName = true;
-                        } else if (value.length() != 0 &&
-                                !value.equalsIgnoreCase("false")) {
-                            notNullCustomMessage = value;
+                        if (!notNullCustomMessages) {
+                            if (value.equalsIgnoreCase("classname")) {
+                                notNullCustomMessages = true;
+                                notNullPrefixFieldName = true;
+                                notNullPrefixClassName = true;
+                            } else if (value.equalsIgnoreCase("fieldname")) {
+                                notNullCustomMessages = true;
+                                notNullPrefixFieldName = true;
+                            } else if (value.length() != 0 &&
+                                    !value.equalsIgnoreCase("false")) {
+                                notNullCustomMessage = value;
+                            }
                         }
-                    }
-                });
+                    });
+        }
 
-        return argParser.getCounter();
+        return Argument.returnOneIfOwnArgument(args[index]);
     }
 
     @Override
@@ -136,9 +118,9 @@ public class JaxbValidationsPlugins extends Plugin {
 
     @Override
     public String getUsage() {
-        return "  -" + PLUGIN_OPTION_NAME + "      :  " +
+        return "  -" + Argument.PLUGIN_OPTION_NAME + "      :  " +
                 "inject Bean validation annotations (JSR 303); " +
-                "-" + PLUGIN_OPTION_NAME +
+                "-" + Argument.PLUGIN_OPTION_NAME +
                 ":targetNamespace=http://www.foo.com/bar  :      " +
                 "additional settings for @Valid annotation";
     }
@@ -263,7 +245,7 @@ public class JaxbValidationsPlugins extends Plugin {
             addJpaColumnAnnotation(simpleType, propertyName, className, field);
         }
 
-        if (Utils.isNumber(field)) {
+        if (Utils.isNumberField(field)) {
 
             if (!hasAnnotation(field, "DecimalMin")) {
 
@@ -787,10 +769,10 @@ public class JaxbValidationsPlugins extends Plugin {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public boolean hasAnnotation(JFieldVar var, String annotationClassSimpleName) {
         List<JAnnotationUse> list =
-                (List<JAnnotationUse>) Utils.getField("annotations", var);
+                (List<JAnnotationUse>) Utils.getFieldValue("annotations", var);
         if (list != null) {
             for (JAnnotationUse annotationUse : list) {
-                if (((Class) Utils.getField("clazz._class", annotationUse)).
+                if (((Class) Utils.getFieldValue("clazz._class", annotationUse)).
                         getSimpleName().equals(annotationClassSimpleName)) {
                     return true;
                 }
