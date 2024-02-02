@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="a"
+    xmlns:a="a">
+
+    <xsd:element name="message" type="a:redacted3"/>
+
+    <xsd:complexType name="redacted3">
+        <xsd:sequence>
+            <xsd:choice>
+                <xsd:element name="redacted2" type="a:redacted"/>
+            </xsd:choice>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="redacted">
+        <xsd:sequence>
+            <xsd:element name="redacted6" type="a:redacted4" minOccurs="0"/>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="redacted4">
+        <xsd:sequence>
+            <xsd:element name="redacted7" type="a:redacted5" minOccurs="0" maxOccurs="200" />
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="redacted5">
+    </xsd:complexType>
+
+</xsd:schema>
