@@ -2,8 +2,10 @@ package com.sun.tools.xjc.addon.krasa;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 /**
@@ -11,7 +13,7 @@ import java.util.function.Consumer;
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public enum Argument {
-    targetNamespace(),
+    targetNamespace,
     JSR_349,
     generateNotNullAnnotations,
     notNullAnnotationsCustomMessages,
@@ -82,19 +84,25 @@ public enum Argument {
     }
 
     public static class Builder {
-        private List<String> list = new ArrayList<>();
-
-        public Builder() {
-            list.add(Argument.PLUGIN_OPTION_NAME);
-        }
+        private Map<String,String> map = new LinkedHashMap<>();
 
         public Builder add(Argument argument, Object value) {
-            list.add(Argument.PLUGIN_OPTION_NAME + ":" + argument.name() + "=" + value);
+            map.put(argument.name(), Objects.toString(value));
             return this;
         }
 
         public List<String> getList() {
+            List<String> list = new ArrayList<>(map.size() + 1);
+            list.add(Argument.PLUGIN_OPTION_NAME);
+            map.entrySet().stream()
+                    .map(Builder::createOption)
+                    .forEach(s -> list.add(s));
             return list;
         }
+
+        private static String createOption(Map.Entry<String,String> e) {
+            return Argument.PLUGIN_OPTION_NAME + ":" + e.getKey() + "=" + e.getValue();
+        }
     }
+
 }
