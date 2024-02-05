@@ -20,7 +20,7 @@ class ArgumentBuilder {
     }
 
     public ArgumentBuilder add(Argument argument, Object value) {
-        list.add(Argument.PLUGIN_OPTION_NAME + ":" + argument.name() + "=" + value);
+        list.add(argument.getOptionValue(value));
         return this;
     }
 
