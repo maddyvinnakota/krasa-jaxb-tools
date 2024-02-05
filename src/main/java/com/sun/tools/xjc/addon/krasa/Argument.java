@@ -10,20 +10,23 @@ enum Argument {
     targetNamespace((p, v) -> p.targetNamespace = v),
     JSR_349((p,v) -> p.jsr349 = toBoolean(v)),
     generateNotNullAnnotations((p,v) -> p.notNullAnnotations = toBoolean(v)),
-    notNullAnnotationsCustomMessages((p,value) -> {
-        p.notNullCustomMessages = toBoolean(value);
+    notNullAnnotationsCustomMessages((p,v) -> {
+        Boolean b = toBoolean(v);
 
-        if (!p.notNullCustomMessages) {
-            if (value.equalsIgnoreCase("classname")) {
-                p.notNullCustomMessages = true;
-                p.notNullPrefixFieldName = true;
+        if (b != null) {
+            p.notNullCustomMessage = b;
+        } else {
+            if (CustomMessageType.Classname.equalsIgnoreCase(v)) {
+                p.notNullCustomMessage = true;
+                p.notNullPrefixFieldName = false;
                 p.notNullPrefixClassName = true;
-            } else if (value.equalsIgnoreCase("fieldname")) {
-                p.notNullCustomMessages = true;
+            } else if (CustomMessageType.Fieldname.equalsIgnoreCase(v)) {
+                p.notNullCustomMessage = true;
                 p.notNullPrefixFieldName = true;
-            } else if (value.length() != 0 &&
-                    !value.equalsIgnoreCase("false")) {
-                p.notNullCustomMessage = value;
+                p.notNullPrefixClassName = false;
+            } else if (v.length() != 0 &&
+                    !v.equalsIgnoreCase("false")) {
+                p.notNullCustomMessageText = v;
             }
         }
     }),
@@ -37,8 +40,20 @@ enum Argument {
     public static final String PLUGIN_OPTION_NAME = "-" + PLUGIN_NAME;
     public static final int PONL = PLUGIN_OPTION_NAME.length() + 1;
 
-    private static boolean toBoolean(String v) {
-        return v != null && "true".equals(v.toLowerCase());
+    /**
+     * @return the boolean value of v (no case sensitive) or null otherwise.
+     */
+    private static Boolean toBoolean(String v) {
+        if (v == null) {
+            return null;
+        }
+        String lc = v.toLowerCase();
+        if ("true".equals(lc)) {
+            return Boolean.TRUE;
+        } else if ("false".equals(lc)) {
+            return Boolean.FALSE;
+        }
+        return null;
     }
 
     private BiConsumer<JaxbValidationsPlugins, String> setter;

@@ -47,10 +47,10 @@ public class JaxbValidationsPlugins extends Plugin {
     boolean jsr349 = false;
     boolean verbose = false;
     boolean notNullAnnotations = true;
-    boolean notNullCustomMessages;
+    boolean notNullCustomMessage;
     boolean notNullPrefixFieldName;
     boolean notNullPrefixClassName;
-    String notNullCustomMessage = null;
+    String notNullCustomMessageText = null;
     boolean jpaAnnotations = false;
     boolean generateStringListAnnotations;
 
@@ -356,12 +356,12 @@ public class JaxbValidationsPlugins extends Plugin {
                     field.name(),
                     notNullClass.getName());
 
-        } else if (notNullCustomMessages) {
+        } else if (notNullCustomMessage) {
             message = String.format("{%s.message}",
                     notNullClass.getName());
 
-        } else if (notNullCustomMessage != null) {
-            message = notNullCustomMessage
+        } else if (notNullCustomMessageText != null) {
+            message = notNullCustomMessageText
                     .replace("{ClassName}", className)
                     .replace("{FieldName}", field.name());
 

@@ -2,10 +2,10 @@ package com.sun.tools.xjc.addon.krasa;
 
 import com.sun.tools.xjc.BadCommandLineException;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 
 /**
@@ -17,23 +17,6 @@ public class ArgumentTest {
     private static final String NAMESPACE = "xyz";
     private static final String ANNOTATION = "javax";
     private static final String MESSAGE = "custom message";
-
-    @Test
-    public void shouldBuildArguments() {
-        List<String> list = ArgumentBuilder.builder()
-                .add(Argument.targetNamespace, NAMESPACE)
-                .add(Argument.JSR_349, true)
-                .add(Argument.generateStringListAnnotations, true)
-                .add(Argument.validationAnnotations, ANNOTATION)
-                .getOptionList();
-
-        Iterator<String> it = list.iterator();
-        assertEquals(Argument.PLUGIN_OPTION_NAME, it.next());
-        assertEquals(Argument.targetNamespace.getOptionValue(NAMESPACE), it.next());
-        assertEquals(Argument.JSR_349.getOptionValue(true), it.next());
-        assertEquals(Argument.generateStringListAnnotations.getOptionValue(true), it.next());
-        assertEquals(Argument.validationAnnotations.getOptionValue(ANNOTATION), it.next());
-    }
 
     @Test
     public void shouldParseArguments() throws BadCommandLineException, IOException {
@@ -52,6 +35,7 @@ public class ArgumentTest {
                 .getOptionList();
 
         String[] args = arguments.toArray(new String[arguments.size()]);
+
         for (int i=0; i<args.length; i++) {
             plugin.parseArgument(null, args, i);
         }
@@ -61,9 +45,61 @@ public class ArgumentTest {
         assertTrue(plugin.jsr349);
         assertTrue(plugin.notNullAnnotations);
         assertTrue(plugin.generateStringListAnnotations);
-        assertEquals(plugin.notNullCustomMessage, MESSAGE);
+        assertEquals(plugin.notNullCustomMessageText, MESSAGE);
         assertTrue(plugin.jpaAnnotations);
         assertTrue(plugin.verbose);
 
+    }
+
+    @Test
+    public void shouldNotNullFlagsBeFalseByDefault() {
+        JaxbValidationsPlugins plugin = new JaxbValidationsPlugins();
+
+        assertFalse(plugin.notNullCustomMessage);
+        assertFalse(plugin.notNullPrefixFieldName);
+        assertFalse(plugin.notNullPrefixClassName);
+    }
+
+    @Test
+    public void shouldSetNotNullAnnotationsCustomMessagesOnClassName()
+            throws BadCommandLineException, IOException {
+
+        String option = CustomMessageType.Classname.value();
+
+        JaxbValidationsPlugins plugin = setupNotNullMessage(option);
+
+        assertTrue(plugin.notNullCustomMessage);
+        assertFalse(plugin.notNullPrefixFieldName);
+        assertTrue(plugin.notNullPrefixClassName);
+    }
+
+    @Test
+    public void shouldSetNotNullAnnotationsCustomMessagesOnFieldName()
+            throws BadCommandLineException, IOException {
+
+        String option = CustomMessageType.Fieldname.value();
+
+        JaxbValidationsPlugins plugin = setupNotNullMessage(option);
+
+        assertTrue(plugin.notNullCustomMessage);
+        assertTrue(plugin.notNullPrefixFieldName);
+        assertFalse(plugin.notNullPrefixClassName);
+    }
+
+    private JaxbValidationsPlugins setupNotNullMessage(String option)
+            throws IOException, BadCommandLineException {
+        JaxbValidationsPlugins plugin = new JaxbValidationsPlugins();
+
+        List<String> arguments = ArgumentBuilder.builder()
+                .add(Argument.notNullAnnotationsCustomMessages, option)
+                .getOptionList();
+
+        String[] args = arguments.toArray(new String[arguments.size()]);
+
+        for (int i=0; i<args.length; i++) {
+            plugin.parseArgument(null, args, i);
+        }
+
+        return plugin;
     }
 }

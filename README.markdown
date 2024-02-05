@@ -6,7 +6,7 @@ Versions
 ----------------
 
 - `2.2` Some new features added because of PR requests
-  
+
   - Added `@Valid` annotation to `sequence`s to force items validation
   - Added support for `Jakarta EE 9` with parameter `validationAnnotations`
 
@@ -34,7 +34,7 @@ Options
 - `targetNamespace` (string, optional): adds @Valid annotation to all elements with given namespace
 - `generateNotNullAnnotations` (boolean, optional, default=`true`): adds a `@NotNull` annotation if an element has `minOccours` not 0, is `required` or is not `nillable`.
 - `notNullAnnotationsCustomMessages` (boolean or string, optional, default=`false`): values are `true`, `FieldName`, `ClassName`, or an *actual message*
-- `JSR_349` (boolean, optiona, defalut=`false`) generates [JSR349](https://beanvalidation.org/1.1/) compatible annotations for `@DecimalMax` and `@DecimalMin` inclusive parameter
+- `JSR_349` (boolean, optional, defalut=`false`) generates [JSR349](https://beanvalidation.org/1.1/) compatible annotations for `@DecimalMax` and `@DecimalMin` inclusive parameter
 - `verbose` (boolean, optional, default=`false`) print verbose messages to output
 
 **`@NotNull`**'s default validation message is not always helpful, so it can be customized with **-XJsr303Annotations:notNullAnnotationsCustomMessages=OPTION** where **OPTION** is one of the following:
@@ -45,7 +45,7 @@ Options
 * `ClassName` (class and field name are prefixed to the default message: **"Class.field {javax....message}"**)
 * `other-non-empty-text` (arbitrary message, with substitutable, case-sensitive parameters `{ClassName}` and `{FieldName}`: **"Class {ClassName} field {FieldName} non-null"**)
 
----- 
+----
 
 XJsr303Annotations
 ----------------
@@ -63,14 +63,14 @@ Generates:
 * `@Digits` if there is a totalDigits or fractionDigits restriction.
 * `@Pattern` if there is a Pattern restriction
 
----- 
+----
 
 Example project with tests:
 ----------------
 
 https://github.com/krasa/krasa-jaxb-tools-example
 
----- 
+----
 
 Usage
 ----------------
@@ -180,7 +180,7 @@ Note that `maven-jaxb2-plugin` presently[ only supports JDK up to 9 officially](
                             <extraarg>-xjc-XJsr303Annotations:generateNotNullAnnotations=true</extraarg>
                             <!--optional, default is false, possible values are true, FieldName, ClassName, or an actual message -->
                             <extraarg>-xjc-XJsr303Annotations:notNullAnnotationsCustomMessages=false</extraarg>
-                            <!-- generates JSR349 compatible annotations 
+                            <!-- generates JSR349 compatible annotations
                                  (DecimalMax and DecimalMin inclusive parameter) -->
                             <extraarg>-xjc-XJsr303Annotations:JSR_349=false</extraarg>
                             <extraarg>-xjc-XJsr303Annotations:verbose=false</extraarg>
