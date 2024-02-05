@@ -20,7 +20,7 @@ public class ArgumentTest {
 
     @Test
     public void shouldParseArguments() throws BadCommandLineException, IOException {
-        JaxbValidationsPlugins plugin = new JaxbValidationsPlugins();
+        JaxbValidationsPlugin plugin = new JaxbValidationsPlugin();
 
         List<String> arguments = ArgumentBuilder.builder()
                 .add(Argument.targetNamespace, NAMESPACE)
@@ -53,7 +53,7 @@ public class ArgumentTest {
 
     @Test
     public void shouldNotNullFlagsBeFalseByDefault() {
-        JaxbValidationsPlugins plugin = new JaxbValidationsPlugins();
+        JaxbValidationsPlugin plugin = new JaxbValidationsPlugin();
 
         assertFalse(plugin.notNullCustomMessage);
         assertFalse(plugin.notNullPrefixFieldName);
@@ -66,7 +66,7 @@ public class ArgumentTest {
 
         String option = CustomMessageType.Classname.value();
 
-        JaxbValidationsPlugins plugin = setupNotNullMessage(option);
+        JaxbValidationsPlugin plugin = setupNotNullMessage(option);
 
         assertTrue(plugin.notNullCustomMessage);
         assertFalse(plugin.notNullPrefixFieldName);
@@ -79,16 +79,16 @@ public class ArgumentTest {
 
         String option = CustomMessageType.Fieldname.value();
 
-        JaxbValidationsPlugins plugin = setupNotNullMessage(option);
+        JaxbValidationsPlugin plugin = setupNotNullMessage(option);
 
         assertTrue(plugin.notNullCustomMessage);
         assertTrue(plugin.notNullPrefixFieldName);
         assertFalse(plugin.notNullPrefixClassName);
     }
 
-    private JaxbValidationsPlugins setupNotNullMessage(String option)
+    private JaxbValidationsPlugin setupNotNullMessage(String option)
             throws IOException, BadCommandLineException {
-        JaxbValidationsPlugins plugin = new JaxbValidationsPlugins();
+        JaxbValidationsPlugin plugin = new JaxbValidationsPlugin();
 
         List<String> arguments = ArgumentBuilder.builder()
                 .add(Argument.notNullAnnotationsCustomMessages, option)

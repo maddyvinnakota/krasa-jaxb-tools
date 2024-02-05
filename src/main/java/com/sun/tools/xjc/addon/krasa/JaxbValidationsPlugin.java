@@ -39,7 +39,7 @@ import org.xml.sax.ErrorHandler;
  * @author Vojtěch Krása
  * @author cocorossello
  */
-public class JaxbValidationsPlugins extends Plugin {
+public class JaxbValidationsPlugin extends Plugin {
 
     static final String NAMESPACE = "http://jaxb.dev.java.net/plugin/code-injector";
 

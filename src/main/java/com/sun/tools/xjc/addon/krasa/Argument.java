@@ -56,9 +56,9 @@ enum Argument {
         return null;
     }
 
-    private BiConsumer<JaxbValidationsPlugins, String> setter;
+    private BiConsumer<JaxbValidationsPlugin, String> setter;
 
-    Argument(BiConsumer<JaxbValidationsPlugins, String> setter) {
+    Argument(BiConsumer<JaxbValidationsPlugin, String> setter) {
         this.setter = setter;
     }
 
@@ -71,7 +71,7 @@ enum Argument {
     }
 
     /** @return 1 if the argument is referring to this plugin, 0 otherwise. */
-    public static int parse(JaxbValidationsPlugins plugin, String option) {
+    public static int parse(JaxbValidationsPlugin plugin, String option) {
         if (option.startsWith(PLUGIN_OPTION_NAME)) {
             int idx = option.indexOf("=");
             if (idx != -1) {
