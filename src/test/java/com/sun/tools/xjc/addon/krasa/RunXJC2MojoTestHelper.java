@@ -80,13 +80,13 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
 
     @Override
     public List<String> getArgs() {
-        return Argument.builder()
+        return ArgumentBuilder.builder()
                 .add(Argument.generateNotNullAnnotations, true)
                 .add(Argument.generateStringListAnnotations, true)
                 .add(Argument.targetNamespace, getNamespace())
                 .add(Argument.JSR_349, true)
                 .add(Argument.validationAnnotations, getAnnotation().name())
-                .getList();
+                .getOptionList();
     }
 
     /**

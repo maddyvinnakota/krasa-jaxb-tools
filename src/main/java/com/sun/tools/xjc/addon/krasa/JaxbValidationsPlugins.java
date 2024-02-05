@@ -43,20 +43,18 @@ public class JaxbValidationsPlugins extends Plugin {
 
     static final String NAMESPACE = "http://jaxb.dev.java.net/plugin/code-injector";
 
-    private String targetNamespace = null;
-    private boolean jsr349 = false;
-    private boolean verbose = false;
-    private boolean notNullAnnotations = true;
-    private boolean notNullCustomMessages;
-    private boolean notNullPrefixFieldName;
-    private boolean notNullPrefixClassName;
-    private String notNullCustomMessage = null;
-    private boolean jpaAnnotations = false;
-    private boolean generateStringListAnnotations;
+    String targetNamespace = null;
+    boolean jsr349 = false;
+    boolean verbose = false;
+    boolean notNullAnnotations = true;
+    boolean notNullCustomMessages;
+    boolean notNullPrefixFieldName;
+    boolean notNullPrefixClassName;
+    String notNullCustomMessage = null;
+    boolean jpaAnnotations = false;
+    boolean generateStringListAnnotations;
 
-    private ValidationAnnotation annotationFactory = ValidationAnnotation.JAVAX;
-
-    private boolean parsedArgument = false;
+    ValidationAnnotation annotationFactory = ValidationAnnotation.JAVAX;
 
     @Override
     public String getOptionName() {
@@ -67,38 +65,7 @@ public class JaxbValidationsPlugins extends Plugin {
     public int parseArgument(Options opt, String[] args, int index)
             throws BadCommandLineException, IOException {
 
-        if (!parsedArgument) {
-            parsedArgument = true;
-            Argument.parse(args)
-                    .stringArgument(Argument.targetNamespace, v -> targetNamespace = v)
-                    .stringArgument(Argument.validationAnnotations,
-                            v -> annotationFactory = ValidationAnnotation.valueOf(v.toUpperCase()))
-                    .booleanArgument(Argument.JSR_349, v -> jsr349 = v)
-                    .booleanArgument(Argument.generateNotNullAnnotations, v -> notNullAnnotations = v)
-                    .booleanArgument(Argument.verbose, v -> verbose = v)
-                    .booleanArgument(Argument.jpa, v -> jpaAnnotations = v)
-                    .booleanArgument(Argument.generateStringListAnnotations,
-                            v -> generateStringListAnnotations = v)
-                    .stringArgument(Argument.notNullAnnotationsCustomMessages, value -> {
-                        notNullCustomMessages = Boolean.parseBoolean(value);
-
-                        if (!notNullCustomMessages) {
-                            if (value.equalsIgnoreCase("classname")) {
-                                notNullCustomMessages = true;
-                                notNullPrefixFieldName = true;
-                                notNullPrefixClassName = true;
-                            } else if (value.equalsIgnoreCase("fieldname")) {
-                                notNullCustomMessages = true;
-                                notNullPrefixFieldName = true;
-                            } else if (value.length() != 0 &&
-                                    !value.equalsIgnoreCase("false")) {
-                                notNullCustomMessage = value;
-                            }
-                        }
-                    });
-        }
-
-        return Argument.returnOneIfOwnArgument(args[index]);
+        return Argument.parse(this, args[index]);
     }
 
     @Override
