@@ -1,6 +1,12 @@
 ![Maven Central](https://img.shields.io/maven-central/v/com.fillumina/krasa-jaxb-tools.svg)
 
-Plugin for generation of Bean Validation Annotations (JSR-303) **-XJsr303Annotations**
+# Plugin to generate Bean Validation Annotations ([JSR-303](https://beanvalidation.org/1.0/spec/))
+
+It works with:
+
+ - [`maven-jaxb2-plugin`](https://github.com/highsource/jaxb-tools)
+ - ['cxf-codegen-plugin'](https://cxf.apache.org/docs/overview.html)
+ - 'cxf-xjc-plugin'
 
 Versions
 ----------------
