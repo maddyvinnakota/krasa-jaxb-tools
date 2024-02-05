@@ -86,10 +86,7 @@ public class JaxbValidationsPlugin extends Plugin {
     @Override
     public String getUsage() {
         return "  -" + Argument.PLUGIN_OPTION_NAME + "      :  " +
-                "inject Bean validation annotations (JSR 303); " +
-                "-" + Argument.PLUGIN_OPTION_NAME +
-                ":targetNamespace=http://www.foo.com/bar  :      " +
-                "additional settings for @Valid annotation";
+                "inject Bean validation annotations (JSR 303);\n";
     }
 
     @Override
