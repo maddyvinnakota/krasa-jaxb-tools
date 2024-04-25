@@ -38,7 +38,7 @@ enum Argument {
 
     public static final String PLUGIN_NAME = "XJsr303Annotations";
     public static final String PLUGIN_OPTION_NAME = "-" + PLUGIN_NAME;
-    public static final int PONL = PLUGIN_OPTION_NAME.length() + 1;
+    public static final int PLUGIN_OPTION_NAME_LENGHT = PLUGIN_OPTION_NAME.length() + 1;
 
     /**
      * @return the boolean value of v (no case sensitive) or null otherwise.
@@ -75,12 +75,12 @@ enum Argument {
         if (option.startsWith(PLUGIN_OPTION_NAME)) {
             int idx = option.indexOf("=");
             if (idx != -1) {
-                final String name = option.substring(PONL, idx);
+                final String name = option.substring(PLUGIN_OPTION_NAME_LENGHT, idx);
                 final String value = option.substring(idx + 1);
                 Argument argument = Argument.valueOf(name);
                 argument.setter.accept(plugin, value);
-            } else if (option.length() > PONL) {
-                final String name = option.substring(PONL);
+            } else if (option.length() > PLUGIN_OPTION_NAME_LENGHT) {
+                final String name = option.substring(PLUGIN_OPTION_NAME_LENGHT);
                 Argument argument = Argument.valueOf(name);
                 argument.setter.accept(plugin, "true");
             }
