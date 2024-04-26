@@ -51,11 +51,11 @@ enum Argument {
         this.setter = setter;
     }
 
-    public String getOption() {
+    public String getOptionName() {
         return PLUGIN_OPTION_NAME + ":" + name();
     }
 
-    public String getOptionValue(Object value) {
+    public String getOptionNameAndValue(Object value) {
         return PLUGIN_OPTION_NAME + ":" + name() + "=" + value;
     }
 
