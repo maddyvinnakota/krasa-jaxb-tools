@@ -85,12 +85,24 @@ public class JaxbValidationsPlugin extends Plugin {
 
     @Override
     public String getUsage() {
-        return "  -" + Argument.PLUGIN_OPTION_NAME + "      :  " +
-                "inject Bean validation annotations (JSR 303);\n";
+        return new StringBuilder()
+                .append("  -")
+                .append(Argument.PLUGIN_OPTION_NAME)
+                .append("      :  ")
+                .append("inject Bean validation annotations (JSR 303)")
+                .append(System.lineSeparator())
+                .append("   Options:")
+                .append(Argument.help("     "))
+                .append(System.lineSeparator())
+                .toString();
     }
 
     @Override
     public boolean run(Outline model, Options opt, ErrorHandler errorHandler) {
+        if (verbose) {
+            // print out the actual plugin options
+            log(Argument.options(this, "    "));
+        }
         for (ClassOutline co : model.getClasses()) {
             List<CPropertyInfo> properties = co.target.getProperties();
 
@@ -518,7 +530,7 @@ public class JaxbValidationsPlugin extends Plugin {
                 max = max.subtract(BigDecimal.ONE);
             }
 
-            log("@DecimalMax(" + max + "): " + propertyName +  " added to class " + className);
+            log("@DecimalMax(" + max + "): " + propertyName + " added to class " + className);
 
             annotate.param("value", max.toString());
         }
@@ -546,9 +558,8 @@ public class JaxbValidationsPlugin extends Plugin {
     private void addSinlgePatternAnnotation(XSSimpleType simpleType, String propertyName,
             String className, JFieldVar field, String pattern) {
 
-
         if (simpleType.getBaseType() instanceof XSSimpleType &&
-                ((XSSimpleType)simpleType.getBaseType()).getFacet("pattern") != null) {
+                ((XSSimpleType) simpleType.getBaseType()).getFacet("pattern") != null) {
 
             final XSSimpleType baseType = (XSSimpleType) simpleType.getBaseType();
 
@@ -560,7 +571,7 @@ public class JaxbValidationsPlugin extends Plugin {
             String basePattern = facet.getValue().value;
 
             listValue.annotate(annotationFactory.getPatternClass())
-                    .param("regexp",replaceRegexp(basePattern));
+                    .param("regexp", replaceRegexp(basePattern));
 
             annotateSinglePattern(basePattern, propertyName, className, listValue,
                     false);
@@ -583,7 +594,7 @@ public class JaxbValidationsPlugin extends Plugin {
             JAnnotationArrayMember listValue = patternListAnnotation.paramArray("value");
 
             String basePattern = ((XSSimpleType) simpleType.getBaseType()).getFacet("pattern").getValue().value;
-            listValue.annotate(annotationFactory.getPatternClass()).param("regexp",replaceRegexp(basePattern));
+            listValue.annotate(annotationFactory.getPatternClass()).param("regexp", replaceRegexp(basePattern));
 
             log("@Pattern: " + propertyName + " added to class " + className);
             final JAnnotationUse patternAnnotation = listValue.annotate(annotationFactory.getPatternClass());
@@ -730,7 +741,7 @@ public class JaxbValidationsPlugin extends Plugin {
         return value != null && !Utils.isMax(value) && !Utils.isMin(value);
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     public boolean hasAnnotation(JFieldVar var, String annotationClassSimpleName) {
         List<JAnnotationUse> list =
                 (List<JAnnotationUse>) Utils.getFieldValue("annotations", var);
