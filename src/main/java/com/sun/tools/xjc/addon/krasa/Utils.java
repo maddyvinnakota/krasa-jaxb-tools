@@ -14,6 +14,31 @@ import java.util.stream.Collectors;
  */
 class Utils {
 
+    /**
+     * @return the boolean value of v (no case sensitive) or null otherwise.
+     */
+    public static boolean toBoolean(String v, Boolean defaultIfNull) {
+        if (v != null) {
+            return toBoolean(v);
+        }
+        return defaultIfNull != null ? defaultIfNull : false;
+    }
+
+    /**
+     * @return the boolean value of v (no case sensitive) or null otherwise.
+     */
+    public static Boolean toBoolean(String v) {
+        if (v != null) {
+            String lc = v.toLowerCase().trim();
+            if ("true".equals(lc)) {
+                return Boolean.TRUE;
+            } else if ("false".equals(lc)) {
+                return Boolean.FALSE;
+            }
+        }
+        return null;
+    }
+
     public static int toInt(Object value) {
         Objects.requireNonNull(value, "value is null");
         if (value instanceof Number) {

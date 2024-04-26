@@ -6,7 +6,6 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -15,10 +14,40 @@ import org.junit.Test;
 public class UtilsTest {
 
     @Test
+    public void shouldConvertToBooleanWithDefault() {
+        assertTrue(Utils.toBoolean("True", false));
+        assertTrue(Utils.toBoolean("true", false));
+        assertTrue(Utils.toBoolean("TRUE", false));
+        assertTrue(Utils.toBoolean(" true", false));
+        assertTrue(Utils.toBoolean("true ", false));
+        assertTrue(Utils.toBoolean(" true ", false));
+
+        assertFalse(Utils.toBoolean("False", true));
+        assertFalse(Utils.toBoolean("false", true));
+        assertFalse(Utils.toBoolean("FALSE", true));
+        assertFalse(Utils.toBoolean("FalSe", true));
+    }
+
+    @Test
+    public void shouldConvertToBoolean() {
+        assertTrue(Utils.toBoolean("True"));
+        assertTrue(Utils.toBoolean("true"));
+        assertTrue(Utils.toBoolean("TRUE"));
+        assertTrue(Utils.toBoolean(" true"));
+        assertTrue(Utils.toBoolean("true "));
+        assertTrue(Utils.toBoolean(" true "));
+
+        assertFalse(Utils.toBoolean("False"));
+        assertFalse(Utils.toBoolean("false"));
+        assertFalse(Utils.toBoolean("FALSE"));
+        assertFalse(Utils.toBoolean("FalSe"));
+    }
+
+    @Test
     public void testIsNumber() throws Exception {
-        Assert.assertFalse(Utils.isNumber(String.class));
-        Assert.assertFalse(Utils.isNumber(IllegalStateException.class));
-        Assert.assertTrue(Utils.isNumber(BigDecimal.class));
+        assertFalse(Utils.isNumber(String.class));
+        assertFalse(Utils.isNumber(IllegalStateException.class));
+        assertTrue(Utils.isNumber(BigDecimal.class));
     }
 
     @Test

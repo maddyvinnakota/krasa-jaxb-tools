@@ -1,5 +1,6 @@
 package com.sun.tools.xjc.addon.krasa;
 
+import static com.sun.tools.xjc.addon.krasa.Utils.toBoolean;
 import java.util.function.BiConsumer;
 
 /**
@@ -8,8 +9,9 @@ import java.util.function.BiConsumer;
  */
 enum Argument {
     targetNamespace((p, v) -> p.targetNamespace = v),
-    JSR_349((p,v) -> p.jsr349 = toBoolean(v)),
-    generateNotNullAnnotations((p,v) -> p.notNullAnnotations = toBoolean(v)),
+    JSR_349((p,v) -> p.jsr349 = toBoolean(v, p.jsr349)),
+    generateNotNullAnnotations((p,v) ->
+            p.notNullAnnotations = toBoolean(v, p.notNullAnnotations)),
     notNullAnnotationsCustomMessages((p,v) -> {
         Boolean b = toBoolean(v);
 
@@ -30,31 +32,18 @@ enum Argument {
             }
         }
     }),
-    verbose((p,v) -> p.verbose = toBoolean(v)),
-    jpa((p,v) -> p.jpaAnnotations = toBoolean(v)),
-    generateStringListAnnotations((p,v) -> p.generateStringListAnnotations = toBoolean(v)),
-    validationAnnotations((p,v) -> p.annotationFactory = ValidationAnnotation.valueOf(v.toUpperCase())),
-    generateServiceValidationAnnotations((p,v) -> p.generateStringListAnnotations = toBoolean(v));
+    verbose((p,v) -> p.verbose = toBoolean(v, p.verbose)),
+    jpa((p,v) -> p.jpaAnnotations = toBoolean(v, p.jpaAnnotations)),
+    generateStringListAnnotations((p,v) ->
+            p.generateStringListAnnotations = toBoolean(v, p.generateStringListAnnotations)),
+    validationAnnotations((p,v) ->
+            p.annotationFactory = ValidationAnnotation.valueOf(v.toUpperCase())),
+    generateServiceValidationAnnotations((p,v) ->
+            p.generateStringListAnnotations = toBoolean(v, p.generateStringListAnnotations));
 
     public static final String PLUGIN_NAME = "XJsr303Annotations";
     public static final String PLUGIN_OPTION_NAME = "-" + PLUGIN_NAME;
     public static final int PLUGIN_OPTION_NAME_LENGHT = PLUGIN_OPTION_NAME.length() + 1;
-
-    /**
-     * @return the boolean value of v (no case sensitive) or null otherwise.
-     */
-    private static Boolean toBoolean(String v) {
-        if (v == null) {
-            return null;
-        }
-        String lc = v.toLowerCase();
-        if ("true".equals(lc)) {
-            return Boolean.TRUE;
-        } else if ("false".equals(lc)) {
-            return Boolean.FALSE;
-        }
-        return null;
-    }
 
     private BiConsumer<JaxbValidationsPlugin, String> setter;
 
