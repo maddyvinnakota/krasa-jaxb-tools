@@ -25,9 +25,9 @@ public class ArgumentBuilderTest {
 
         Iterator<String> it = list.iterator();
         assertEquals(Argument.PLUGIN_OPTION_NAME, it.next());
-        assertEquals(Argument.targetNamespace.getOptionNameAndValue(NAMESPACE), it.next());
-        assertEquals(Argument.JSR_349.getOptionNameAndValue(true), it.next());
-        assertEquals(Argument.generateStringListAnnotations.getOptionNameAndValue(true), it.next());
-        assertEquals(Argument.validationAnnotations.getOptionNameAndValue(ANNOTATION), it.next());
+        assertEquals(Argument.targetNamespace.withValue(NAMESPACE), it.next());
+        assertEquals(Argument.JSR_349.withValue("true"), it.next());
+        assertEquals(Argument.generateStringListAnnotations.withValue("true"), it.next());
+        assertEquals(Argument.validationAnnotations.withValue(ANNOTATION), it.next());
     }
 }

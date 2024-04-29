@@ -4,15 +4,28 @@ import com.sun.codemodel.JFieldVar;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+
 /**
  * @author Vojtech Krasa
  */
 class Utils {
+
+    public static boolean isValidURL(String url) {
+        try {
+            new URL(url).toURI();
+            return true;
+        } catch (MalformedURLException | URISyntaxException e) {
+            return false;
+        }
+    }
 
     /**
      * @return the boolean value of v (no case sensitive) or null otherwise.
@@ -144,17 +157,17 @@ class Utils {
         return LONG_MAX.equals(value) || INTEGER_MAX.equals(value);
     }
 
-    public static final Set<String> NUMBERS = Arrays.stream( new Class<?>[] {
-            BigDecimal.class,
-            BigInteger.class,
-            Byte.class,
-            Short.class,
-            Integer.class,
-            Double.class,
-            Float.class,
-            Long.class})
-                .map(c -> c.getSimpleName().toUpperCase())
-                .collect(Collectors.toSet());
+    public static final Set<String> NUMBERS = Arrays.stream(new Class<?>[]{
+        BigDecimal.class,
+        BigInteger.class,
+        Byte.class,
+        Short.class,
+        Integer.class,
+        Double.class,
+        Float.class,
+        Long.class})
+            .map(c -> c.getSimpleName().toUpperCase())
+            .collect(Collectors.toSet());
 
     public static boolean isNumberField(JFieldVar field) {
         return isFieldTypeNameNumber(field.type().name()) ||

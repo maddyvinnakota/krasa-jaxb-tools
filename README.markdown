@@ -4,15 +4,15 @@
 
 It works with:
 
- - [`maven-jaxb2-plugin`](https://github.com/highsource/jaxb-tools)
- - ['cxf-codegen-plugin'](https://cxf.apache.org/docs/overview.html)
- - 'cxf-xjc-plugin'
+- [`maven-jaxb2-plugin`](https://github.com/highsource/jaxb-tools)
+- ['cxf-codegen-plugin'](https://cxf.apache.org/docs/overview.html)
+- 'cxf-xjc-plugin'
 
 Versions
 ----------------
 
 - `2.2` Some new features added because of PR requests
-
+  
   - Added `@Valid` annotation to `sequence`s to force items validation
   - Added support for `Jakarta EE 9` with parameter `validationAnnotations`
 

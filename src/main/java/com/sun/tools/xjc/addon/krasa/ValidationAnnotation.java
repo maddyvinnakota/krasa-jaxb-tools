@@ -140,4 +140,10 @@ public enum ValidationAnnotation {
         }
         return canonicalName;
     }
+
+    public static String getValuesAsString() {
+        return Arrays.asList(values()).stream()
+                .map(v -> v.name())
+                .collect(Collectors.joining(","));
+    }
 }

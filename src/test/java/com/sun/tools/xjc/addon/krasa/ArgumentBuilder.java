@@ -20,7 +20,7 @@ class ArgumentBuilder {
     }
 
     public ArgumentBuilder add(Argument argument, Object value) {
-        list.add(argument.getOptionNameAndValue(value));
+        list.add(argument.withValue(java.util.Objects.toString(value)));
         return this;
     }
 

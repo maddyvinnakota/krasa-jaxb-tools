@@ -47,9 +47,9 @@ public class JaxbValidationsPlugin extends Plugin {
     boolean jsr349 = false;
     boolean verbose = false;
     boolean notNullAnnotations = true;
-    boolean notNullCustomMessage;
-    boolean notNullPrefixFieldName;
-    boolean notNullPrefixClassName;
+    boolean notNullCustomMessage = false;
+    boolean notNullPrefixFieldName = false;
+    boolean notNullPrefixClassName = false;
     String notNullCustomMessageText = null;
     boolean jpaAnnotations = false;
     boolean generateStringListAnnotations;
@@ -64,7 +64,6 @@ public class JaxbValidationsPlugin extends Plugin {
     @Override
     public int parseArgument(Options opt, String[] args, int index)
             throws BadCommandLineException, IOException {
-
         return Argument.parse(this, args[index]);
     }
 
@@ -92,16 +91,20 @@ public class JaxbValidationsPlugin extends Plugin {
                 .append("inject Bean validation annotations (JSR 303)")
                 .append(System.lineSeparator())
                 .append("   Options:")
-                .append(Argument.help("     "))
+                .append(Argument.helpMessageWithPrefix("     "))
                 .append(System.lineSeparator())
                 .toString();
     }
 
     @Override
     public boolean run(Outline model, Options opt, ErrorHandler errorHandler) {
+        if (opt.verbose) {
+            verbose = true;
+        }
+
         if (verbose) {
             // print out the actual plugin options
-            log(Argument.options(this, "    "));
+            log(Argument.actualOptionValuesString(this, "    "));
         }
         for (ClassOutline co : model.getClasses()) {
             List<CPropertyInfo> properties = co.target.getProperties();

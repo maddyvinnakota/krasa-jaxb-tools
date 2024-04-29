@@ -1,8 +1,9 @@
 package com.sun.tools.xjc.addon.krasa;
 
+import com.sun.tools.xjc.BadCommandLineException;
 import static com.sun.tools.xjc.addon.krasa.Utils.toBoolean;
 import java.util.Objects;
-import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -12,23 +13,47 @@ import java.util.function.Function;
 enum Argument {
     targetNamespace(
             String.class,
-            "adds @Valid annotation to all elements with given namespace",
-            (p, v) -> p.targetNamespace = v,
-            (p) ->  Objects.toString(p.targetNamespace)),
+            "adds @Valid annotation to all elements with given namespace. " +
+                    "NOTE that this not related to XSD targetNamespace option but with the 'name' " +
+                    "defined as xmlns:name=...",
+            (p, v) -> {
+                if (v != null) {
+                    p.targetNamespace = v;
+                } else {
+                    return "wrong URL passed"; // error message
+                }
+                return null; // OK
+            },
+            (p) ->  p.targetNamespace),
     JSR_349(
             Boolean.class,
             "generates JSR349 compatible annotations for @DecimalMax and @DecimalMin inclusive parameter",
-            (p,v) -> p.jsr349 = toBoolean(v, p.jsr349),
+            (p,v) -> {
+                Boolean result = toBoolean(v);
+                if (result != null) {
+                    p.jsr349 = result;
+                    return null;
+                } else {
+                    return "";
+                }
+            },
             (p) -> Objects.toString(p.jsr349)),
     generateNotNullAnnotations(
             Boolean.class,
             "adds a @NotNull annotation if an element has minOccours not 0, is required or is not nillable",
-            (p,v) ->
-                p.notNullAnnotations = toBoolean(v, p.notNullAnnotations),
+            (p,v) -> {
+                Boolean result = toBoolean(v);
+                if (result != null) {
+                    p.notNullAnnotations = result;
+                    return null;
+                } else {
+                    return "";
+                }
+            },
             (p) -> Objects.toString(p.notNullAnnotations)),
     notNullAnnotationsCustomMessages(
             String.class,
-            "values are 'true', 'FieldName', 'ClassName', or an actual message",
+            "allowed values: true/false, 'FieldName', 'ClassName' or an actual message",
             (p,v) -> {
                 Boolean b = toBoolean(v);
 
@@ -39,58 +64,125 @@ enum Argument {
                         p.notNullCustomMessage = true;
                         p.notNullPrefixFieldName = false;
                         p.notNullPrefixClassName = true;
+                        p.notNullCustomMessageText = null;
                     } else if (CustomMessageType.Fieldname.equalsIgnoreCase(v)) {
                         p.notNullCustomMessage = true;
                         p.notNullPrefixFieldName = true;
                         p.notNullPrefixClassName = false;
-                    } else if (v.length() != 0 &&
-                            !v.equalsIgnoreCase("false")) {
+                        p.notNullCustomMessageText = null;
+                    } else if (v.equalsIgnoreCase("false")) {
+                        p.notNullCustomMessage = false;
+                        p.notNullPrefixFieldName = false;
+                        p.notNullPrefixClassName = false;
+                        p.notNullCustomMessageText = null;
+                    } else {
+                        p.notNullCustomMessage = false;
+                        p.notNullPrefixFieldName = false;
+                        p.notNullPrefixClassName = false;
                         p.notNullCustomMessageText = v;
                     }
+
                 }
+                return null;
             },
-            (p) -> ""),
+            (p) -> {
+                if (p.notNullPrefixFieldName) {
+                    return "FieldName";
+                } else if (p.notNullPrefixClassName) {
+                    return "ClassName";
+                } else if (p.notNullCustomMessageText != null) {
+                    return p.notNullCustomMessageText;
+                } else {
+                    return Objects.toString(p.notNullCustomMessage);
+                }
+            }),
     verbose(Boolean.class,
             "increases verbosity",
-            (p,v) -> p.verbose = toBoolean(v, p.verbose),
+            (p,v) -> {
+                Boolean result = toBoolean(v);
+                if (result != null) {
+                    p.verbose = result;
+                    return null;
+                } else {
+                    return "";
+                }
+            },
             (p) -> Objects.toString(p.verbose)),
     jpa(
             Boolean.class,
             "adds JPA @Column annotations for fields with multiplicity greater than 0",
-            (p,v) -> p.jpaAnnotations = toBoolean(v, p.jpaAnnotations),
+            (p,v) -> {
+                Boolean result = toBoolean(v);
+                if (result != null) {
+                    p.jpaAnnotations = result;
+                    return null;
+                } else {
+                    return "";
+                }
+            },
             (p) -> Objects.toString(p.jpaAnnotations)),
-    generateStringListAnnotations(
-            Boolean.class,
-            "generates github.com/jirutka/validator-collection annotations",
-            (p,v) ->
-                p.generateStringListAnnotations = toBoolean(v, p.generateStringListAnnotations),
-            (p) -> Objects.toString(p.generateStringListAnnotations)),
     validationAnnotations(
             String.class,
             "selects which type of annotation to use: JAVAX (default) or JAKARTA",
-            (p,v) ->
-                p.annotationFactory = ValidationAnnotation.valueOf(v.toUpperCase()),
+            (p,v) -> {
+                ValidationAnnotation va;
+                try {
+                    va = ValidationAnnotation.valueOf(v.toUpperCase());
+                } catch (IllegalArgumentException | NullPointerException ex) {
+                    return "passed value is not allowed, use one of: " +
+                            ValidationAnnotation.getValuesAsString();
+                }
+                p.annotationFactory = va;
+                return null;
+            },
             (p) -> Objects.toString(p.annotationFactory)),
+    generateStringListAnnotations(
+            Boolean.class,
+            "generates github.com/jirutka/validator-collection annotations",
+            (p,v) -> {
+                Boolean result = toBoolean(v);
+                if (result != null) {
+                    p.generateStringListAnnotations = result;
+                    return null;
+                } else {
+                    return "";
+                }
+            },
+            (p) -> Objects.toString(p.generateStringListAnnotations)),
     generateServiceValidationAnnotations(
             Boolean.class,
-            "",
-            (p,v) ->
-                p.generateStringListAnnotations = toBoolean(v, p.generateStringListAnnotations),
+            "???",
+            (p,v) -> {
+                Boolean result = toBoolean(v);
+                if (result != null) {
+                    p.generateStringListAnnotations = result;
+                    return null;
+                } else {
+                    return "";
+                }
+            },
             (p) -> Objects.toString(p.generateStringListAnnotations));
 
     public static final String PLUGIN_NAME = "XJsr303Annotations";
     public static final String PLUGIN_OPTION_NAME = "-" + PLUGIN_NAME;
     public static final int PLUGIN_OPTION_NAME_LENGHT = PLUGIN_OPTION_NAME.length() + 1;
 
+    // parameter type
     private Class<?> type;
+
+    // help text
     private String help;
-    private BiConsumer<JaxbValidationsPlugin, String> setter;
+
+    // set the value and return null if ok or a text with the error
+    private BiFunction<JaxbValidationsPlugin, String, String> setter;
+
+    // get the value
     private Function<JaxbValidationsPlugin, String> getter;
 
     Argument(
             Class<?> type,
             String help,
-            BiConsumer<JaxbValidationsPlugin, String> setter,
+            BiFunction<JaxbValidationsPlugin, String, String> setter,
             Function<JaxbValidationsPlugin, String> getter) {
         this.type = type;
         this.help = help;
@@ -98,35 +190,62 @@ enum Argument {
         this.getter = getter;
     }
 
-    public String getOptionName() {
-        return PLUGIN_OPTION_NAME + ":" + name();
-    }
-
-    public String getOptionNameAndValue(Object value) {
+    String withValue(String value) {
         return PLUGIN_OPTION_NAME + ":" + name() + "=" + value;
     }
 
+    String fullName() {
+        return PLUGIN_NAME + ":" + name();
+    }
+
     /** @return 1 if the argument is referring to this plugin, 0 otherwise. */
-    public static int parse(JaxbValidationsPlugin plugin, String option) {
+    public static int parse(JaxbValidationsPlugin plugin, String option)
+            throws BadCommandLineException {
         if (option.startsWith(PLUGIN_OPTION_NAME)) {
             int idx = option.indexOf("=");
             if (idx != -1) {
                 final String name = option.substring(PLUGIN_OPTION_NAME_LENGHT, idx);
                 final String value = option.substring(idx + 1);
-                Argument argument = Argument.valueOf(name);
-                argument.setter.accept(plugin, value);
+                Argument argument = parseArgument(name);
+                setValueToPlugin(plugin, argument, value);
             } else if (option.length() > PLUGIN_OPTION_NAME_LENGHT) {
                 final String name = option.substring(PLUGIN_OPTION_NAME_LENGHT);
-                Argument argument = Argument.valueOf(name);
-                argument.setter.accept(plugin, "true");
+                Argument argument = parseArgument(name);
+                setValueToPlugin(plugin, argument, "true");
             }
             return 1;
         }
         return 0;
     }
 
+    private static void setValueToPlugin(
+            JaxbValidationsPlugin plugin, Argument argument, final String value)
+            throws BadCommandLineException {
+        try {
+            String error = argument.setter.apply(plugin, value);
+            if (error != null) {
+                throw new BadCommandLineException(
+                        "option " + argument.name() + ": " +
+                        (error.length() > 0 ? error + ", " : "") +
+                        "cannot accept '" + value + "' as a " + argument.type.getSimpleName());
+            }
+        } catch (NullPointerException ex) {
+            throw new BadCommandLineException(argument.errorMessage(value));
+        }
+    }
+
+    private static Argument parseArgument(final String name) throws
+            BadCommandLineException {
+        Argument argument = Argument.valueOf(name);
+        if (argument == null) {
+            throw new BadCommandLineException(PLUGIN_NAME +
+                    " unrecognized option " + name + ", usage:\n" + Argument.helpMessageWithPrefix(""));
+        }
+        return argument;
+    }
+
     /** @return a multi line string containing an help for each option. */
-    public static String help(String linePrefix) {
+    public static String helpMessageWithPrefix(String linePrefix) {
         StringBuilder buf = new StringBuilder();
         for (Argument a : values()) {
             buf
@@ -142,8 +261,13 @@ enum Argument {
         return buf.toString();
     }
 
+    public String errorMessage(String wrongValue) {
+        return fullName() + " option expected a value of type " + type.getSimpleName() +
+                " but got '" + Objects.toString(wrongValue) + "'";
+    }
+
     /** @return a multi line string containing the value for each option. */
-    public static String options(JaxbValidationsPlugin plugin, String linePrefix) {
+    public static String actualOptionValuesString(JaxbValidationsPlugin plugin, String linePrefix) {
         StringBuilder buf = new StringBuilder();
         buf
                 .append(linePrefix)

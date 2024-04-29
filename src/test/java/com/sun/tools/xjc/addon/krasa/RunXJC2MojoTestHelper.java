@@ -42,6 +42,7 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
 
     public abstract String getFolderName();
 
+    /* @return must return a valid URL */
     public String getNamespace() {
         return "";
     }

@@ -1,6 +1,7 @@
 package com.sun.tools.xjc.addon.krasa;
 
 import com.sun.tools.xjc.BadCommandLineException;
+import com.sun.tools.xjc.Options;
 import java.io.IOException;
 import java.util.List;
 import static junit.framework.TestCase.assertEquals;
@@ -35,9 +36,10 @@ public class ArgumentTest {
                 .getOptionList();
 
         String[] args = arguments.toArray(new String[arguments.size()]);
+        Options opt = new Options();
 
         for (int i=0; i<args.length; i++) {
-            plugin.parseArgument(null, args, i);
+            plugin.parseArgument(opt, args, i);
         }
 
         assertEquals(NAMESPACE, plugin.targetNamespace);
@@ -95,9 +97,10 @@ public class ArgumentTest {
                 .getOptionList();
 
         String[] args = arguments.toArray(new String[arguments.size()]);
+        Options opt = new Options();
 
         for (int i=0; i<args.length; i++) {
-            plugin.parseArgument(null, args, i);
+            plugin.parseArgument(opt, args, i);
         }
 
         return plugin;
