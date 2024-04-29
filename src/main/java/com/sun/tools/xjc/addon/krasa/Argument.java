@@ -27,7 +27,7 @@ enum Argument {
             (p) ->  p.targetNamespace),
     JSR_349(
             Boolean.class,
-            "generates JSR349 compatible annotations for @DecimalMax and @DecimalMin inclusive parameter",
+            "generates JSR349 compatible annotations for @DecimalMax and @DecimalMin parameters",
             (p,v) -> {
                 Boolean result = toBoolean(v);
                 if (result != null) {
@@ -40,7 +40,7 @@ enum Argument {
             (p) -> Objects.toString(p.jsr349)),
     generateNotNullAnnotations(
             Boolean.class,
-            "adds a @NotNull annotation if an element has minOccours not 0, is required or is not nillable",
+            "adds a @NotNull when an element has minOccours not 0, is required or is not nillable",
             (p,v) -> {
                 Boolean result = toBoolean(v);
                 if (result != null) {
@@ -123,7 +123,7 @@ enum Argument {
             (p) -> Objects.toString(p.jpaAnnotations)),
     validationAnnotations(
             String.class,
-            "selects which type of annotation to use: JAVAX (default) or JAKARTA",
+            "selects which type of annotation to use: " + ValidationAnnotation.getValuesAsString(),
             (p,v) -> {
                 ValidationAnnotation va;
                 try {
@@ -151,7 +151,7 @@ enum Argument {
             (p) -> Objects.toString(p.generateStringListAnnotations)),
     generateServiceValidationAnnotations(
             Boolean.class,
-            "???",
+            "-- deprecated, use generateStringListAnnotations instead --",
             (p,v) -> {
                 Boolean result = toBoolean(v);
                 if (result != null) {
