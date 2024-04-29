@@ -30,4 +30,5 @@ public class ArgumentBuilderTest {
         assertEquals(Argument.generateStringListAnnotations.withValue("true"), it.next());
         assertEquals(Argument.validationAnnotations.withValue(ANNOTATION), it.next());
     }
+
 }

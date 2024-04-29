@@ -10,6 +10,7 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 
@@ -25,6 +26,20 @@ class Utils {
         } catch (MalformedURLException | URISyntaxException e) {
             return false;
         }
+    }
+
+
+    public static String setBoolean(String value, Consumer<Boolean> setter) {
+        if (value == null || "".equals(value.trim())) {
+            setter.accept(true);
+            return null;
+        }
+        Boolean bool = toBoolean(value);
+        if (bool == null) {
+            return "argument not valid, must be 'true' or 'false'";
+        }
+        setter.accept(bool);
+        return null;
     }
 
     /**

@@ -24,6 +24,11 @@ class ArgumentBuilder {
         return this;
     }
 
+    public ArgumentBuilder addWithoutValue(Argument argument) {
+        list.add(argument.fullOptionName());
+        return this;
+    }
+
     public List<String> getOptionList() {
         return list;
     }

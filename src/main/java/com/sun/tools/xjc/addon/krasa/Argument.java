@@ -1,6 +1,7 @@
 package com.sun.tools.xjc.addon.krasa;
 
 import com.sun.tools.xjc.BadCommandLineException;
+import static com.sun.tools.xjc.addon.krasa.Utils.setBoolean;
 import static com.sun.tools.xjc.addon.krasa.Utils.toBoolean;
 import java.util.Objects;
 import java.util.function.BiFunction;
@@ -17,10 +18,10 @@ enum Argument {
                     "NOTE that this not related to XSD targetNamespace option but with the 'name' " +
                     "defined as xmlns:name=...",
             (p, v) -> {
-                if (v != null) {
+                if (v != null && !v.contains(" ")) {
                     p.targetNamespace = v;
                 } else {
-                    return "wrong URL passed"; // error message
+                    return "invalid namespace"; // error message
                 }
                 return null; // OK
             },
@@ -28,28 +29,12 @@ enum Argument {
     JSR_349(
             Boolean.class,
             "generates JSR349 compatible annotations for @DecimalMax and @DecimalMin parameters",
-            (p,v) -> {
-                Boolean result = toBoolean(v);
-                if (result != null) {
-                    p.jsr349 = result;
-                    return null;
-                } else {
-                    return "";
-                }
-            },
+            (p,v) -> setBoolean(v, r -> p.jsr349 = r),
             (p) -> Objects.toString(p.jsr349)),
     generateNotNullAnnotations(
             Boolean.class,
             "adds a @NotNull when an element has minOccours not 0, is required or is not nillable",
-            (p,v) -> {
-                Boolean result = toBoolean(v);
-                if (result != null) {
-                    p.notNullAnnotations = result;
-                    return null;
-                } else {
-                    return "";
-                }
-            },
+            (p,v) -> setBoolean(v, r -> p.notNullAnnotations = r),
             (p) -> Objects.toString(p.notNullAnnotations)),
     notNullAnnotationsCustomMessages(
             String.class,
@@ -98,28 +83,12 @@ enum Argument {
             }),
     verbose(Boolean.class,
             "increases verbosity",
-            (p,v) -> {
-                Boolean result = toBoolean(v);
-                if (result != null) {
-                    p.verbose = result;
-                    return null;
-                } else {
-                    return "";
-                }
-            },
+            (p,v) -> setBoolean(v, r -> p.verbose = r),
             (p) -> Objects.toString(p.verbose)),
     jpa(
             Boolean.class,
             "adds JPA @Column annotations for fields with multiplicity greater than 0",
-            (p,v) -> {
-                Boolean result = toBoolean(v);
-                if (result != null) {
-                    p.jpaAnnotations = result;
-                    return null;
-                } else {
-                    return "";
-                }
-            },
+            (p,v) -> setBoolean(v, r -> p.jpaAnnotations = r),
             (p) -> Objects.toString(p.jpaAnnotations)),
     validationAnnotations(
             String.class,
@@ -139,28 +108,12 @@ enum Argument {
     generateStringListAnnotations(
             Boolean.class,
             "generates github.com/jirutka/validator-collection annotations",
-            (p,v) -> {
-                Boolean result = toBoolean(v);
-                if (result != null) {
-                    p.generateStringListAnnotations = result;
-                    return null;
-                } else {
-                    return "";
-                }
-            },
+            (p,v) -> setBoolean(v, r -> p.generateStringListAnnotations = r),
             (p) -> Objects.toString(p.generateStringListAnnotations)),
     generateServiceValidationAnnotations(
             Boolean.class,
             "-- deprecated, use generateStringListAnnotations instead --",
-            (p,v) -> {
-                Boolean result = toBoolean(v);
-                if (result != null) {
-                    p.generateStringListAnnotations = result;
-                    return null;
-                } else {
-                    return "";
-                }
-            },
+            (p,v) -> setBoolean(v, r -> p.generateStringListAnnotations = r),
             (p) -> Objects.toString(p.generateStringListAnnotations));
 
     public static final String PLUGIN_NAME = "XJsr303Annotations";
@@ -192,6 +145,10 @@ enum Argument {
 
     String withValue(String value) {
         return PLUGIN_OPTION_NAME + ":" + name() + "=" + value;
+    }
+
+    String fullOptionName() {
+        return PLUGIN_OPTION_NAME + ":" + name();
     }
 
     String fullName() {
