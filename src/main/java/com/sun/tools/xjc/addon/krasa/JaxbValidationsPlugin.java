@@ -53,7 +53,6 @@ public class JaxbValidationsPlugin extends Plugin {
     String notNullCustomMessageText = null;
     boolean jpaAnnotations = false;
     boolean generateStringListAnnotations;
-
     ValidationAnnotation annotationFactory = ValidationAnnotation.JAVAX;
 
     @Override
@@ -75,11 +74,6 @@ public class JaxbValidationsPlugin extends Plugin {
     @Override
     public boolean isCustomizationTagName(String nsUri, String localName) {
         return nsUri.equals(NAMESPACE) && localName.equals("code");
-    }
-
-    @Override
-    public void onActivated(Options opts) throws BadCommandLineException {
-        super.onActivated(opts);
     }
 
     @Override
