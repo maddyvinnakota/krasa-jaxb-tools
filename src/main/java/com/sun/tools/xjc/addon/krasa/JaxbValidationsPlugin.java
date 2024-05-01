@@ -106,6 +106,7 @@ public class JaxbValidationsPlugin extends Plugin {
             // print out the actual plugin options
             log(Argument.actualOptionValuesString(this, "    "));
         }
+
         for (ClassOutline co : model.getClasses()) {
             List<CPropertyInfo> properties = co.target.getProperties();
 

@@ -30,12 +30,12 @@ enum Argument {
             Boolean.class,
             "generates JSR349 compatible annotations for @DecimalMax and @DecimalMin parameters",
             (p,v) -> setBoolean(v, r -> p.jsr349 = r),
-            (p) -> Objects.toString(p.jsr349)),
+            (p) -> p.jsr349),
     generateNotNullAnnotations(
             Boolean.class,
             "adds a @NotNull when an element has minOccours not 0, is required or is not nillable",
             (p,v) -> setBoolean(v, r -> p.notNullAnnotations = r),
-            (p) -> Objects.toString(p.notNullAnnotations)),
+            (p) -> p.notNullAnnotations),
     notNullAnnotationsCustomMessages(
             String.class,
             "allowed values: true/false, 'FieldName', 'ClassName' or an actual message",
@@ -78,18 +78,18 @@ enum Argument {
                 } else if (p.notNullCustomMessageText != null) {
                     return p.notNullCustomMessageText;
                 } else {
-                    return Objects.toString(p.notNullCustomMessage);
+                    return p.notNullCustomMessage;
                 }
             }),
     verbose(Boolean.class,
             "increases verbosity",
             (p,v) -> setBoolean(v, r -> p.verbose = r),
-            (p) -> Objects.toString(p.verbose)),
+            (p) -> p.verbose),
     jpa(
             Boolean.class,
             "adds JPA @Column annotations for fields with multiplicity greater than 0",
             (p,v) -> setBoolean(v, r -> p.jpaAnnotations = r),
-            (p) -> Objects.toString(p.jpaAnnotations)),
+            (p) -> p.jpaAnnotations),
     validationAnnotations(
             String.class,
             "selects which type of annotation to use: " + ValidationAnnotation.getValuesAsString(),
@@ -104,17 +104,17 @@ enum Argument {
                 p.annotationFactory = va;
                 return null;
             },
-            (p) -> Objects.toString(p.annotationFactory)),
+            (p) -> p.annotationFactory),
     generateStringListAnnotations(
             Boolean.class,
             "generates github.com/jirutka/validator-collection annotations",
             (p,v) -> setBoolean(v, r -> p.generateStringListAnnotations = r),
-            (p) -> Objects.toString(p.generateStringListAnnotations)),
+            (p) -> p.generateStringListAnnotations),
     generateServiceValidationAnnotations(
             Boolean.class,
             "-- deprecated, use generateStringListAnnotations instead --",
             (p,v) -> setBoolean(v, r -> p.generateStringListAnnotations = r),
-            (p) -> Objects.toString(p.generateStringListAnnotations));
+            (p) -> p.generateStringListAnnotations);
 
     public static final String PLUGIN_NAME = "XJsr303Annotations";
     public static final String PLUGIN_OPTION_NAME = "-" + PLUGIN_NAME;
@@ -130,13 +130,13 @@ enum Argument {
     private BiFunction<JaxbValidationsPlugin, String, String> setter;
 
     // get the value
-    private Function<JaxbValidationsPlugin, String> getter;
+    private Function<JaxbValidationsPlugin, Object> getter;
 
     Argument(
             Class<?> type,
             String help,
             BiFunction<JaxbValidationsPlugin, String, String> setter,
-            Function<JaxbValidationsPlugin, String> getter) {
+            Function<JaxbValidationsPlugin, Object> getter) {
         this.type = type;
         this.help = help;
         this.setter = setter;
@@ -237,7 +237,7 @@ enum Argument {
                     .append(linePrefix)
                     .append(a.name())
                     .append(": ")
-                    .append(a.getter.apply(plugin))
+                    .append(Objects.toString(a.getter.apply(plugin)))
                     .append(System.lineSeparator());
         }
 
