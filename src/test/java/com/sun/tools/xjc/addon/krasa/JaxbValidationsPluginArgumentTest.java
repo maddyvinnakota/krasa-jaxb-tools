@@ -39,16 +39,16 @@ public class JaxbValidationsPluginArgumentTest {
 
     @Test
     public void shouldSetVersbose() throws BadCommandLineException, IOException {
-        assertFalse(plugin.verbose);
+        assertFalse(plugin.options.verbose);
         setArguments(Argument.verbose.withValue("true"));
-        assertTrue(plugin.verbose);
+        assertTrue(plugin.options.verbose);
     }
 
     @Test
     public void shouldSetVersboseWithCapital() throws BadCommandLineException, IOException {
-        assertFalse(plugin.verbose);
+        assertFalse(plugin.options.verbose);
         setArguments(Argument.verbose.withValue("TRue"));
-        assertTrue(plugin.verbose);
+        assertTrue(plugin.options.verbose);
     }
 
     @Test(expected = BadCommandLineException.class)
@@ -58,10 +58,10 @@ public class JaxbValidationsPluginArgumentTest {
 
     @Test
     public void shouldSetTargetNamespace() throws BadCommandLineException, IOException {
-        assertNull(plugin.targetNamespace);
+        assertNull(plugin.options.targetNamespace);
         String ns = "target.namespace";
         setArguments(Argument.targetNamespace.withValue(ns));
-        assertEquals(plugin.targetNamespace, ns);
+        assertEquals(plugin.options.targetNamespace, ns);
     }
 
     private void setArguments(String... args) throws BadCommandLineException, IOException {

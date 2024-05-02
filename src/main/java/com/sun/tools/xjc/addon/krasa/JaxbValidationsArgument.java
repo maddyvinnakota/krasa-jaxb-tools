@@ -127,16 +127,16 @@ enum Argument {
     private String help;
 
     // set the value and return null if ok or a text with the error
-    private BiFunction<JaxbValidationsPlugin, String, String> setter;
+    private BiFunction<JaxbValidationsOptions, String, String> setter;
 
     // get the value
-    private Function<JaxbValidationsPlugin, Object> getter;
+    private Function<JaxbValidationsOptions, Object> getter;
 
     Argument(
             Class<?> type,
             String help,
-            BiFunction<JaxbValidationsPlugin, String, String> setter,
-            Function<JaxbValidationsPlugin, Object> getter) {
+            BiFunction<JaxbValidationsOptions, String, String> setter,
+            Function<JaxbValidationsOptions, Object> getter) {
         this.type = type;
         this.help = help;
         this.setter = setter;
@@ -156,7 +156,7 @@ enum Argument {
     }
 
     /** @return 1 if the argument is referring to this plugin, 0 otherwise. */
-    public static int parse(JaxbValidationsPlugin plugin, String option)
+    public static int parse(JaxbValidationsOptions options, String option)
             throws BadCommandLineException {
         if (option.startsWith(PLUGIN_OPTION_NAME)) {
             int idx = option.indexOf("=");
@@ -164,11 +164,11 @@ enum Argument {
                 final String name = option.substring(PLUGIN_OPTION_NAME_LENGHT, idx);
                 final String value = option.substring(idx + 1);
                 Argument argument = parseArgument(name);
-                setValueToPlugin(plugin, argument, value);
+                setValueToPlugin(options, argument, value);
             } else if (option.length() > PLUGIN_OPTION_NAME_LENGHT) {
                 final String name = option.substring(PLUGIN_OPTION_NAME_LENGHT);
                 Argument argument = parseArgument(name);
-                setValueToPlugin(plugin, argument, "true");
+                setValueToPlugin(options, argument, "true");
             }
             return 1;
         }
@@ -176,10 +176,10 @@ enum Argument {
     }
 
     private static void setValueToPlugin(
-            JaxbValidationsPlugin plugin, Argument argument, final String value)
+            JaxbValidationsOptions options, Argument argument, final String value)
             throws BadCommandLineException {
         try {
-            String error = argument.setter.apply(plugin, value);
+            String error = argument.setter.apply(options, value);
             if (error != null) {
                 throw new BadCommandLineException(
                         "option " + argument.name() + ": " +
@@ -224,7 +224,7 @@ enum Argument {
     }
 
     /** @return a multi line string containing the value for each option. */
-    public static String actualOptionValuesString(JaxbValidationsPlugin plugin, String linePrefix) {
+    public static String actualOptionValuesString(JaxbValidationsOptions plugin, String linePrefix) {
         StringBuilder buf = new StringBuilder();
         buf
                 .append(linePrefix)

@@ -43,17 +43,7 @@ public class JaxbValidationsPlugin extends Plugin {
 
     static final String NAMESPACE = "http://jaxb.dev.java.net/plugin/code-injector";
 
-    String targetNamespace = null;
-    boolean jsr349 = false;
-    boolean verbose = false;
-    boolean notNullAnnotations = true;
-    boolean notNullCustomMessage = false;
-    boolean notNullPrefixFieldName = false;
-    boolean notNullPrefixClassName = false;
-    String notNullCustomMessageText = null;
-    boolean jpaAnnotations = false;
-    boolean generateStringListAnnotations;
-    JaxbValidationsAnnotation annotationFactory = JaxbValidationsAnnotation.JAVAX;
+    JaxbValidationsOptions options = new JaxbValidationsOptions();
 
     @Override
     public String getOptionName() {
@@ -63,7 +53,7 @@ public class JaxbValidationsPlugin extends Plugin {
     @Override
     public int parseArgument(Options opt, String[] args, int index)
             throws BadCommandLineException, IOException {
-        return Argument.parse(this, args[index]);
+        return Argument.parse(options, args[index]);
     }
 
     @Override
@@ -93,12 +83,12 @@ public class JaxbValidationsPlugin extends Plugin {
     @Override
     public boolean run(Outline model, Options opt, ErrorHandler errorHandler) {
         if (opt.verbose) {
-            verbose = true;
+            options.verbose = true;
         }
 
-        if (verbose) {
+        if (options.verbose) {
             // print out the actual plugin option values
-            log(Argument.actualOptionValuesString(this, "    "));
+            log(Argument.actualOptionValuesString(options, "    "));
         }
 
         for (ClassOutline co : model.getClasses()) {
@@ -141,7 +131,7 @@ public class JaxbValidationsPlugin extends Plugin {
 
         JFieldVar field = classOutline.implClass.fields().get(propertyName);
 
-        if (notNullAnnotations &&
+        if (options.notNullAnnotations &&
                 !(minOccurs == 0 || !required || nillable) &&
                 !hasAnnotation(field, "NotNull")) {
 
@@ -185,7 +175,7 @@ public class JaxbValidationsPlugin extends Plugin {
 
         // using https://github.com/jirutka/validator-collection to annotate Lists of primitives
         final XSSimpleType simpleType = elementType.asSimpleType();
-        if (generateStringListAnnotations && property.isCollection() && simpleType != null) {
+        if (options.generateStringListAnnotations && property.isCollection() && simpleType != null) {
             addEachSizeAnnotation(simpleType, field);
             addEachDigitsAnnotation(simpleType, field);
             addEachDecimalMinAnnotation(simpleType, field);
@@ -213,7 +203,7 @@ public class JaxbValidationsPlugin extends Plugin {
             addSizeAnnotation(simpleType, propertyName, className, field);
         }
 
-        if (jpaAnnotations && isSizeAnnotationApplicable(field)) {
+        if (options.jpaAnnotations && isSizeAnnotationApplicable(field)) {
             addJpaColumnAnnotation(simpleType, propertyName, className, field);
         }
 
@@ -348,25 +338,25 @@ public class JaxbValidationsPlugin extends Plugin {
 
     private void addNotNullAnnotation(ClassOutline co, JFieldVar field) {
         final String className = co.implClass.name();
-        final Class<? extends Annotation> notNullClass = annotationFactory.getNotNullClass();
+        final Class<? extends Annotation> notNullClass = options.annotationFactory.getNotNullClass();
 
         String message = null;
-        if (notNullPrefixClassName) {
+        if (options.notNullPrefixClassName) {
             message = String.format("%s.%s {%s.message}",
                     className, field.name(),
                     notNullClass.getName());
 
-        } else if (notNullPrefixFieldName) {
+        } else if (options.notNullPrefixFieldName) {
             message = String.format("%s {%s.message}",
                     field.name(),
                     notNullClass.getName());
 
-        } else if (notNullCustomMessage) {
+        } else if (options.notNullCustomMessage) {
             message = String.format("{%s.message}",
                     notNullClass.getName());
 
-        } else if (notNullCustomMessageText != null) {
-            message = notNullCustomMessageText
+        } else if (options.notNullCustomMessageText != null) {
+            message = options.notNullCustomMessageText
                     .replace("{ClassName}", className)
                     .replace("{FieldName}", field.name());
 
@@ -382,24 +372,24 @@ public class JaxbValidationsPlugin extends Plugin {
     }
 
     private void addValidAnnotation(String propertyName, String className, JFieldVar field) {
-        if (!field.annotations().contains(annotationFactory.getValidClass())) {
+        if (!field.annotations().contains(options.annotationFactory.getValidClass())) {
             log("@Valid: " + propertyName + " added to class " + className);
-            field.annotate(annotationFactory.getValidClass());
+            field.annotate(options.annotationFactory.getValidClass());
         }
     }
 
     private void addValidAnnotation(XSType elementType, JFieldVar field, String propertyName,
             String className) {
 
-        if (!field.annotations().contains(annotationFactory.getValidClass())) {
+        if (!field.annotations().contains(options.annotationFactory.getValidClass())) {
             String elemNs = elementType.getTargetNamespace();
 
-            if ((targetNamespace == null || elemNs.startsWith(targetNamespace)) &&
+            if ((options.targetNamespace == null || elemNs.startsWith(options.targetNamespace)) &&
                     (elementType.isComplexType() || Utils.isCustomType(field)) &&
                     !hasAnnotation(field, "Valid")) {
 
                 log("@Valid: " + propertyName + " added to class " + className);
-                field.annotate(annotationFactory.getValidClass());
+                field.annotate(options.annotationFactory.getValidClass());
             }
         }
     }
@@ -421,7 +411,7 @@ public class JaxbValidationsPlugin extends Plugin {
             log("@Size(" + minLength + "," + maxLength + "): " +
                     propertyName + " added to class " + className);
 
-            final JAnnotationUse annotate = field.annotate(annotationFactory.getSizeClass());
+            final JAnnotationUse annotate = field.annotate(options.annotationFactory.getSizeClass());
             if (isValidLength(minLength)) {
                 annotate.param("min", minLength);
             }
@@ -433,7 +423,7 @@ public class JaxbValidationsPlugin extends Plugin {
             log("@Size(" + length + "," + length + "): " + propertyName +
                     " added to class " + className);
 
-            field.annotate(annotationFactory.getSizeClass())
+            field.annotate(options.annotationFactory.getSizeClass())
                     .param("min", length)
                     .param("max", length);
         }
@@ -468,11 +458,11 @@ public class JaxbValidationsPlugin extends Plugin {
         if (!hasAnnotation(field, "Digits")) {
             log("@Digits(" + totalDigits + "," + fractionDigits + "): " + propertyName +
                     " added to class " + className);
-            field.annotate(annotationFactory.getDigitsClass())
+            field.annotate(options.annotationFactory.getDigitsClass())
                     .param("integer", totalDigits)
                     .param("fraction", fractionDigits);
         }
-        if (jpaAnnotations) {
+        if (options.jpaAnnotations) {
             field.annotate(Column.class)
                     .param("precision", totalDigits)
                     .param("scale", fractionDigits);
@@ -487,9 +477,9 @@ public class JaxbValidationsPlugin extends Plugin {
             return;
         }
 
-        JAnnotationUse annotate = field.annotate(annotationFactory.getDecimalMinClass());
+        JAnnotationUse annotate = field.annotate(options.annotationFactory.getDecimalMinClass());
 
-        if (jsr349) {
+        if (options.jsr349) {
             log("@DecimalMin(value = " + min + ", inclusive = " + (!exclusive) + "): " +
                     propertyName + " added to class " + className);
 
@@ -516,9 +506,9 @@ public class JaxbValidationsPlugin extends Plugin {
             return;
         }
 
-        JAnnotationUse annotate = field.annotate(annotationFactory.getDecimalMaxClass());
+        JAnnotationUse annotate = field.annotate(options.annotationFactory.getDecimalMaxClass());
 
-        if (jsr349) {
+        if (options.jsr349) {
             log("@DecimalMax(value = " + max + ", inclusive = " + (!exclusive) + "): " +
                     propertyName + " added to class " + className);
 
@@ -545,7 +535,7 @@ public class JaxbValidationsPlugin extends Plugin {
         if (enumerationList.size() > 1) { // More than one pattern
 
             log("@Pattern: " + propertyName + " added to class " + className);
-            final JAnnotationUse annotation = field.annotate(annotationFactory.getPatternClass());
+            final JAnnotationUse annotation = field.annotate(options.annotationFactory.getPatternClass());
             annotateMultiplePattern(enumerationList, annotation, true);
 
         } else if (patternFacet != null) {
@@ -565,12 +555,12 @@ public class JaxbValidationsPlugin extends Plugin {
 
             log("@Pattern.List: " + propertyName + " added to class " + className);
 
-            JAnnotationUse patternListAnnotation = field.annotate(annotationFactory.getPatternListClass());
+            JAnnotationUse patternListAnnotation = field.annotate(options.annotationFactory.getPatternListClass());
             JAnnotationArrayMember listValue = patternListAnnotation.paramArray("value");
             final XSFacet facet = baseType.getFacet("pattern");
             String basePattern = facet.getValue().value;
 
-            listValue.annotate(annotationFactory.getPatternClass())
+            listValue.annotate(options.annotationFactory.getPatternClass())
                     .param("regexp", replaceRegexp(basePattern));
 
             annotateSinglePattern(basePattern, propertyName, className, listValue,
@@ -590,20 +580,20 @@ public class JaxbValidationsPlugin extends Plugin {
 
             log("@Pattern.List: " + propertyName + " added to class " + className);
 
-            JAnnotationUse patternListAnnotation = field.annotate(annotationFactory.getPatternListClass());
+            JAnnotationUse patternListAnnotation = field.annotate(options.annotationFactory.getPatternListClass());
             JAnnotationArrayMember listValue = patternListAnnotation.paramArray("value");
 
             String basePattern = ((XSSimpleType) simpleType.getBaseType()).getFacet("pattern").getValue().value;
-            listValue.annotate(annotationFactory.getPatternClass()).param("regexp", replaceRegexp(basePattern));
+            listValue.annotate(options.annotationFactory.getPatternClass()).param("regexp", replaceRegexp(basePattern));
 
             log("@Pattern: " + propertyName + " added to class " + className);
-            final JAnnotationUse patternAnnotation = listValue.annotate(annotationFactory.getPatternClass());
+            final JAnnotationUse patternAnnotation = listValue.annotate(options.annotationFactory.getPatternClass());
             annotateMultiplePattern(patternList, patternAnnotation, false);
 
         } else {
 
             log("@Pattern: " + propertyName + " added to class " + className);
-            final JAnnotationUse patternAnnotation = field.annotate(annotationFactory.getPatternClass());
+            final JAnnotationUse patternAnnotation = field.annotate(options.annotationFactory.getPatternClass());
             annotateMultiplePattern(patternList, patternAnnotation, false);
         }
     }
@@ -617,7 +607,7 @@ public class JaxbValidationsPlugin extends Plugin {
             if (literal) {
                 replaceRegexp = escapeRegexp(replaceRegexp);
             }
-            annotable.annotate(annotationFactory.getPatternClass())
+            annotable.annotate(options.annotationFactory.getPatternClass())
                     .param("regexp", replaceRegexp);
         }
     }
@@ -761,7 +751,7 @@ public class JaxbValidationsPlugin extends Plugin {
     }
 
     private void log(String log) {
-        if (verbose) {
+        if (options.verbose) {
             System.out.println(log);
         }
     }
