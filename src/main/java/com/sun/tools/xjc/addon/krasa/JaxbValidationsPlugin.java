@@ -97,7 +97,7 @@ public class JaxbValidationsPlugin extends Plugin {
         }
 
         if (verbose) {
-            // print out the actual plugin options
+            // print out the actual plugin option values
             log(Argument.actualOptionValuesString(this, "    "));
         }
 
@@ -150,20 +150,18 @@ public class JaxbValidationsPlugin extends Plugin {
 
         if (property.isCollection()) {
             addValidAnnotation(propertyName, classOutline.implClass.name(), field);
-        }
 
-        // https://www.ibm.com/developerworks/webservices/library/ws-tip-null/index.html
-        // http://www.dimuthu.org/blog/2008/08/18/xml-schema-nillabletrue-vs-minoccurs0/comment-page-1/
-        if (property.isCollection() &&
-                !hasAnnotation(field, "Size") &&
-                (maxOccurs != 0 || minOccurs != 0)) {
+            // http://www.dimuthu.org/blog/2008/08/18/xml-schema-nillabletrue-vs-minoccurs0/comment-page-1/
+            if (!hasAnnotation(field, "Size") &&
+                    (maxOccurs != 0 || minOccurs != 0)) {
 
-            if (property.isCollectionRequired()) {
-                addNotNullAnnotation(classOutline, field);
+                if (property.isCollectionRequired()) {
+                    addNotNullAnnotation(classOutline, field);
+                }
+
+                addSizeAnnotation(minOccurs, maxOccurs, null,
+                        propertyName, classOutline.implClass.name(), field);
             }
-
-            addSizeAnnotation(minOccurs, maxOccurs, null,
-                    propertyName, classOutline.implClass.name(), field);
         }
 
         if (term instanceof ElementDecl) {
@@ -178,9 +176,9 @@ public class JaxbValidationsPlugin extends Plugin {
     }
 
     private void processElement(CElementPropertyInfo property,
-            ClassOutline clase, JFieldVar field, ElementDecl element) {
+            ClassOutline classOutline, JFieldVar field, ElementDecl element) {
         String propertyName = propertyName(property);
-        String className = clase.implClass.name();
+        String className = classOutline.implClass.name();
         XSType elementType = element.getType();
 
         addValidAnnotation(elementType, field, propertyName, className);
@@ -384,21 +382,25 @@ public class JaxbValidationsPlugin extends Plugin {
     }
 
     private void addValidAnnotation(String propertyName, String className, JFieldVar field) {
-        log("@Valid: " + propertyName + " added to class " + className);
-        field.annotate(annotationFactory.getValidClass());
+        if (!field.annotations().contains(annotationFactory.getValidClass())) {
+            log("@Valid: " + propertyName + " added to class " + className);
+            field.annotate(annotationFactory.getValidClass());
+        }
     }
 
     private void addValidAnnotation(XSType elementType, JFieldVar field, String propertyName,
             String className) {
 
-        String elemNs = elementType.getTargetNamespace();
+        if (!field.annotations().contains(annotationFactory.getValidClass())) {
+            String elemNs = elementType.getTargetNamespace();
 
-        if ((targetNamespace == null || elemNs.startsWith(targetNamespace)) &&
-                (elementType.isComplexType() || Utils.isCustomType(field)) &&
-                !hasAnnotation(field, "Valid")) {
+            if ((targetNamespace == null || elemNs.startsWith(targetNamespace)) &&
+                    (elementType.isComplexType() || Utils.isCustomType(field)) &&
+                    !hasAnnotation(field, "Valid")) {
 
-            log("@Valid: " + propertyName + " added to class " + className);
-            field.annotate(annotationFactory.getValidClass());
+                log("@Valid: " + propertyName + " added to class " + className);
+                field.annotate(annotationFactory.getValidClass());
+            }
         }
     }
 
