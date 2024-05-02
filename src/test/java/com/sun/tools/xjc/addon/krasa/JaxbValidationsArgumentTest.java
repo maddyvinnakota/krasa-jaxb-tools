@@ -24,15 +24,15 @@ public class JaxbValidationsArgumentTest {
         JaxbValidationsPlugin plugin = new JaxbValidationsPlugin();
 
         List<String> arguments = ArgumentBuilder.builder()
-                .add(Argument.targetNamespace, NAMESPACE)
-                .add(Argument.JSR_349, true)
-                .add(Argument.generateStringListAnnotations, true)
-                .add(Argument.validationAnnotations, ANNOTATION)
-                .add(Argument.generateNotNullAnnotations, true)
-                .add(Argument.generateServiceValidationAnnotations, true)
-                .add(Argument.notNullAnnotationsCustomMessages, MESSAGE)
-                .add(Argument.jpa, true)
-                .add(Argument.verbose, true)
+                .add(JaxbValidationsArgument.targetNamespace, NAMESPACE)
+                .add(JaxbValidationsArgument.JSR_349, true)
+                .add(JaxbValidationsArgument.generateStringListAnnotations, true)
+                .add(JaxbValidationsArgument.validationAnnotations, ANNOTATION)
+                .add(JaxbValidationsArgument.generateNotNullAnnotations, true)
+                .add(JaxbValidationsArgument.generateServiceValidationAnnotations, true)
+                .add(JaxbValidationsArgument.notNullAnnotationsCustomMessages, MESSAGE)
+                .add(JaxbValidationsArgument.jpa, true)
+                .add(JaxbValidationsArgument.verbose, true)
                 .getOptionList();
 
         String[] args = arguments.toArray(new String[arguments.size()]);
@@ -42,24 +42,27 @@ public class JaxbValidationsArgumentTest {
             plugin.parseArgument(opt, args, i);
         }
 
-        assertEquals(NAMESPACE, plugin.options.targetNamespace);
-        assertEquals(JaxbValidationsAnnotation.JAVAX, plugin.options.annotationFactory);
-        assertTrue(plugin.options.jsr349);
-        assertTrue(plugin.options.notNullAnnotations);
-        assertTrue(plugin.options.generateStringListAnnotations);
-        assertEquals(plugin.options.notNullCustomMessageText, MESSAGE);
-        assertTrue(plugin.options.jpaAnnotations);
-        assertTrue(plugin.options.verbose);
+        plugin.buildOptions();
+
+        assertEquals(NAMESPACE, plugin.options.getTargetNamespace());
+        assertEquals(JaxbValidationsAnnotation.JAVAX, plugin.options.getAnnotationFactory());
+        assertTrue(plugin.options.isJsr349());
+        assertTrue(plugin.options.isNotNullAnnotations());
+        assertTrue(plugin.options.isGenerateStringListAnnotations());
+        assertEquals(plugin.options.getNotNullCustomMessageText(), MESSAGE);
+        assertTrue(plugin.options.isJpaAnnotations());
+        assertTrue(plugin.options.isVerbose());
 
     }
 
     @Test
     public void shouldNotNullFlagsBeFalseByDefault() {
         JaxbValidationsPlugin plugin = new JaxbValidationsPlugin();
+        plugin.buildOptions();
 
-        assertFalse(plugin.options.notNullCustomMessage);
-        assertFalse(plugin.options.notNullPrefixFieldName);
-        assertFalse(plugin.options.notNullPrefixClassName);
+        assertFalse(plugin.options.isNotNullCustomMessage());
+        assertFalse(plugin.options.isNotNullPrefixFieldName());
+        assertFalse(plugin.options.isNotNullPrefixClassName());
     }
 
     @Test
@@ -70,9 +73,9 @@ public class JaxbValidationsArgumentTest {
 
         JaxbValidationsPlugin plugin = setupNotNullMessage(option);
 
-        assertTrue(plugin.options.notNullCustomMessage);
-        assertFalse(plugin.options.notNullPrefixFieldName);
-        assertTrue(plugin.options.notNullPrefixClassName);
+        assertTrue(plugin.options.isNotNullCustomMessage());
+        assertFalse(plugin.options.isNotNullPrefixFieldName());
+        assertTrue(plugin.options.isNotNullPrefixClassName());
     }
 
     @Test
@@ -83,9 +86,9 @@ public class JaxbValidationsArgumentTest {
 
         JaxbValidationsPlugin plugin = setupNotNullMessage(option);
 
-        assertTrue(plugin.options.notNullCustomMessage);
-        assertTrue(plugin.options.notNullPrefixFieldName);
-        assertFalse(plugin.options.notNullPrefixClassName);
+        assertTrue(plugin.options.isNotNullCustomMessage());
+        assertTrue(plugin.options.isNotNullPrefixFieldName());
+        assertFalse(plugin.options.isNotNullPrefixClassName());
     }
 
     private JaxbValidationsPlugin setupNotNullMessage(String option)
@@ -93,7 +96,7 @@ public class JaxbValidationsArgumentTest {
         JaxbValidationsPlugin plugin = new JaxbValidationsPlugin();
 
         List<String> arguments = ArgumentBuilder.builder()
-                .add(Argument.notNullAnnotationsCustomMessages, option)
+                .add(JaxbValidationsArgument.notNullAnnotationsCustomMessages, option)
                 .getOptionList();
 
         String[] args = arguments.toArray(new String[arguments.size()]);
@@ -103,6 +106,7 @@ public class JaxbValidationsArgumentTest {
             plugin.parseArgument(opt, args, i);
         }
 
+        plugin.buildOptions();
         return plugin;
     }
 }

@@ -16,12 +16,12 @@ public class EmptyBooleanArgumentParserTest extends AnnotationsMojoTestHelper {
     @Override
     public List<String> getArgs() {
         return ArgumentBuilder.builder()
-                .add(Argument.JSR_349, "")
-                .add(Argument.generateStringListAnnotations, "")
-                .add(Argument.generateNotNullAnnotations, "")
-                .add(Argument.verbose, "")
-                .add(Argument.jpa, "")
-                .add(Argument.generateServiceValidationAnnotations, "")
+                .add(JaxbValidationsArgument.JSR_349, "")
+                .add(JaxbValidationsArgument.generateStringListAnnotations, "")
+                .add(JaxbValidationsArgument.generateNotNullAnnotations, "")
+                .add(JaxbValidationsArgument.verbose, "")
+                .add(JaxbValidationsArgument.jpa, "")
+                .add(JaxbValidationsArgument.generateServiceValidationAnnotations, "")
                 .getOptionList();
     }
 

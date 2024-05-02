@@ -74,7 +74,7 @@ public class ValidSEIGenerator extends SEIGenerator {
 			for (String arg : xjcArgs) {
 				String[] parts = arg.split("=");
 				if (parts.length == 2 &&
-                        parts[0].contains(Argument.generateServiceValidationAnnotations.name())) {
+                        parts[0].contains(JaxbValidationsArgument.generateServiceValidationAnnotations.name())) {
 					parseValidationPolicy(parts[1]);
 				}
 				LOG.log(Level.FINE, "xjc arg:" + arg);

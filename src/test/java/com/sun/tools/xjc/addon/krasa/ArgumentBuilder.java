@@ -16,15 +16,15 @@ class ArgumentBuilder {
     private final List<String> list = new ArrayList<>();
 
     public ArgumentBuilder() {
-        list.add(Argument.PLUGIN_OPTION_NAME);
+        list.add(JaxbValidationsArgument.PLUGIN_OPTION_NAME);
     }
 
-    public ArgumentBuilder add(Argument argument, Object value) {
+    public ArgumentBuilder add(JaxbValidationsArgument argument, Object value) {
         list.add(argument.withValue(java.util.Objects.toString(value)));
         return this;
     }
 
-    public ArgumentBuilder addWithoutValue(Argument argument) {
+    public ArgumentBuilder addWithoutValue(JaxbValidationsArgument argument) {
         list.add(argument.fullOptionName());
         return this;
     }

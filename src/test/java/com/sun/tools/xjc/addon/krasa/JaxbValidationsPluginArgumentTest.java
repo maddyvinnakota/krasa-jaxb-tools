@@ -19,8 +19,6 @@ import com.sun.tools.xjc.BadCommandLineException;
 import com.sun.tools.xjc.Options;
 import java.io.IOException;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -39,35 +37,33 @@ public class JaxbValidationsPluginArgumentTest {
 
     @Test
     public void shouldSetVersbose() throws BadCommandLineException, IOException {
-        assertFalse(plugin.options.verbose);
-        setArguments(Argument.verbose.withValue("true"));
-        assertTrue(plugin.options.verbose);
+        setArguments(JaxbValidationsArgument.verbose.withValue("true"));
+        assertTrue(plugin.options.isVerbose());
     }
 
     @Test
     public void shouldSetVersboseWithCapital() throws BadCommandLineException, IOException {
-        assertFalse(plugin.options.verbose);
-        setArguments(Argument.verbose.withValue("TRue"));
-        assertTrue(plugin.options.verbose);
+        setArguments(JaxbValidationsArgument.verbose.withValue("TRue"));
+        assertTrue(plugin.options.isVerbose());
     }
 
     @Test(expected = BadCommandLineException.class)
     public void shouldNotSetErroneousVerbose() throws BadCommandLineException, IOException {
-        setArguments(Argument.verbose.withValue("ERROR"));
+        setArguments(JaxbValidationsArgument.verbose.withValue("ERROR"));
     }
 
     @Test
     public void shouldSetTargetNamespace() throws BadCommandLineException, IOException {
-        assertNull(plugin.options.targetNamespace);
         String ns = "target.namespace";
-        setArguments(Argument.targetNamespace.withValue(ns));
-        assertEquals(plugin.options.targetNamespace, ns);
+        setArguments(JaxbValidationsArgument.targetNamespace.withValue(ns));
+        assertEquals(plugin.options.getTargetNamespace(), ns);
     }
 
     private void setArguments(String... args) throws BadCommandLineException, IOException {
         for (int i=0; i<args.length; i++) {
             plugin.parseArgument(opt , args, i);
         }
+        plugin.buildOptions();
     }
 
 }
