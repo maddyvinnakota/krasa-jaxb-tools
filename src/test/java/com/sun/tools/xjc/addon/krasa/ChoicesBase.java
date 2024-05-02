@@ -2,7 +2,7 @@ package com.sun.tools.xjc.addon.krasa;
 
 public class ChoicesBase extends AnnotationsMojoTestHelper {
 
-    public ChoicesBase(ValidationAnnotation annotation) {
+    public ChoicesBase(JaxbValidationsAnnotation annotation) {
         super("choices", annotation);
     }
 

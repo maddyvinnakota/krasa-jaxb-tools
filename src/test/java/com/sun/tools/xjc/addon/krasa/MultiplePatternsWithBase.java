@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 public class MultiplePatternsWithBase extends AnnotationsMojoTestHelper {
 
-    public MultiplePatternsWithBase(ValidationAnnotation annotation) {
+    public MultiplePatternsWithBase(JaxbValidationsAnnotation annotation) {
         super("multiplePatternsWithBase", annotation);
     }
 

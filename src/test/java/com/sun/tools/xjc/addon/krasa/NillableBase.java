@@ -2,7 +2,7 @@ package com.sun.tools.xjc.addon.krasa;
 
 public class NillableBase extends AnnotationsMojoTestHelper {
 
-    public NillableBase(ValidationAnnotation annotation) {
+    public NillableBase(JaxbValidationsAnnotation annotation) {
         super("nillable", annotation);
     }
 

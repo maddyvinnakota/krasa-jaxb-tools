@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  *
  * @author Francesco Illuminati
  */
-public enum ValidationAnnotation {
+public enum JaxbValidationsAnnotation {
 
     JAVAX {
         @Override
@@ -102,7 +102,7 @@ public enum ValidationAnnotation {
     private final List<Class<?>> classList;
     private final Map<String, String> classMap;
 
-    private ValidationAnnotation() {
+    private JaxbValidationsAnnotation() {
         this.classList = Arrays.asList(
                 getValidClass(),
                 getNotNullClass(),

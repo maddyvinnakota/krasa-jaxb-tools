@@ -7,7 +7,7 @@ package com.sun.tools.xjc.addon.krasa;
 public class ComplexJakartaTest extends ComplexBase {
 
     public ComplexJakartaTest() {
-        super(ValidationAnnotation.JAKARTA);
+        super(JaxbValidationsAnnotation.JAKARTA);
     }
 
 }

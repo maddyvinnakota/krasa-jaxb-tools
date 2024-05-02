@@ -6,7 +6,7 @@ package com.sun.tools.xjc.addon.krasa;
  */
 public class StringsBase extends AnnotationsMojoTestHelper {
 
-    public StringsBase(ValidationAnnotation annotation) {
+    public StringsBase(JaxbValidationsAnnotation annotation) {
         super("strings", annotation);
     }
 

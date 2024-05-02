@@ -13,7 +13,7 @@ import org.junit.Test;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class ArgumentTest {
+public class JaxbValidationsArgumentTest {
 
     private static final String NAMESPACE = "xyz";
     private static final String ANNOTATION = "javax";
@@ -43,7 +43,7 @@ public class ArgumentTest {
         }
 
         assertEquals(NAMESPACE, plugin.targetNamespace);
-        assertEquals(ValidationAnnotation.JAVAX, plugin.annotationFactory);
+        assertEquals(JaxbValidationsAnnotation.JAVAX, plugin.annotationFactory);
         assertTrue(plugin.jsr349);
         assertTrue(plugin.notNullAnnotations);
         assertTrue(plugin.generateStringListAnnotations);

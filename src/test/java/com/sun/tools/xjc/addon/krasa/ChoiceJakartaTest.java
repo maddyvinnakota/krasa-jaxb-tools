@@ -7,7 +7,7 @@ package com.sun.tools.xjc.addon.krasa;
 public class ChoiceJakartaTest extends ChoicesBase {
 
     public ChoiceJakartaTest() {
-        super(ValidationAnnotation.JAKARTA);
+        super(JaxbValidationsAnnotation.JAKARTA);
     }
 
 }

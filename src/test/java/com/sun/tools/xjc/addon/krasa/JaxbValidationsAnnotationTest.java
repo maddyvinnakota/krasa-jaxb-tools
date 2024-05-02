@@ -7,55 +7,55 @@ import org.junit.Test;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class ValidationAnnotationTest {
+public class JaxbValidationsAnnotationTest {
 
     @Test
     public void testConversionFromJavaxClassNames() throws ClassNotFoundException {
         assertEquals("javax.validation.Valid",
-                ValidationAnnotation.JAVAX.getCanonicalClassName("Valid"));
+                JaxbValidationsAnnotation.JAVAX.getCanonicalClassName("Valid"));
         assertEquals("javax.validation.constraints.NotNull",
-                ValidationAnnotation.JAVAX.getCanonicalClassName("NotNull"));
+                JaxbValidationsAnnotation.JAVAX.getCanonicalClassName("NotNull"));
         assertEquals("javax.validation.constraints.Size",
-                ValidationAnnotation.JAVAX.getCanonicalClassName("Size"));
+                JaxbValidationsAnnotation.JAVAX.getCanonicalClassName("Size"));
         assertEquals("javax.validation.constraints.Digits",
-                ValidationAnnotation.JAVAX.getCanonicalClassName("Digits"));
+                JaxbValidationsAnnotation.JAVAX.getCanonicalClassName("Digits"));
         assertEquals("javax.validation.constraints.DecimalMin",
-                ValidationAnnotation.JAVAX.getCanonicalClassName("DecimalMin"));
+                JaxbValidationsAnnotation.JAVAX.getCanonicalClassName("DecimalMin"));
         assertEquals("javax.validation.constraints.DecimalMax",
-                ValidationAnnotation.JAVAX.getCanonicalClassName("DecimalMax"));
+                JaxbValidationsAnnotation.JAVAX.getCanonicalClassName("DecimalMax"));
         assertEquals("javax.validation.constraints.Pattern",
-                ValidationAnnotation.JAVAX.getCanonicalClassName("Pattern"));
+                JaxbValidationsAnnotation.JAVAX.getCanonicalClassName("Pattern"));
         assertEquals("javax.validation.constraints.Pattern.List",
-                ValidationAnnotation.JAVAX.getCanonicalClassName("List"));
+                JaxbValidationsAnnotation.JAVAX.getCanonicalClassName("List"));
     }
 
     @Test
     public void testConversionFromJakartaClassNames() throws ClassNotFoundException {
         assertEquals("jakarta.validation.Valid",
-                ValidationAnnotation.JAKARTA.getCanonicalClassName("Valid"));
+                JaxbValidationsAnnotation.JAKARTA.getCanonicalClassName("Valid"));
         assertEquals("jakarta.validation.constraints.NotNull",
-                ValidationAnnotation.JAKARTA.getCanonicalClassName("NotNull"));
+                JaxbValidationsAnnotation.JAKARTA.getCanonicalClassName("NotNull"));
         assertEquals("jakarta.validation.constraints.Size",
-                ValidationAnnotation.JAKARTA.getCanonicalClassName("Size"));
+                JaxbValidationsAnnotation.JAKARTA.getCanonicalClassName("Size"));
         assertEquals("jakarta.validation.constraints.Digits",
-                ValidationAnnotation.JAKARTA.getCanonicalClassName("Digits"));
+                JaxbValidationsAnnotation.JAKARTA.getCanonicalClassName("Digits"));
         assertEquals("jakarta.validation.constraints.DecimalMin",
-                ValidationAnnotation.JAKARTA.getCanonicalClassName("DecimalMin"));
+                JaxbValidationsAnnotation.JAKARTA.getCanonicalClassName("DecimalMin"));
         assertEquals("jakarta.validation.constraints.DecimalMax",
-                ValidationAnnotation.JAKARTA.getCanonicalClassName("DecimalMax"));
+                JaxbValidationsAnnotation.JAKARTA.getCanonicalClassName("DecimalMax"));
         assertEquals("jakarta.validation.constraints.Pattern",
-                ValidationAnnotation.JAKARTA.getCanonicalClassName("Pattern"));
+                JaxbValidationsAnnotation.JAKARTA.getCanonicalClassName("Pattern"));
         assertEquals("jakarta.validation.constraints.Pattern.List",
-                ValidationAnnotation.JAKARTA.getCanonicalClassName("List"));
+                JaxbValidationsAnnotation.JAKARTA.getCanonicalClassName("List"));
     }
 
     @Test(expected = ClassNotFoundException.class)
     public void shouldThrowExceptionIfJavaxClassNotFound() throws ClassNotFoundException {
-        ValidationAnnotation.JAVAX.getCanonicalClassName("NotExistentClassName");
+        JaxbValidationsAnnotation.JAVAX.getCanonicalClassName("NotExistentClassName");
     }
 
     @Test(expected = ClassNotFoundException.class)
     public void shouldThrowExceptionIfJakartaClassNotFound() throws ClassNotFoundException {
-        ValidationAnnotation.JAKARTA.getCanonicalClassName("NotExistentClassName");
+        JaxbValidationsAnnotation.JAKARTA.getCanonicalClassName("NotExistentClassName");
     }
 }

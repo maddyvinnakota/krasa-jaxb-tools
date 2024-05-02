@@ -92,14 +92,14 @@ enum Argument {
             (p) -> p.jpaAnnotations),
     validationAnnotations(
             String.class,
-            "selects which type of annotation to use: " + ValidationAnnotation.getValuesAsString(),
+            "selects which type of annotation to use: " + JaxbValidationsAnnotation.getValuesAsString(),
             (p,v) -> {
-                ValidationAnnotation va;
+                JaxbValidationsAnnotation va;
                 try {
-                    va = ValidationAnnotation.valueOf(v.toUpperCase());
+                    va = JaxbValidationsAnnotation.valueOf(v.toUpperCase());
                 } catch (IllegalArgumentException | NullPointerException ex) {
                     return "passed value is not allowed, use one of: " +
-                            ValidationAnnotation.getValuesAsString();
+                            JaxbValidationsAnnotation.getValuesAsString();
                 }
                 p.annotationFactory = va;
                 return null;

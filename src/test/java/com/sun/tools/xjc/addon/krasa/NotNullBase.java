@@ -2,7 +2,7 @@ package com.sun.tools.xjc.addon.krasa;
 
 public class NotNullBase extends AnnotationsMojoTestHelper {
 
-    public NotNullBase(ValidationAnnotation annotation) {
+    public NotNullBase(JaxbValidationsAnnotation annotation) {
         super("notNull", annotation);
     }
 

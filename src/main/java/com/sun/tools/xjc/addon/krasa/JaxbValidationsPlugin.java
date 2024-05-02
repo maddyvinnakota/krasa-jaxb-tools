@@ -53,7 +53,7 @@ public class JaxbValidationsPlugin extends Plugin {
     String notNullCustomMessageText = null;
     boolean jpaAnnotations = false;
     boolean generateStringListAnnotations;
-    ValidationAnnotation annotationFactory = ValidationAnnotation.JAVAX;
+    JaxbValidationsAnnotation annotationFactory = JaxbValidationsAnnotation.JAVAX;
 
     @Override
     public String getOptionName() {

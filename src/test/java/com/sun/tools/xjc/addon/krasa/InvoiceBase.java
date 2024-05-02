@@ -9,7 +9,7 @@ package com.sun.tools.xjc.addon.krasa;
  */
 public class InvoiceBase extends AnnotationsMojoTestHelper {
 
-    public InvoiceBase(ValidationAnnotation annotation) {
+    public InvoiceBase(JaxbValidationsAnnotation annotation) {
         super("invoice", annotation);
     }
 

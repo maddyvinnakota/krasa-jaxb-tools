@@ -2,7 +2,7 @@ package com.sun.tools.xjc.addon.krasa;
 
 public abstract class ArrayBase extends AnnotationsMojoTestHelper {
 
-    public ArrayBase(ValidationAnnotation annotation) {
+    public ArrayBase(JaxbValidationsAnnotation annotation) {
         super("array", annotation);
     }
 
