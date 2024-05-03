@@ -8,9 +8,6 @@ import com.sun.tools.xjc.outline.ClassOutline;
 import com.sun.xml.xsom.XSFacet;
 import com.sun.xml.xsom.XSSimpleType;
 import com.sun.xml.xsom.XSType;
-import cz.jirutka.validator.collection.constraints.EachDecimalMax;
-import cz.jirutka.validator.collection.constraints.EachDecimalMin;
-import cz.jirutka.validator.collection.constraints.EachDigits;
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 import java.util.List;
@@ -28,65 +25,6 @@ public class JaxbValidationsOldAnnotator {
         this.options = options;
         this.logger = logger;
     }
-
-    void addEachDigitsAnnotation(final XSSimpleType simpleType, final JFieldVar field)
-            throws NumberFormatException {
-        String totalDigits = getStringFacet(simpleType, XSFacet.FACET_TOTALDIGITS);
-        String fractionDigits = getStringFacet(simpleType, XSFacet.FACET_FRACTIONDIGITS);
-        if (totalDigits != null || fractionDigits != null) {
-            JAnnotationUse annotation = field.annotate(EachDigits.class);
-            if (totalDigits != null || fractionDigits != null) {
-                if (totalDigits != null) {
-                    annotation.param("integer", Integer.parseInt(totalDigits));
-                } else {
-                    annotation.param("integer", 0);
-                }
-                if (fractionDigits != null) {
-                    annotation.param("fraction", Integer.parseInt(fractionDigits));
-                } else {
-                    annotation.param("fraction", 0);
-                }
-            }
-        }
-    }
-
-    void addEachDecimalMaxAnnotation(final XSSimpleType simpleType, final JFieldVar field)
-            throws NumberFormatException {
-        String maxInclusive = getStringFacet(simpleType, XSFacet.FACET_MAXINCLUSIVE);
-        String maxExclusive = getStringFacet(simpleType, XSFacet.FACET_MAXEXCLUSIVE);
-        if (maxExclusive != null || maxInclusive != null) {
-            JAnnotationUse annotation = field.annotate(EachDecimalMax.class);
-            if (maxInclusive != null) {
-                annotation.param("value", maxInclusive)
-                        .param("inclusive", true);
-            }
-            if (maxExclusive != null) {
-                annotation.param("value", maxExclusive)
-                        .param("inclusive", false);
-            }
-        }
-    }
-
-    void addEachDecimalMinAnnotation(final XSSimpleType simpleType, JFieldVar field)
-            throws NumberFormatException {
-        String minInclusive = getStringFacet(simpleType, XSFacet.FACET_MININCLUSIVE);
-        String minExclusive = getStringFacet(simpleType, XSFacet.FACET_MINEXCLUSIVE);
-        if (minExclusive != null || minInclusive != null) {
-            JAnnotationUse annotation = field.annotate(EachDecimalMin.class);
-            if (minInclusive != null) {
-                annotation.param("value", minInclusive)
-                        .param("inclusive", true);
-            }
-            if (minExclusive != null) {
-                annotation.param("value", minExclusive)
-                        .param("inclusive", false);
-            }
-        }
-    }
-
-
-
-
 
     void addNotNullAnnotation(ClassOutline co, JFieldVar field) {
         final String className = co.implClass.name();
