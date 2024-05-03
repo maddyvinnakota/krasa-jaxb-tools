@@ -32,8 +32,8 @@ public class JaxbValidationsAnnotator {
 
     void addEachSizeAnnotation(final XSSimpleType simpleType, final JFieldVar field)
             throws NumberFormatException {
-        String minLength = getStringFacet(simpleType, "minLength");
-        String maxLength = getStringFacet(simpleType, "maxLength");
+        String minLength = getStringFacet(simpleType, XSFacet.FACET_MINLENGTH);
+        String maxLength = getStringFacet(simpleType, XSFacet.FACET_MAXLENGTH);
         if (minLength != null || maxLength != null) {
             JAnnotationUse annotation = field.annotate(EachSize.class);
             if (minLength != null) {
@@ -47,8 +47,8 @@ public class JaxbValidationsAnnotator {
 
     void addEachDigitsAnnotation(final XSSimpleType simpleType, final JFieldVar field)
             throws NumberFormatException {
-        String totalDigits = getStringFacet(simpleType, "totalDigits");
-        String fractionDigits = getStringFacet(simpleType, "fractionDigits");
+        String totalDigits = getStringFacet(simpleType, XSFacet.FACET_TOTALDIGITS);
+        String fractionDigits = getStringFacet(simpleType, XSFacet.FACET_FRACTIONDIGITS);
         if (totalDigits != null || fractionDigits != null) {
             JAnnotationUse annotation = field.annotate(EachDigits.class);
             if (totalDigits != null || fractionDigits != null) {
@@ -68,8 +68,8 @@ public class JaxbValidationsAnnotator {
 
     void addEachDecimalMaxAnnotation(final XSSimpleType simpleType, final JFieldVar field)
             throws NumberFormatException {
-        String maxInclusive = getStringFacet(simpleType, "maxInclusive");
-        String maxExclusive = getStringFacet(simpleType, "maxExclusive");
+        String maxInclusive = getStringFacet(simpleType, XSFacet.FACET_MAXINCLUSIVE);
+        String maxExclusive = getStringFacet(simpleType, XSFacet.FACET_MAXEXCLUSIVE);
         if (maxExclusive != null || maxInclusive != null) {
             JAnnotationUse annotation = field.annotate(EachDecimalMax.class);
             if (maxInclusive != null) {
@@ -85,8 +85,8 @@ public class JaxbValidationsAnnotator {
 
     void addEachDecimalMinAnnotation(final XSSimpleType simpleType, JFieldVar field)
             throws NumberFormatException {
-        String minInclusive = getStringFacet(simpleType, "minInclusive");
-        String minExclusive = getStringFacet(simpleType, "minExclusive");
+        String minInclusive = getStringFacet(simpleType, XSFacet.FACET_MININCLUSIVE);
+        String minExclusive = getStringFacet(simpleType, XSFacet.FACET_MINEXCLUSIVE);
         if (minExclusive != null || minInclusive != null) {
             JAnnotationUse annotation = field.annotate(EachDecimalMin.class);
             if (minInclusive != null) {
@@ -102,7 +102,8 @@ public class JaxbValidationsAnnotator {
 
     void addNotNullAnnotation(ClassOutline co, JFieldVar field) {
         final String className = co.implClass.name();
-        final Class<? extends Annotation> notNullClass = options.getAnnotationFactory().getNotNullClass();
+        final Class<? extends Annotation> notNullClass =
+                options.getAnnotationFactory().getNotNullClass();
 
         String message = null;
         if (options.isNotNullPrefixClassName()) {
@@ -161,9 +162,9 @@ public class JaxbValidationsAnnotator {
     void addSizeAnnotation(XSSimpleType simpleType, String propertyName, String className,
             JFieldVar field) {
 
-        Integer maxLength = getIntegerFacet(simpleType, "maxLength");
-        Integer minLength = getIntegerFacet(simpleType, "minLength");
-        Integer length = getIntegerFacet(simpleType, "length");
+        Integer maxLength = getIntegerFacet(simpleType, XSFacet.FACET_MAXLENGTH);
+        Integer minLength = getIntegerFacet(simpleType, XSFacet.FACET_MINLENGTH);
+        Integer length = getIntegerFacet(simpleType, XSFacet.FACET_LENGTH);
 
         addSizeAnnotation(minLength, maxLength, length, propertyName, className, field);
     }
@@ -199,7 +200,7 @@ public class JaxbValidationsAnnotator {
 
     void addJpaColumnAnnotation(XSSimpleType simpleType, String propertyName,
             String className, JFieldVar field) {
-        Integer maxLength = getIntegerFacet(simpleType, "maxLength");
+        Integer maxLength = getIntegerFacet(simpleType, XSFacet.FACET_MAXLENGTH);
         if (maxLength != null) {
             log("@Column(null, " + maxLength + "): " + propertyName +
                     " added to class " + className);
@@ -210,8 +211,8 @@ public class JaxbValidationsAnnotator {
     void addDigitAndJpaColumnAnnotation(XSSimpleType simpleType, JFieldVar field,
             String propertyName, String className) {
 
-        Integer totalDigits = getIntegerFacet(simpleType, "totalDigits");
-        Integer fractionDigits = getIntegerFacet(simpleType, "fractionDigits");
+        Integer totalDigits = getIntegerFacet(simpleType, XSFacet.FACET_TOTALDIGITS);
+        Integer fractionDigits = getIntegerFacet(simpleType, XSFacet.FACET_FRACTIONDIGITS);
         if (totalDigits == null) {
             totalDigits = 0;
         }
@@ -293,8 +294,8 @@ public class JaxbValidationsAnnotator {
     void addPatternEmptyAnnotation(XSSimpleType simpleType, String propertyName,
             String className, JFieldVar field) {
 
-        final List<XSFacet> enumerationList = simpleType.getFacets("enumeration");
-        final XSFacet patternFacet = simpleType.getFacet("enumeration");
+        final List<XSFacet> enumerationList = simpleType.getFacets(XSFacet.FACET_ENUMERATION);
+        final XSFacet patternFacet = simpleType.getFacet(XSFacet.FACET_ENUMERATION);
 
         if (enumerationList.size() > 1) { // More than one pattern
 
@@ -313,7 +314,7 @@ public class JaxbValidationsAnnotator {
             String className, JFieldVar field, String pattern) {
 
         if (simpleType.getBaseType() instanceof XSSimpleType &&
-                ((XSSimpleType) simpleType.getBaseType()).getFacet("pattern") != null) {
+                ((XSSimpleType) simpleType.getBaseType()).getFacet(XSFacet.FACET_PATTERN) != null) {
 
             final XSSimpleType baseType = (XSSimpleType) simpleType.getBaseType();
 
@@ -340,14 +341,16 @@ public class JaxbValidationsAnnotator {
             String className, JFieldVar field, List<XSFacet> patternList) {
 
         if (simpleType.getBaseType() instanceof XSSimpleType &&
-                ((XSSimpleType) simpleType.getBaseType()).getFacet("pattern") != null) {
+                ((XSSimpleType) simpleType.getBaseType()).getFacet(XSFacet.FACET_PATTERN) != null) {
 
             log("@Pattern.List: " + propertyName + " added to class " + className);
 
-            JAnnotationUse patternListAnnotation = field.annotate(options.getAnnotationFactory().getPatternListClass());
+            JAnnotationUse patternListAnnotation =
+                    field.annotate(options.getAnnotationFactory().getPatternListClass());
             JAnnotationArrayMember listValue = patternListAnnotation.paramArray("value");
 
-            String basePattern = ((XSSimpleType) simpleType.getBaseType()).getFacet("pattern").getValue().value;
+            String basePattern =
+                    ((XSSimpleType) simpleType.getBaseType()).getFacet(XSFacet.FACET_PATTERN).getValue().value;
             listValue.annotate(options.getAnnotationFactory().getPatternClass()).param("regexp", replaceRegexp(basePattern));
 
             log("@Pattern: " + propertyName + " added to class " + className);
@@ -453,6 +456,7 @@ public class JaxbValidationsAnnotator {
         }
     }
 
+    // TODO looks weird
     private BigDecimal parseIntegerXsFacet(XSFacet facet) {
         final String str = facet.getValue().value;
         if (str == null || str.trim().isEmpty()) {
