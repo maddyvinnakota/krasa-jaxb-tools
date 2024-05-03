@@ -74,7 +74,7 @@ public class JaxbValidationsPlugin extends Plugin {
 
         JaxbValidationsLogger logger = new JaxbValidationsLogger(options.isVerbose());
 
-        JaxbValidationsAnnotator annotator = new JaxbValidationsAnnotator(options, logger);
+        JaxbValidationsOldAnnotator annotator = new JaxbValidationsOldAnnotator(options, logger);
 
         JaxbValidationsAttributeProcessor attributeProcessor =
                 new JaxbValidationsAttributeProcessor(options, annotator, logger);
@@ -83,6 +83,8 @@ public class JaxbValidationsPlugin extends Plugin {
                 new JaxbValidationsElementProcessor(options, annotator, attributeProcessor, logger);
 
         logger.log(JaxbValidationsArgument.actualOptionValuesString(options, "    "));
+
+
 
         for (ClassOutline co : model.getClasses()) {
             List<CPropertyInfo> properties = co.target.getProperties();

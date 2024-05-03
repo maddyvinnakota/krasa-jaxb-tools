@@ -20,11 +20,11 @@ import java.util.List;
 public class JaxbValidationsAttributeProcessor {
 
     private final JaxbValidationsOptions options;
-    private final JaxbValidationsAnnotator annotator;
+    private final JaxbValidationsOldAnnotator annotator;
     private final JaxbValidationsLogger logger;
 
     public JaxbValidationsAttributeProcessor(JaxbValidationsOptions options,
-            JaxbValidationsAnnotator annotator, JaxbValidationsLogger logger) {
+            JaxbValidationsOldAnnotator annotator, JaxbValidationsLogger logger) {
         this.options = options;
         this.annotator = annotator;
         this.logger = logger;
