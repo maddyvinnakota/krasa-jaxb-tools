@@ -65,24 +65,14 @@ public class JaxbValidationsElementProcessor {
                 new JaxbValidationsAnnotator(field, options.getAnnotationFactory());
 
 
-//        oldAnnotator.addValidAnnotation(elementType, field, propertyName, className);
-
-//        annotator.addValidAnnotation();
-
-//        String elemNs = elementType.getTargetNamespace();
-//        if ((options.getTargetNamespace() == null || elemNs.startsWith(options.getTargetNamespace())) &&
-//                (elementType.isComplexType() || Utils.isCustomType(field)) ) {
-//            annotator.addValidAnnotation();
-//        }
-
-
         if (options.isNotNullAnnotations() && !nillable &&
                 (minOccurs > 0 || required || property.isCollectionRequired()) ) {
             annotator.addNotNullAnnotation(notNullMessage(classOutline, field));
         }
 
         if (property.isCollection()) {
-            oldAnnotator.addValidAnnotation(propertyName, classOutline.implClass.name(), field);
+            // add @Valid to all collections
+            annotator.addValidAnnotation();
 
             if (maxOccurs != 0 || minOccurs != 0) {
                 // http://www.dimuthu.org/blog/2008/08/18/xml-schema-nillabletrue-vs-minoccurs0/comment-page-1/
@@ -92,7 +82,12 @@ public class JaxbValidationsElementProcessor {
             }
         }
 
-        oldAnnotator.addValidAnnotation(elementType, field, propertyName, className);
+        // add @Valid to complext type elements with selected namespace
+        String elemNs = elementType.getTargetNamespace();
+        if ((options.getTargetNamespace() == null || elemNs.startsWith(options.getTargetNamespace())) &&
+                (elementType.isComplexType() || Utils.isCustomType(field)) ) {
+            annotator.addValidAnnotation();
+        }
 
         if (simpleType == null) {
             return; // it's a complex type and we don't manage it here
