@@ -125,16 +125,16 @@ enum JaxbValidationsArgument {
     public static final int PLUGIN_OPTION_NAME_LENGHT = PLUGIN_OPTION_NAME.length() + 1;
 
     // parameter type
-    private Class<?> type;
+    private final Class<?> type;
 
     // help text
-    private String help;
+    private final String help;
 
     // set the value and return null if ok or a text with the error
-    private BiFunction<JaxbValidationsOptions.Builder, String, String> setter;
+    private final BiFunction<JaxbValidationsOptions.Builder, String, String> setter;
 
     // get the value
-    private Function<JaxbValidationsOptions, Object> getter;
+    private final Function<JaxbValidationsOptions, Object> getter;
 
     JaxbValidationsArgument(
             Class<?> type,
