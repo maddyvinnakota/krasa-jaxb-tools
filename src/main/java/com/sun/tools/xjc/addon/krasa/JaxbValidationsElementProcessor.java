@@ -4,14 +4,10 @@ import com.sun.codemodel.JFieldVar;
 import com.sun.tools.xjc.model.CElementPropertyInfo;
 import com.sun.tools.xjc.outline.ClassOutline;
 import com.sun.tools.xjc.outline.Outline;
-import com.sun.xml.xsom.XSComponent;
-import com.sun.xml.xsom.XSElementDecl;
 import com.sun.xml.xsom.XSParticle;
 import com.sun.xml.xsom.XSSimpleType;
-import com.sun.xml.xsom.XSTerm;
 import com.sun.xml.xsom.XSType;
 import com.sun.xml.xsom.impl.ElementDecl;
-import com.sun.xml.xsom.impl.parser.DelayedRef;
 
 /**
  *
@@ -19,12 +15,12 @@ import com.sun.xml.xsom.impl.parser.DelayedRef;
  */
 public class JaxbValidationsElementProcessor {
     private final JaxbValidationsOptions options;
-    private final JaxbValidationsAnnotator annotator;
+    private final JaxbValidationsOldAnnotator annotator;
     private final JaxbValidationsAttributeProcessor attributeProcessor;
     private final JaxbValidationsLogger logger;
 
     public JaxbValidationsElementProcessor(JaxbValidationsOptions options,
-            JaxbValidationsAnnotator annotator, JaxbValidationsAttributeProcessor attributeProcessor,
+            JaxbValidationsOldAnnotator annotator, JaxbValidationsAttributeProcessor attributeProcessor,
             JaxbValidationsLogger logger) {
         this.options = options;
         this.annotator = annotator;
@@ -38,18 +34,14 @@ public class JaxbValidationsElementProcessor {
     public void processElement(CElementPropertyInfo property,
             ClassOutline classOutline, Outline model) {
 
-        XSComponent schemaComponent = property.getSchemaComponent();
-        XSParticle particle = (XSParticle) schemaComponent;
-        XSTerm term = particle.getTerm();
+        XSParticle particle = (XSParticle) property.getSchemaComponent();
+        ElementDecl element = (ElementDecl) particle.getTerm();
 
         int minOccurs = particle.getMinOccurs().intValue();
         int maxOccurs = particle.getMaxOccurs().intValue();
-        boolean nillable = false;
-        if (term.isElementDecl()) {
-            nillable = ((XSElementDecl) term).isNillable();
-        }
+        boolean nillable = element.isNillable();
         boolean required = property.isRequired();
-        String propertyName = propertyName(property);
+        String propertyName = property.getName(false);
 
         JFieldVar field = classOutline.implClass.fields().get(propertyName);
 
@@ -76,27 +68,21 @@ public class JaxbValidationsElementProcessor {
             }
         }
 
-        if (term instanceof ElementDecl) {
-            processElement(property, classOutline, field, (ElementDecl) term);
-
-        } else if (term instanceof DelayedRef.Element) {
-
-            XSElementDecl xsElementDecl = ((DelayedRef.Element) term).get();
-            processElement(property, classOutline, field, (ElementDecl) xsElementDecl);
-        }
-
-    }
-
-    private void processElement(CElementPropertyInfo property,
-            ClassOutline classOutline, JFieldVar field, ElementDecl element) {
-        String propertyName = propertyName(property);
         String className = classOutline.implClass.name();
         XSType elementType = element.getType();
 
         annotator.addValidAnnotation(elementType, field, propertyName, className);
 
         // using https://github.com/jirutka/validator-collection to annotate Lists of primitives
-        final XSSimpleType simpleType = elementType.asSimpleType();
+        final XSSimpleType simpleType;
+        if (!(elementType instanceof XSSimpleType)) {
+            // is a complex type, get the base type
+            simpleType = elementType.getBaseType().asSimpleType();
+        } else {
+            // simple type
+            simpleType = elementType.asSimpleType();
+        }
+
         if (options.isGenerateStringListAnnotations() && property.isCollection() && simpleType != null) {
             annotator.addEachSizeAnnotation(simpleType, field);
             annotator.addEachDigitsAnnotation(simpleType, field);
@@ -104,17 +90,7 @@ public class JaxbValidationsElementProcessor {
             annotator.addEachDecimalMaxAnnotation(simpleType, field);
         }
 
-        if (elementType instanceof XSSimpleType) {
-            attributeProcessor.processType((XSSimpleType) elementType, field, propertyName, className);
-
-        } else if (elementType.getBaseType() instanceof XSSimpleType) {
-            final XSSimpleType baseType = (XSSimpleType) elementType.getBaseType();
-            attributeProcessor.processType(baseType, field, propertyName, className);
-        }
-    }
-
-    private String propertyName(CElementPropertyInfo property) {
-        return property.getName(false);
+        attributeProcessor.processType(simpleType, field, propertyName, className);
     }
 
 }
