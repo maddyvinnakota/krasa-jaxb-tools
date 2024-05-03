@@ -19,15 +19,13 @@ import java.lang.annotation.Annotation;
  */
 public class JaxbValidationsElementProcessor {
     private final JaxbValidationsOptions options;
-    private final JaxbValidationsOldAnnotator oldAnnotator;
     private final JaxbValidationsAttributeProcessor attributeProcessor;
     private final JaxbValidationsLogger logger;
 
     public JaxbValidationsElementProcessor(JaxbValidationsOptions options,
-            JaxbValidationsOldAnnotator oldAnnotator, JaxbValidationsAttributeProcessor attributeProcessor,
+            JaxbValidationsAttributeProcessor attributeProcessor,
             JaxbValidationsLogger logger) {
         this.options = options;
-        this.oldAnnotator = oldAnnotator;
         this.attributeProcessor = attributeProcessor;
         this.logger = logger;
     }
@@ -76,43 +74,38 @@ public class JaxbValidationsElementProcessor {
 
             if (maxOccurs != 0 || minOccurs != 0) {
                 // http://www.dimuthu.org/blog/2008/08/18/xml-schema-nillabletrue-vs-minoccurs0/comment-page-1/
-
-                oldAnnotator.addSizeAnnotation(minOccurs, maxOccurs, null,
-                        propertyName, classOutline.implClass.name(), field);
+                annotator.addSizeAnnotation(minOccurs, maxOccurs, null);
             }
         }
 
-        // add @Valid to complext type elements with selected namespace
+        // add @Valid to complext type or custom elements with selected namespace
         String elemNs = elementType.getTargetNamespace();
         if ((options.getTargetNamespace() == null || elemNs.startsWith(options.getTargetNamespace())) &&
                 (elementType.isComplexType() || Utils.isCustomType(field)) ) {
             annotator.addValidAnnotation();
         }
 
-        if (simpleType == null) {
-            return; // it's a complex type and we don't manage it here
+        if (simpleType != null) {
+            if (options.isGenerateStringListAnnotations() && property.isCollection() && simpleType != null) {
+                Integer minLength = getIntegerFacet(simpleType, XSFacet.FACET_MINLENGTH);
+                Integer maxLength = getIntegerFacet(simpleType, XSFacet.FACET_MAXLENGTH);
+                annotator.addEachSizeAnnotation(minLength, maxLength);
+
+                Integer totalDigits = getIntegerFacet(simpleType, XSFacet.FACET_TOTALDIGITS);
+                Integer fractionDigits = getIntegerFacet(simpleType, XSFacet.FACET_FRACTIONDIGITS);
+                annotator.addEachDigitsAnnotation(totalDigits, fractionDigits);
+
+                String minInclusive = getStringFacet(simpleType, XSFacet.FACET_MININCLUSIVE);
+                String minExclusive = getStringFacet(simpleType, XSFacet.FACET_MINEXCLUSIVE);
+                annotator.addEachDecimalMinAnnotation(minInclusive, minExclusive);
+
+                String maxInclusive = getStringFacet(simpleType, XSFacet.FACET_MAXINCLUSIVE);
+                String maxExclusive = getStringFacet(simpleType, XSFacet.FACET_MAXEXCLUSIVE);
+                annotator.addEachDecimalMaxAnnotation(maxInclusive, maxExclusive);
+            }
+
+            attributeProcessor.processType(simpleType, field, propertyName, className);
         }
-
-
-        if (options.isGenerateStringListAnnotations() && property.isCollection() && simpleType != null) {
-            Integer minLength = getIntegerFacet(simpleType, XSFacet.FACET_MINLENGTH);
-            Integer maxLength = getIntegerFacet(simpleType, XSFacet.FACET_MAXLENGTH);
-            annotator.addEachSizeAnnotation(minLength, maxLength);
-
-            Integer totalDigits = getIntegerFacet(simpleType, XSFacet.FACET_TOTALDIGITS);
-            Integer fractionDigits = getIntegerFacet(simpleType, XSFacet.FACET_FRACTIONDIGITS);
-            annotator.addEachDigitsAnnotation(totalDigits, fractionDigits);
-
-            String minInclusive = getStringFacet(simpleType, XSFacet.FACET_MININCLUSIVE);
-            String minExclusive = getStringFacet(simpleType, XSFacet.FACET_MINEXCLUSIVE);
-            annotator.addEachDecimalMinAnnotation(minInclusive, minExclusive);
-
-            String maxInclusive = getStringFacet(simpleType, XSFacet.FACET_MAXINCLUSIVE);
-            String maxExclusive = getStringFacet(simpleType, XSFacet.FACET_MAXEXCLUSIVE);
-            annotator.addEachDecimalMaxAnnotation(maxInclusive, maxExclusive);
-        }
-
-        attributeProcessor.processType(simpleType, field, propertyName, className);
     }
 
     private String notNullMessage(ClassOutline classOutline, JFieldVar field) {
@@ -140,7 +133,6 @@ public class JaxbValidationsElementProcessor {
             message = options.getNotNullCustomMessageText()
                     .replace("{ClassName}", className)
                     .replace("{FieldName}", field.name());
-
         }
 
         return message;

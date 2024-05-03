@@ -62,13 +62,6 @@ public class JaxbValidationsOldAnnotator {
 
     }
 
-    void addValidAnnotation(String propertyName, String className, JFieldVar field) {
-        if (!field.annotations().contains(options.getAnnotationFactory().getValidClass())) {
-            logger.log("@Valid: " + propertyName + " added to class " + className);
-            field.annotate(options.getAnnotationFactory().getValidClass());
-        }
-    }
-
     void addValidAnnotation(XSType elementType, JFieldVar field, String propertyName,
             String className) {
 

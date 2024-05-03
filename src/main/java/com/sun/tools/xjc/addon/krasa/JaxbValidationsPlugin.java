@@ -80,7 +80,7 @@ public class JaxbValidationsPlugin extends Plugin {
                 new JaxbValidationsAttributeProcessor(options, annotator, logger);
 
         JaxbValidationsElementProcessor elementProcessor =
-                new JaxbValidationsElementProcessor(options, annotator, attributeProcessor, logger);
+                new JaxbValidationsElementProcessor(options, attributeProcessor, logger);
 
         logger.log(JaxbValidationsArgument.actualOptionValuesString(options, "    "));
 

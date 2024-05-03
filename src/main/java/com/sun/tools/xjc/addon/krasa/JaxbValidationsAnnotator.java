@@ -65,6 +65,22 @@ public class JaxbValidationsAnnotator {
         annotate(annotationFactory.getValidClass());
     }
 
+    void addSizeAnnotation(Integer minLength, Integer maxLength, Integer length) {
+        if (isValidLength(minLength) || isValidLength(maxLength)) {
+            annotate(annotationFactory.getSizeClass())
+                    .paramIf(isValidLength(minLength), "min", minLength)
+                    .paramIf(isValidLength(maxLength), "max", maxLength);
+
+        } else if (isValidLength(length)) {
+            annotate(annotationFactory.getSizeClass())
+                    .param("min", length)
+                    .param("max", length);
+        }
+    }
+
+    private static boolean isValidLength(Integer length) {
+        return length != null && length != -1;
+    }
 
     public static String getStringFacet(final XSSimpleType simpleType, String param) {
         final XSFacet facet = simpleType.getFacet(param);
@@ -97,6 +113,13 @@ public class JaxbValidationsAnnotator {
             } else {
                 this.annotationUse = null;
             }
+        }
+
+        public Annotate paramIf(boolean condition, String name, Integer value) {
+            if (condition && annotationUse != null && value != null) {
+                annotationUse.param(name, value);
+            }
+            return this;
         }
 
         public Annotate param(String name, Integer value) {
