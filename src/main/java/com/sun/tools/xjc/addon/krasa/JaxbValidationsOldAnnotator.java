@@ -26,8 +26,8 @@ public class JaxbValidationsOldAnnotator {
         this.logger = logger;
     }
 
-    void addNotNullAnnotation(ClassOutline co, JFieldVar field) {
-        final String className = co.implClass.name();
+    void addNotNullAnnotation(ClassOutline classOutline, JFieldVar field) {
+        final String className = classOutline.implClass.name();
         final Class<? extends Annotation> notNullClass =
                 options.getAnnotationFactory().getNotNullClass();
 
@@ -326,6 +326,7 @@ public class JaxbValidationsOldAnnotator {
         patternAnnotation.param("regexp", sb.substring(0, sb.length() - 1));
     }
 
+    @Deprecated // not API complieant, use alternative method
     @SuppressWarnings({ "unchecked", "rawtypes" })
     boolean hasAnnotation(JFieldVar var, String annotationClassSimpleName) {
         List<JAnnotationUse> list =

@@ -1,6 +1,7 @@
 package com.sun.tools.xjc.addon.krasa;
 
 import com.sun.codemodel.JFieldVar;
+import static com.sun.tools.xjc.addon.krasa.JaxbValidationsAnnotator.getIntegerFacet;
 import static com.sun.tools.xjc.addon.krasa.JaxbValidationsAnnotator.getStringFacet;
 import com.sun.tools.xjc.model.CElementPropertyInfo;
 import com.sun.tools.xjc.outline.ClassOutline;
@@ -10,6 +11,7 @@ import com.sun.xml.xsom.XSParticle;
 import com.sun.xml.xsom.XSSimpleType;
 import com.sun.xml.xsom.XSType;
 import com.sun.xml.xsom.impl.ElementDecl;
+import java.lang.annotation.Annotation;
 
 /**
  *
@@ -41,39 +43,13 @@ public class JaxbValidationsElementProcessor {
 
         int minOccurs = particle.getMinOccurs().intValue();
         int maxOccurs = particle.getMaxOccurs().intValue();
-        boolean nillable = element.isNillable();
         boolean required = property.isRequired();
+        boolean nillable = element.isNillable();
         String propertyName = property.getName(false);
 
         JFieldVar field = classOutline.implClass.fields().get(propertyName);
-
-        if (options.isNotNullAnnotations() &&
-                !(minOccurs == 0 || !required || nillable) &&
-                !oldAnnotator.hasAnnotation(field, "NotNull")) {
-
-            oldAnnotator.addNotNullAnnotation(classOutline, field);
-        }
-
-        if (property.isCollection()) {
-            oldAnnotator.addValidAnnotation(propertyName, classOutline.implClass.name(), field);
-
-            // http://www.dimuthu.org/blog/2008/08/18/xml-schema-nillabletrue-vs-minoccurs0/comment-page-1/
-            if (!oldAnnotator.hasAnnotation(field, "Size") &&
-                    (maxOccurs != 0 || minOccurs != 0)) {
-
-                if (property.isCollectionRequired()) {
-                    oldAnnotator.addNotNullAnnotation(classOutline, field);
-                }
-
-                oldAnnotator.addSizeAnnotation(minOccurs, maxOccurs, null,
-                        propertyName, classOutline.implClass.name(), field);
-            }
-        }
-
         String className = classOutline.implClass.name();
         XSType elementType = element.getType();
-
-        oldAnnotator.addValidAnnotation(elementType, field, propertyName, className);
 
         // using https://github.com/jirutka/validator-collection to annotate Lists of primitives
         final XSSimpleType simpleType;
@@ -85,15 +61,51 @@ public class JaxbValidationsElementProcessor {
             simpleType = elementType.asSimpleType();
         }
 
-        JaxbValidationsAnnotator annotator = new JaxbValidationsAnnotator(field);
+        JaxbValidationsAnnotator annotator =
+                new JaxbValidationsAnnotator(field, options.getAnnotationFactory());
+
+
+//        oldAnnotator.addValidAnnotation(elementType, field, propertyName, className);
+
+//        annotator.addValidAnnotation();
+
+//        String elemNs = elementType.getTargetNamespace();
+//        if ((options.getTargetNamespace() == null || elemNs.startsWith(options.getTargetNamespace())) &&
+//                (elementType.isComplexType() || Utils.isCustomType(field)) ) {
+//            annotator.addValidAnnotation();
+//        }
+
+
+        if (options.isNotNullAnnotations() && !nillable &&
+                (minOccurs > 0 || required || property.isCollectionRequired()) ) {
+            annotator.addNotNullAnnotation(notNullMessage(classOutline, field));
+        }
+
+        if (property.isCollection()) {
+            oldAnnotator.addValidAnnotation(propertyName, classOutline.implClass.name(), field);
+
+            if (maxOccurs != 0 || minOccurs != 0) {
+                // http://www.dimuthu.org/blog/2008/08/18/xml-schema-nillabletrue-vs-minoccurs0/comment-page-1/
+
+                oldAnnotator.addSizeAnnotation(minOccurs, maxOccurs, null,
+                        propertyName, classOutline.implClass.name(), field);
+            }
+        }
+
+        oldAnnotator.addValidAnnotation(elementType, field, propertyName, className);
+
+        if (simpleType == null) {
+            return; // it's a complex type and we don't manage it here
+        }
+
 
         if (options.isGenerateStringListAnnotations() && property.isCollection() && simpleType != null) {
-            String minLength = getStringFacet(simpleType, XSFacet.FACET_MINLENGTH);
-            String maxLength = getStringFacet(simpleType, XSFacet.FACET_MAXLENGTH);
+            Integer minLength = getIntegerFacet(simpleType, XSFacet.FACET_MINLENGTH);
+            Integer maxLength = getIntegerFacet(simpleType, XSFacet.FACET_MAXLENGTH);
             annotator.addEachSizeAnnotation(minLength, maxLength);
 
-            String totalDigits = getStringFacet(simpleType, XSFacet.FACET_TOTALDIGITS);
-            String fractionDigits = getStringFacet(simpleType, XSFacet.FACET_FRACTIONDIGITS);
+            Integer totalDigits = getIntegerFacet(simpleType, XSFacet.FACET_TOTALDIGITS);
+            Integer fractionDigits = getIntegerFacet(simpleType, XSFacet.FACET_FRACTIONDIGITS);
             annotator.addEachDigitsAnnotation(totalDigits, fractionDigits);
 
             String minInclusive = getStringFacet(simpleType, XSFacet.FACET_MININCLUSIVE);
@@ -108,4 +120,34 @@ public class JaxbValidationsElementProcessor {
         attributeProcessor.processType(simpleType, field, propertyName, className);
     }
 
+    private String notNullMessage(ClassOutline classOutline, JFieldVar field) {
+        final String className = classOutline.implClass.name();
+        final Class<? extends Annotation> notNullClass =
+                options.getAnnotationFactory().getNotNullClass();
+
+        String message = null;
+
+        if (options.isNotNullPrefixClassName()) {
+            message = String.format("%s.%s {%s.message}",
+                    className, field.name(),
+                    notNullClass.getName());
+
+        } else if (options.isNotNullPrefixFieldName()) {
+            message = String.format("%s {%s.message}",
+                    field.name(),
+                    notNullClass.getName());
+
+        } else if (options.isNotNullCustomMessage()) {
+            message = String.format("{%s.message}",
+                    notNullClass.getName());
+
+        } else if (options.getNotNullCustomMessageText() != null) {
+            message = options.getNotNullCustomMessageText()
+                    .replace("{ClassName}", className)
+                    .replace("{FieldName}", field.name());
+
+        }
+
+        return message;
+    }
 }

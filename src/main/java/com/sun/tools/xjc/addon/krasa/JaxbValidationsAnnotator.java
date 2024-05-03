@@ -10,7 +10,6 @@ import cz.jirutka.validator.collection.constraints.EachDigits;
 import cz.jirutka.validator.collection.constraints.EachSize;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -19,19 +18,21 @@ import java.util.Set;
  */
 public class JaxbValidationsAnnotator {
     private final JFieldVar field;
+    private final JaxbValidationsAnnotation annotationFactory;
     private final Set<Class<? extends Annotation>> annotations = new HashSet<>();
 
-    public JaxbValidationsAnnotator(JFieldVar field) {
+    public JaxbValidationsAnnotator(JFieldVar field, JaxbValidationsAnnotation annotationFactory) {
         this.field = field;
+        this.annotationFactory = annotationFactory;
     }
 
-    void addEachSizeAnnotation(String minLength, String maxLength) {
+    void addEachSizeAnnotation(Integer minLength, Integer maxLength) {
         annotate(EachSize.class)
                 .param("min", minLength)
                 .param("max", maxLength);
     }
 
-    void addEachDigitsAnnotation(String totalDigits, String fractionDigits) {
+    void addEachDigitsAnnotation(Integer totalDigits, Integer fractionDigits) {
         annotate(EachDigits.class)
                 .param("integer", totalDigits, 0)
                 .param("fraction", fractionDigits, 0);
@@ -55,9 +56,31 @@ public class JaxbValidationsAnnotator {
         }
     }
 
+    void addNotNullAnnotation(String message) {
+        annotate(annotationFactory.getNotNullClass())
+                .param("message", message);
+    }
+
+    void addValidAnnotation() {
+        annotate(annotationFactory.getValidClass());
+    }
+
+
     public static String getStringFacet(final XSSimpleType simpleType, String param) {
         final XSFacet facet = simpleType.getFacet(param);
         return facet == null ? null : facet.getValue().value;
+    }
+
+    public static Integer getIntegerFacet(final XSSimpleType simpleType, String param) {
+        final XSFacet facet = simpleType.getFacet(param);
+        if (facet != null) {
+            try {
+                return Integer.parseInt(facet.getValue().value);
+            } catch (NumberFormatException e) {
+                return null;
+            }
+        }
+        return null;
     }
 
     private Annotate annotate(Class<? extends Annotation> annotation) {
@@ -76,16 +99,37 @@ public class JaxbValidationsAnnotator {
             }
         }
 
-        public Annotate param(String name, Object value) {
+        public Annotate param(String name, Integer value) {
+            if (annotationUse != null && value != null) {
+                annotationUse.param(name, value);
+            }
+            return this;
+        }
+
+        public Annotate param(String name, Boolean value) {
+            if (annotationUse != null && value != null) {
+                annotationUse.param(name, value);
+            }
+            return this;
+        }
+
+        public Annotate param(String name, String value) {
             if (annotationUse != null && value != null) {
                 annotationUse.param(name, value.toString());
             }
             return this;
         }
 
-        public Annotate param(String name, Object value, Object defaultValue) {
+        public Annotate param(String name, String value, String defaultValue) {
             if (annotationUse != null) {
-                annotationUse.param(name, Objects.toString(value == null ? defaultValue : value));
+                annotationUse.param(name, value == null ? defaultValue : value);
+            }
+            return this;
+        }
+
+        public Annotate param(String name, Integer value, Integer defaultValue) {
+            if (annotationUse != null) {
+                annotationUse.param(name, value == null ? defaultValue : value);
             }
             return this;
         }
