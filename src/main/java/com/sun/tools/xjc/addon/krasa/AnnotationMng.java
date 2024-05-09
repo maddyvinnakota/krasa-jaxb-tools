@@ -24,10 +24,6 @@ public class AnnotationMng {
         return new Annotate((Annotate) null, annotation);
     }
 
-    Annotate annotate(Annotate parent, Class<? extends Annotation> annotation) {
-        return new Annotate(parent, annotation);
-    }
-
     boolean isAnnotatedWith(Class<? extends Annotation> annotation) {
         return annotationSet.contains(annotation);
     }
@@ -107,18 +103,14 @@ public class AnnotationMng {
 
         public MultipleAnnotation multiple(String paramName) {
             JAnnotationArrayMember array = annotationUse.paramArray(paramName);
-            return new MultipleAnnotation(this, array);
+            return new MultipleAnnotation(array);
         }
 
         public class MultipleAnnotation {
-            private final Annotate parent;
             private final JAnnotationArrayMember array;
-            private final AnnotationMng annotations;
 
-            public MultipleAnnotation(Annotate parent, JAnnotationArrayMember array) {
-                this.parent = parent;
+            public MultipleAnnotation(JAnnotationArrayMember array) {
                 this.array = array;
-                this.annotations = new AnnotationMng(field);
             }
 
             public Annotate annotate(Class<? extends Annotation> annotation) {
