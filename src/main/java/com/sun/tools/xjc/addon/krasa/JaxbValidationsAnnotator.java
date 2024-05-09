@@ -33,19 +33,11 @@ public class JaxbValidationsAnnotator {
     private static final String SCALE = "scale";
     private static final String PRECISION = "precision";
 
-    // use those in logger
-    private final String className;
-    private final String propertyName;
-    private final JFieldVar field;
-
     private final JaxbValidationsAnnotation annotationFactory;
     private final AnnotationMng annotations;
 
-    public JaxbValidationsAnnotator(String className, String propertyName, JFieldVar field,
+    public JaxbValidationsAnnotator(JFieldVar field,
             JaxbValidationsAnnotation annotationFactory) {
-        this.className = className;
-        this.propertyName = propertyName;
-        this.field = field;
         this.annotationFactory = annotationFactory;
         this.annotations = new AnnotationMng(field);
     }
@@ -179,14 +171,6 @@ public class JaxbValidationsAnnotator {
     static String escapeRegexp(String pattern) {
         return java.util.regex.Pattern.quote(pattern);
     }
-
-    static boolean isSizeAnnotationApplicable(JFieldVar field) {
-        if (field == null) {
-            return false;
-        }
-        return field.type().name().equals("String") || field.type().isArray();
-    }
-
 
     static boolean isValidLength(Integer length) {
         return length != null && length != -1;

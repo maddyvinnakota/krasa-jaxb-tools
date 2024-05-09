@@ -152,7 +152,7 @@ public class JaxbValidationsPlugin extends Plugin {
         }
 
         JaxbValidationsAnnotator annotator =
-                new JaxbValidationsAnnotator(className, propertyName, field,
+                new JaxbValidationsAnnotator(field,
                         options.getAnnotationFactory());
 
         if (options.isNotNullAnnotations() && !nillable &&
@@ -210,8 +210,8 @@ public class JaxbValidationsPlugin extends Plugin {
         JFieldVar var = clase.implClass.fields().get(propertyName);
 
         if (var != null) {
-            JaxbValidationsAnnotator annotator = new JaxbValidationsAnnotator(className, propertyName,
-                    var, options.getAnnotationFactory());
+            JaxbValidationsAnnotator annotator =
+                    new JaxbValidationsAnnotator(var, options.getAnnotationFactory());
 
             processType(type, var, annotator);
         }
@@ -230,8 +230,8 @@ public class JaxbValidationsPlugin extends Plugin {
         JFieldVar var = clase.implClass.fields().get(propertyName);
 
         if (var != null) {
-            JaxbValidationsAnnotator annotator = new JaxbValidationsAnnotator(className, propertyName,
-                    var, options.getAnnotationFactory());
+            JaxbValidationsAnnotator annotator =
+                    new JaxbValidationsAnnotator(var, options.getAnnotationFactory());
 
             if (particle.isRequired()) {
                 String message = notNullMessage(clase, var);
