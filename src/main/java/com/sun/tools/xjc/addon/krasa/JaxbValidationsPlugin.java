@@ -154,8 +154,6 @@ public class JaxbValidationsPlugin extends Plugin {
             annotator.addNotNullAnnotation(classOutline, field, message);
         }
 
-        Facet facet = new Facet(simpleType);
-
         if (property.isCollection()) {
             // add @Valid to all collections
             annotator.addValidAnnotation();
@@ -167,6 +165,8 @@ public class JaxbValidationsPlugin extends Plugin {
         }
 
         if (simpleType != null) {
+            Facet facet = new Facet(simpleType);
+
             if ((options.isGenerateStringListAnnotations() && property.isCollection()) ) {
                 annotator.addEachSizeAnnotation(facet.minLength(), facet.maxLength());
                 annotator.addEachDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
