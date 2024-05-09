@@ -2,16 +2,11 @@ package com.sun.tools.xjc.addon.krasa;
 
 import com.sun.codemodel.JFieldVar;
 import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Objects;
-import java.util.Set;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 
 /**
@@ -170,45 +165,6 @@ class Utils {
 
     public static boolean isMax(String value) {
         return LONG_MAX.equals(value) || INTEGER_MAX.equals(value);
-    }
-
-    public static final Set<String> NUMBERS = Arrays.stream(new Class<?>[]{
-        BigDecimal.class,
-        BigInteger.class,
-        Byte.class,
-        Short.class,
-        Integer.class,
-        Double.class,
-        Float.class,
-        Long.class})
-            .map(c -> c.getSimpleName().toUpperCase())
-            .collect(Collectors.toSet());
-
-    public static boolean isNumberField(JFieldVar field) {
-        return isFieldTypeNameNumber(field.type().name()) ||
-                isFieldTypeFullNameNumber(field.type().fullName());
-    }
-
-    static boolean isFieldTypeNameNumber(String fieldTypeName) {
-        if (NUMBERS.contains(fieldTypeName.toUpperCase())) {
-            return true;
-        }
-        return false;
-    }
-
-    static boolean isFieldTypeFullNameNumber(String fieldTypeFullName) {
-        try {
-            if (isNumber(Class.forName(fieldTypeFullName))) {
-                return true;
-            }
-        } catch (ClassNotFoundException ex) {
-            // ignore
-        }
-        return false;
-    }
-
-    static boolean isNumber(Class<?> aClass) {
-        return Number.class.isAssignableFrom(aClass);
     }
 
     public static boolean isCustomType(JFieldVar var) {

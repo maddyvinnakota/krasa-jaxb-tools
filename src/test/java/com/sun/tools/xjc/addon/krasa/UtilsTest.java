@@ -1,6 +1,5 @@
 package com.sun.tools.xjc.addon.krasa;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
@@ -41,13 +40,6 @@ public class UtilsTest {
         assertFalse(Utils.toBoolean("false"));
         assertFalse(Utils.toBoolean("FALSE"));
         assertFalse(Utils.toBoolean("FalSe"));
-    }
-
-    @Test
-    public void testIsNumber() throws Exception {
-        assertFalse(Utils.isNumber(String.class));
-        assertFalse(Utils.isNumber(IllegalStateException.class));
-        assertTrue(Utils.isNumber(BigDecimal.class));
     }
 
     @Test
@@ -150,34 +142,5 @@ public class UtilsTest {
         assertTrue(Utils.isMax("9223372036854775807"));
         assertTrue(Utils.isMax("2147483647"));
         assertFalse(Utils.isMax("2147483648"));
-    }
-
-    public static class TypeTest {
-        private String stringField;
-        private int intField;
-        private Long longField;
-        private BigInteger bigIntegerField;
-    }
-
-    @Test
-    public void isFieldTypeNameNumber() {
-        assertTrue(Utils.isFieldTypeNameNumber(BigDecimal.class.getSimpleName()));
-        assertTrue(Utils.isFieldTypeNameNumber(Long.class.getSimpleName()));
-        assertTrue(Utils.isFieldTypeNameNumber(Short.class.getSimpleName()));
-        assertTrue(Utils.isFieldTypeNameNumber(Integer.class.getSimpleName()));
-
-        assertFalse(Utils.isFieldTypeNameNumber(String.class.getSimpleName()));
-        assertFalse(Utils.isFieldTypeNameNumber(Boolean.class.getSimpleName()));
-    }
-
-    @Test
-    public void isFieldTypeFullNameNumber() {
-        assertTrue(Utils.isFieldTypeFullNameNumber(BigDecimal.class.getCanonicalName()));
-        assertTrue(Utils.isFieldTypeFullNameNumber(Long.class.getCanonicalName()));
-        assertTrue(Utils.isFieldTypeFullNameNumber(Short.class.getCanonicalName()));
-        assertTrue(Utils.isFieldTypeFullNameNumber(Integer.class.getCanonicalName()));
-
-        assertFalse(Utils.isFieldTypeFullNameNumber(String.class.getCanonicalName()));
-        assertFalse(Utils.isFieldTypeFullNameNumber(Boolean.class.getCanonicalName()));
     }
 }

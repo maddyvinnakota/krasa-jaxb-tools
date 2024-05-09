@@ -230,6 +230,7 @@ public class JaxbValidationsPlugin extends Plugin {
     void processType(XSSimpleType simpleType, JFieldVar field, JaxbValidationsAnnotator annotator) {
 
         Facet facet = new Facet(simpleType);
+        TypeHelper typeHelper = new TypeHelper(field);
 
         // add @Valid to complext types or custom elements with selected namespace
         String elemNs = simpleType.getTargetNamespace();
@@ -238,8 +239,7 @@ public class JaxbValidationsPlugin extends Plugin {
             annotator.addValidAnnotation();
         }
 
-        // TODO put this check in Field mng class
-        if (field.type().name().equals("String") || field.type().isArray()) {
+        if (typeHelper.isString() || typeHelper.isArray()) {
             annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
 
             // TODO put this check in Field mng class
@@ -249,7 +249,7 @@ public class JaxbValidationsPlugin extends Plugin {
         }
 
 
-        if (Utils.isNumberField(field)) {
+        if (typeHelper.isNumber()) {
 
             if (!annotator.isAnnotatedWith(
                     options.getAnnotationFactory().getDecimalMinClass())) {
@@ -269,8 +269,7 @@ public class JaxbValidationsPlugin extends Plugin {
             }
         }
 
-        final String fieldName = field.type().name();
-        if ("String".equals(fieldName)) {
+        if (typeHelper.isString()) {
 
             final List<String> patternList = facet.patternList();
             patternList.add(facet.pattern());
