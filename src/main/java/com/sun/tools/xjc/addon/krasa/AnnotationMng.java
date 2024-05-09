@@ -4,6 +4,7 @@ import com.sun.codemodel.JAnnotationArrayMember;
 import com.sun.codemodel.JAnnotationUse;
 import com.sun.codemodel.JFieldVar;
 import java.lang.annotation.Annotation;
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -68,6 +69,13 @@ public class AnnotationMng {
         public Annotate param(String name, Boolean value) {
             if (annotationUse != null && value != null) {
                 annotationUse.param(name, value);
+            }
+            return this;
+        }
+
+        public Annotate param(String name, BigDecimal value) {
+            if (annotationUse != null && value != null) {
+                annotationUse.param(name, value.toString());
             }
             return this;
         }

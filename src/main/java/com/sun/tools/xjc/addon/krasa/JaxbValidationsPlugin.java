@@ -4,10 +4,6 @@ import com.sun.codemodel.JFieldVar;
 import com.sun.tools.xjc.BadCommandLineException;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
-import static com.sun.tools.xjc.addon.krasa.JaxbValidationsAnnotator.escapeRegexp;
-import static com.sun.tools.xjc.addon.krasa.JaxbValidationsAnnotator.getIntegerFacet;
-import static com.sun.tools.xjc.addon.krasa.JaxbValidationsAnnotator.getMultipleStringFacets;
-import static com.sun.tools.xjc.addon.krasa.JaxbValidationsAnnotator.getStringFacet;
 import com.sun.tools.xjc.model.CAttributePropertyInfo;
 import com.sun.tools.xjc.model.CElementPropertyInfo;
 import com.sun.tools.xjc.model.CPropertyInfo;
@@ -16,7 +12,6 @@ import com.sun.tools.xjc.outline.ClassOutline;
 import com.sun.tools.xjc.outline.FieldOutline;
 import com.sun.tools.xjc.outline.Outline;
 import com.sun.xml.xsom.XSComponent;
-import com.sun.xml.xsom.XSFacet;
 import com.sun.xml.xsom.XSParticle;
 import com.sun.xml.xsom.XSRestrictionSimpleType;
 import com.sun.xml.xsom.XSSimpleType;
@@ -26,7 +21,6 @@ import com.sun.xml.xsom.impl.ElementDecl;
 import com.sun.xml.xsom.impl.SimpleTypeImpl;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -130,7 +124,6 @@ public class JaxbValidationsPlugin extends Plugin {
         XSParticle particle = (XSParticle) property.getSchemaComponent();
         ElementDecl element = (ElementDecl) particle.getTerm();
 
-        String className = classOutline.implClass.name();
         String propertyName = property.getName(false);
 
         int minOccurs = particle.getMinOccurs().intValue();
@@ -161,6 +154,8 @@ public class JaxbValidationsPlugin extends Plugin {
             annotator.addNotNullAnnotation(classOutline, field, message);
         }
 
+        Facet facet = new Facet(simpleType);
+
         if (property.isCollection()) {
             // add @Valid to all collections
             annotator.addValidAnnotation();
@@ -173,21 +168,10 @@ public class JaxbValidationsPlugin extends Plugin {
 
         if (simpleType != null) {
             if ((options.isGenerateStringListAnnotations() && property.isCollection()) ) {
-                Integer minLength = getIntegerFacet(simpleType, XSFacet.FACET_MINLENGTH);
-                Integer maxLength = getIntegerFacet(simpleType, XSFacet.FACET_MAXLENGTH);
-                annotator.addEachSizeAnnotation(minLength, maxLength);
-
-                Integer totalDigits = getIntegerFacet(simpleType, XSFacet.FACET_TOTALDIGITS);
-                Integer fractionDigits = getIntegerFacet(simpleType, XSFacet.FACET_FRACTIONDIGITS);
-                annotator.addEachDigitsAnnotation(totalDigits, fractionDigits);
-
-                String minInclusive = getStringFacet(simpleType, XSFacet.FACET_MININCLUSIVE);
-                String minExclusive = getStringFacet(simpleType, XSFacet.FACET_MINEXCLUSIVE);
-                annotator.addEachDecimalMinAnnotation(minInclusive, minExclusive);
-
-                String maxInclusive = getStringFacet(simpleType, XSFacet.FACET_MAXINCLUSIVE);
-                String maxExclusive = getStringFacet(simpleType, XSFacet.FACET_MAXEXCLUSIVE);
-                annotator.addEachDecimalMaxAnnotation(maxInclusive, maxExclusive);
+                annotator.addEachSizeAnnotation(facet.minLength(), facet.maxLength());
+                annotator.addEachDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
+                annotator.addEachDecimalMinAnnotation(facet.minInclusive(), facet.minExclusive());
+                annotator.addEachDecimalMaxAnnotation(facet.maxInclusive(), facet.maxExclusive());
             }
 
             processType(simpleType, field, annotator);
@@ -245,6 +229,8 @@ public class JaxbValidationsPlugin extends Plugin {
 
     void processType(XSSimpleType simpleType, JFieldVar field, JaxbValidationsAnnotator annotator) {
 
+        Facet facet = new Facet(simpleType);
+
         // add @Valid to complext types or custom elements with selected namespace
         String elemNs = simpleType.getTargetNamespace();
         if ((options.getTargetNamespace() != null && elemNs.startsWith(options.getTargetNamespace())) &&
@@ -254,14 +240,11 @@ public class JaxbValidationsPlugin extends Plugin {
 
         // TODO put this check in Field mng class
         if (field.type().name().equals("String") || field.type().isArray()) {
-            Integer maxLength = getIntegerFacet(simpleType, XSFacet.FACET_MAXLENGTH);
-            Integer minLength = getIntegerFacet(simpleType, XSFacet.FACET_MINLENGTH);
-            Integer length = getIntegerFacet(simpleType, XSFacet.FACET_LENGTH);
-            annotator.addSizeAnnotation(minLength, maxLength, length);
+            annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
 
             // TODO put this check in Field mng class
             if (options.isJpaAnnotations()) {
-                annotator.addJpaColumnAnnotation(maxLength);
+                annotator.addJpaColumnAnnotation(facet.maxLength());
             }
         }
 
@@ -270,90 +253,54 @@ public class JaxbValidationsPlugin extends Plugin {
 
             if (!annotator.isAnnotatedWith(
                     options.getAnnotationFactory().getDecimalMinClass())) {
-
-                BigDecimal minInclusive = annotator.getDecimalFacet(simpleType, XSFacet.FACET_MININCLUSIVE);
-                if (annotator.isValidValue(minInclusive)) {
-                    annotator.addDecimalMinAnnotation(minInclusive, false);
-                }
-
-                BigDecimal minExclusive = annotator.getDecimalFacet(simpleType, XSFacet.FACET_MINEXCLUSIVE);
-                if (annotator.isValidValue(minExclusive)) {
-                    annotator.addDecimalMinAnnotation(minExclusive, true);
-                }
+                annotator.addDecimalMinAnnotation(facet.minInclusive(), false);
+                annotator.addDecimalMinAnnotation(facet.minExclusive(), true);
             }
 
             if (!annotator.isAnnotatedWith(
                     options.getAnnotationFactory().getDecimalMaxClass())) {
-
-                BigDecimal maxInclusive = annotator.getDecimalFacet(simpleType, XSFacet.FACET_MAXINCLUSIVE);
-                if (annotator.isValidValue(maxInclusive)) {
-                    annotator.addDecimalMaxAnnotation(maxInclusive, false);
-                }
-
-                BigDecimal maxExclusive = annotator.getDecimalFacet(simpleType, XSFacet.FACET_MAXEXCLUSIVE);
-                if (annotator.isValidValue(maxExclusive)) {
-                    annotator.addDecimalMaxAnnotation(maxExclusive, true);
-                }
+                annotator.addDecimalMaxAnnotation(facet.maxInclusive(), false);
+                annotator.addDecimalMaxAnnotation(facet.maxExclusive(), true);
             }
 
-            Integer totalDigits = getIntegerFacet(simpleType, XSFacet.FACET_TOTALDIGITS);
-            Integer fractionDigits = getIntegerFacet(simpleType, XSFacet.FACET_FRACTIONDIGITS);
-            if (totalDigits != null) {
-                if (totalDigits == null) {
-                    totalDigits = 0;
-                }
-                if (fractionDigits == null) {
-                    fractionDigits = 0;
-                }
-                annotator.addDigitsAnnotation(totalDigits, fractionDigits);
-                if (options.isJpaAnnotations()) {
-                    annotator.addJpaColumnStringAnnotation(totalDigits, fractionDigits);
-                }
+            annotator.addDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
+            if (options.isJpaAnnotations()) {
+                annotator.addJpaColumnStringAnnotation(facet.totalDigits(), facet.fractionDigits());
             }
         }
 
         final String fieldName = field.type().name();
         if ("String".equals(fieldName)) {
 
-            final String pattern = getStringFacet(simpleType,XSFacet.FACET_PATTERN);
-            final List<String> patternList = getMultipleStringFacets(simpleType, XSFacet.FACET_PATTERN);
+            final List<String> patternList = facet.patternList();
+            patternList.add(facet.pattern());
 
-            final String enumeration = getStringFacet(simpleType,XSFacet.FACET_ENUMERATION);
-            final List<String> enumerationList = getMultipleStringFacets(simpleType, XSFacet.FACET_ENUMERATION);
+            final List<String> enumerationList = facet.enumerationList();
+            enumerationList.add(facet.enumeration());
 
             XSSimpleType baseType = simpleType;
             while ((baseType = baseType.getSimpleBaseType()) != null) {
                 if (baseType instanceof XSRestrictionSimpleType) {
-                    XSRestrictionSimpleType restriction = (XSRestrictionSimpleType) baseType;
+                    Facet baseFacet = new Facet((XSRestrictionSimpleType) baseType);
 
+                    patternList.add(baseFacet.pattern());
+                    patternList.addAll(baseFacet.patternList());
 
-                    final String basePattern = getStringFacet(restriction,XSFacet.FACET_PATTERN);
-                    patternList.add(basePattern);
-                    final List<String> basePatternList = getMultipleStringFacets(restriction, XSFacet.FACET_PATTERN);
-                    patternList.addAll(basePatternList);
-
-                    final String baseEnumeration = getStringFacet(restriction,XSFacet.FACET_ENUMERATION);
-                    enumerationList.add(baseEnumeration);
-                    final List<String> baseEnumerationList = getMultipleStringFacets(restriction, XSFacet.FACET_ENUMERATION);
-                    enumerationList.addAll(baseEnumerationList);
+                    enumerationList.add(baseFacet.enumeration());
+                    enumerationList.addAll(baseFacet.enumerationList());
                 }
             }
 
-            patternList.add(pattern);
-
             List<String> adjustedPatterns = patternList.stream()
                     .filter(p -> isValidRegexp(p))
-                    .map(p -> adjustRegexp(p, false))
+                    .map(p -> replaceRegexp(p))
                     .distinct()
                     .collect(Collectors.toList());
 
-            // enumuerators can be treated as patterns
-
-            enumerationList.add(enumeration);
-
+            // escaped enumuerations can be treated as patterns
             List<String> adjustedEnumerations = enumerationList.stream()
-                    .filter(p -> isValidRegexp(p))
-                    .map(p -> adjustRegexp(p, true))
+                    .filter(p -> p != null && !p.isEmpty())
+                    .map(p -> escapeRegexp(p))
                     .distinct()
                     .collect(Collectors.toList());
 
@@ -366,7 +313,7 @@ public class JaxbValidationsPlugin extends Plugin {
                     // do nothing at all
                     break;
                 case 1:
-                    annotator.annotateSinglePattern(patternSet.iterator().next());
+                    annotator.addSinglePatternAnnotation(patternSet.iterator().next());
                     break;
                 default:
                     if (options.isSinglePattern()) {
@@ -378,12 +325,11 @@ public class JaxbValidationsPlugin extends Plugin {
         }
     }
 
-    static String adjustRegexp(String pattern, boolean literal) {
-        String replaceRegexp = replaceRegexp(pattern);
-        if (literal) {
-            replaceRegexp = escapeRegexp(replaceRegexp);
-        }
-        return replaceRegexp;
+    /*
+	 * \Q indicates begin of quoted regex text, \E indicates end of quoted regex text
+     */
+    private static String escapeRegexp(String pattern) {
+        return java.util.regex.Pattern.quote(pattern);
     }
 
     // cxf-codegen fix

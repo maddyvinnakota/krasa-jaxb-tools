@@ -2,18 +2,13 @@ package com.sun.tools.xjc.addon.krasa;
 
 import com.sun.codemodel.JFieldVar;
 import com.sun.tools.xjc.outline.ClassOutline;
-import com.sun.xml.xsom.XSFacet;
-import com.sun.xml.xsom.XSSimpleType;
 import cz.jirutka.validator.collection.constraints.EachDecimalMax;
 import cz.jirutka.validator.collection.constraints.EachDecimalMin;
 import cz.jirutka.validator.collection.constraints.EachDigits;
 import cz.jirutka.validator.collection.constraints.EachSize;
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.persistence.Column;
 
 /**
@@ -32,6 +27,7 @@ public class JaxbValidationsAnnotator {
     private static final String LENGTH = "length";
     private static final String SCALE = "scale";
     private static final String PRECISION = "precision";
+    private static final String REGEXP = "regexp";
 
     private final JaxbValidationsAnnotation annotationFactory;
     private final AnnotationMng annotations;
@@ -58,7 +54,7 @@ public class JaxbValidationsAnnotator {
                 .param(FRACTION, fractionDigits, 0);
     }
 
-    void addEachDecimalMaxAnnotation(String maxInclusive, String maxExclusive) {
+    void addEachDecimalMaxAnnotation(BigDecimal maxInclusive, BigDecimal maxExclusive) {
         if (maxInclusive != null || maxExclusive != null) {
             annotations.annotate(EachDecimalMax.class)
                     .param(VALUE, maxInclusive)
@@ -67,7 +63,7 @@ public class JaxbValidationsAnnotator {
         }
     }
 
-    void addEachDecimalMinAnnotation(String minInclusive, String minExclusive) {
+    void addEachDecimalMinAnnotation(BigDecimal minInclusive, BigDecimal minExclusive) {
         if (minExclusive != null || minInclusive != null) {
             annotations.annotate(EachDecimalMin.class)
                     .param(VALUE, minInclusive)
@@ -106,7 +102,7 @@ public class JaxbValidationsAnnotator {
     }
 
     void addDecimalMinAnnotation(BigDecimal min, boolean exclusive) {
-        if (min != null) {
+        if (min != null && isValidValue(min)) {
             annotations.annotate(annotationFactory.getDecimalMinClass())
                     .param(VALUE, min.toString())
                     .param(INCLUSIVE, !exclusive);
@@ -115,7 +111,7 @@ public class JaxbValidationsAnnotator {
 
     //TODO minExclusive=0, fractionDigits=2 wrong annotation https://github.com/krasa/krasa-jaxb-tools/issues/38
     void addDecimalMaxAnnotation(BigDecimal max, boolean exclusive) {
-        if (max != null) {
+        if (max != null && isValidValue(max)) {
             annotations.annotate(annotationFactory.getDecimalMaxClass())
                     .param(VALUE, max.toString())
                     .param(INCLUSIVE, (!exclusive));
@@ -123,15 +119,17 @@ public class JaxbValidationsAnnotator {
     }
 
     void addDigitsAnnotation(Integer totalDigits, Integer fractionDigits) {
-        annotations.annotate(annotationFactory.getDigitsClass())
-                .param(INTEGER, totalDigits)
-                .param(FRACTION, fractionDigits);
+        if (totalDigits != null) {
+            annotations.annotate(annotationFactory.getDigitsClass())
+                    .param(INTEGER, getValueOrZeroOnNull(totalDigits))
+                    .param(FRACTION, getValueOrZeroOnNull(fractionDigits));
+        }
     }
 
     void addJpaColumnStringAnnotation(Integer totalDigits, Integer fractionDigits) {
         annotations.annotate(Column.class)
-                .param(PRECISION, totalDigits)
-                .param(SCALE, fractionDigits);
+                .param(PRECISION, getValueOrZeroOnNull(totalDigits))
+                .param(SCALE, getValueOrZeroOnNull(fractionDigits));
     }
 
     /** Adds all the patterns (A, B, C) as options in a single one (A|B|C). */
@@ -141,7 +139,7 @@ public class JaxbValidationsAnnotator {
             sb.append("(").append(p).append(")|");
         }
         String regexp = sb.substring(0, sb.length() - 1);
-        annotateSinglePattern(regexp);
+        addSinglePatternAnnotation(regexp);
     }
 
     /** Uses @Pattern.List to list all patterns. */
@@ -154,32 +152,29 @@ public class JaxbValidationsAnnotator {
             for (String p : patterns) {
                 if (p != null && !p.isEmpty()) {
                     multi.annotate(annotationFactory.getPatternClass())
-                            .param("regexp", p);
+                            .param(REGEXP, p);
                 }
             }
         }
     }
 
-    void annotateSinglePattern(String pattern) {
+    void addSinglePatternAnnotation(String pattern) {
         annotations.annotate(annotationFactory.getPatternClass())
-                .param("regexp", pattern);
+                .param(REGEXP, pattern);
     }
 
-    /*
-	 * \Q indicates begin of quoted regex text, \E indicates end of quoted regex text
-     */
-    static String escapeRegexp(String pattern) {
-        return java.util.regex.Pattern.quote(pattern);
-    }
-
-    static boolean isValidLength(Integer length) {
+    private static boolean isValidLength(Integer length) {
         return length != null && length != -1;
+    }
+
+    private static Integer getValueOrZeroOnNull(Integer value) {
+        return value == null ? Integer.valueOf(0) : value;
     }
 
     /**
      * cxf-codegen puts max and min as value when there is not anything defined in wsdl.
      */
-    static boolean isValidValue(BigDecimal value) {
+    private static boolean isValidValue(BigDecimal value) {
         if (value == null) {
             return false;
         }
@@ -187,44 +182,4 @@ public class JaxbValidationsAnnotator {
         return lvalue != Long.MIN_VALUE && lvalue != Long.MAX_VALUE;
     }
 
-    public static List<String> getMultipleStringFacets(final XSSimpleType simpleType, String param) {
-        final List<XSFacet> facets = simpleType.getFacets(param);
-        if (facets != null) {
-            return facets.stream()
-                    .map(facet -> facet.getValue().value)
-                    .filter(v -> v != null && !v.isEmpty())
-                    .collect(Collectors.toList());
-        }
-        return Collections.emptyList();
-    }
-
-    public static String getStringFacet(final XSSimpleType simpleType, String param) {
-        final XSFacet facet = simpleType.getFacet(param);
-        return facet == null ? null : facet.getValue().value;
-    }
-
-    public static Integer getIntegerFacet(final XSSimpleType simpleType, String param) {
-        final XSFacet facet = simpleType.getFacet(param);
-        if (facet != null) {
-            try {
-                return Integer.parseInt(facet.getValue().value);
-            } catch (NumberFormatException e) {
-                // ignore
-            }
-        }
-        return null;
-    }
-
-    public static BigDecimal getDecimalFacet(final XSSimpleType simpleType, String param) {
-        final XSFacet facet = simpleType.getFacet(param);
-        if (facet != null) {
-            final String str = facet.getValue().value;
-            try {
-                return new BigDecimal(str);
-            } catch (NumberFormatException e) {
-                // ignore
-            }
-        }
-        return null;
-    }
 }
