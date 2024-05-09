@@ -7,6 +7,7 @@ package com.sun.tools.xjc.addon.krasa;
 public class JaxbValidationsOptions {
     // sets default values in Builder not here
     private final String targetNamespace;
+    private final boolean singlePattern;
     private final boolean jsr349;
     private final boolean verbose;
     private final boolean notNullAnnotations;
@@ -21,6 +22,10 @@ public class JaxbValidationsOptions {
 
     public String getTargetNamespace() {
         return targetNamespace;
+    }
+
+    public boolean isSinglePattern() {
+        return singlePattern;
     }
 
     public boolean isJsr349() {
@@ -65,6 +70,7 @@ public class JaxbValidationsOptions {
 
     public static class Builder {
         private String targetNamespace = null;
+        private boolean singlePattern = true;
         private boolean jsr349 = false;
         private boolean verbose = false;
         private boolean notNullAnnotations = true;
@@ -81,6 +87,11 @@ public class JaxbValidationsOptions {
 
         public Builder targetNamespace(final String value) {
             this.targetNamespace = value;
+            return this;
+        }
+
+        public Builder singlePattern(final boolean value) {
+            this.singlePattern = value;
             return this;
         }
 
@@ -135,7 +146,7 @@ public class JaxbValidationsOptions {
         }
 
         public JaxbValidationsOptions build() {
-            return new com.sun.tools.xjc.addon.krasa.JaxbValidationsOptions(targetNamespace, jsr349,
+            return new com.sun.tools.xjc.addon.krasa.JaxbValidationsOptions(targetNamespace, singlePattern, jsr349,
                     verbose, notNullAnnotations, notNullCustomMessage, notNullPrefixFieldName,
                     notNullPrefixClassName, notNullCustomMessageText, jpaAnnotations,
                     generateStringListAnnotations, annotationFactory);
@@ -146,13 +157,15 @@ public class JaxbValidationsOptions {
         return new JaxbValidationsOptions.Builder();
     }
 
-    private JaxbValidationsOptions(final String targetNamespace, final boolean jsr349,
+    private JaxbValidationsOptions(final String targetNamespace,
+            final boolean singlePattern, final boolean jsr349,
             final boolean verbose, final boolean notNullAnnotations,
             final boolean notNullCustomMessage, final boolean notNullPrefixFieldName,
             final boolean notNullPrefixClassName, final String notNullCustomMessageText,
             final boolean jpaAnnotations, final boolean generateStringListAnnotations,
             final JaxbValidationsAnnotation annotationFactory) {
         this.targetNamespace = targetNamespace;
+        this.singlePattern = singlePattern;
         this.jsr349 = jsr349;
         this.verbose = verbose;
         this.notNullAnnotations = notNullAnnotations;

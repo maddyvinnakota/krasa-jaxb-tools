@@ -12,6 +12,7 @@ import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
 
@@ -141,8 +142,8 @@ public class JaxbValidationsAnnotator {
                 .param(SCALE, fractionDigits);
     }
 
-    /** The standard way is very buggy, so prefer this one. */
-    void addAlternativePatternListAnnotation(List<String> patterns) {
+    /** Adds all the patterns (A, B, C) as options in a single one (A|B|C). */
+    void addAlternativePatternListAnnotation(Set<String> patterns) {
         StringBuilder sb = new StringBuilder();
         for (String p : patterns) {
             sb.append("(").append(p).append(")|");
@@ -151,8 +152,8 @@ public class JaxbValidationsAnnotator {
         annotateSinglePattern(regexp);
     }
 
-    @Deprecated // very buggy implementation
-    void addPatternListAnnotation(List<String> patterns) {
+    /** Uses @Pattern.List to list all patterns. */
+    void addPatternListAnnotation(Set<String> patterns) {
         if (patterns != null && !patterns.isEmpty()) {
             AnnotationMng.Annotate.MultipleAnnotation multi = annotations
                     .annotate(annotationFactory.getPatternListClass())

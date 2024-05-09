@@ -46,14 +46,9 @@ public class AnnotationMng {
             }
         }
 
-        public Annotate(JAnnotationUse annotationUse, Class<? extends Annotation> annotation) {
+        private Annotate(JAnnotationUse annotationUse) {
             this.parent = null;
-            if (!annotationSet.contains(annotation)) {
-                this.annotationUse = annotationUse;
-                annotationSet.add(annotation);
-            } else {
-                this.annotationUse = null;
-            }
+            this.annotationUse = annotationUse;
         }
 
         public Annotate paramIf(boolean condition, String name, Integer value) {
@@ -119,7 +114,8 @@ public class AnnotationMng {
             }
 
             public Annotate annotate(Class<? extends Annotation> annotation) {
-                return new Annotate(array.annotate(annotation), annotation);
+                JAnnotationUse annotationUse = array.annotate(annotation);
+                return new Annotate(annotationUse);
             }
 
         }

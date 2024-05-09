@@ -30,6 +30,11 @@ enum JaxbValidationsArgument {
             },
             // getter:
             (p) ->  p.getTargetNamespace()),
+    singlePattern(
+            Boolean.class,
+            "uses a single javax validation @Pattern instead of @PatternList",
+            (p, v) -> setBoolean(v, r -> p.singlePattern(r)),
+            p -> p.isSinglePattern()),
     JSR_349(
             Boolean.class,
             "generates JSR349 compatible annotations for @DecimalMax and @DecimalMin parameters",

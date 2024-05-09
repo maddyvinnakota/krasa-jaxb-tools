@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.xml.sax.ErrorHandler;
@@ -358,15 +359,21 @@ public class JaxbValidationsPlugin extends Plugin {
 
             adjustedPatterns.addAll(adjustedEnumerations);
 
-            switch (adjustedPatterns.size()) {
+            LinkedHashSet<String> patternSet = new LinkedHashSet<>(adjustedPatterns);
+
+            switch (patternSet.size()) {
                 case 0:
                     // do nothing at all
                     break;
                 case 1:
-                    annotator.annotateSinglePattern(adjustedPatterns.get(0));
+                    annotator.annotateSinglePattern(patternSet.iterator().next());
                     break;
                 default:
-                    annotator.addAlternativePatternListAnnotation(adjustedPatterns);
+                    if (options.isSinglePattern()) {
+                        annotator.addAlternativePatternListAnnotation(patternSet);
+                    } else {
+                        annotator.addPatternListAnnotation(patternSet);
+                    }
             }
         }
     }
