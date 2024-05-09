@@ -20,11 +20,7 @@ public class MultiplePatternsWithBase extends AnnotationsMojoTestHelper {
                 .map(s -> s.trim())
                 .collect(Collectors.joining("\n"));
 
-        String expected = "@Pattern.List({\n" +
-            "@Pattern(regexp = \"[Y-Z]\"),\n" +
-            "@Pattern(regexp = \"([0-9])|([A-B])\")\n" +
-            "})";
-
+        String expected = "@Pattern(regexp = \"([0-9])|([A-B])|([Y-Z])\")";
         assertEquals(expected, text);
     }
 
