@@ -11,10 +11,10 @@ import java.util.stream.Collectors;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class TypeHelper {
+public class FieldHelper {
     private final JFieldVar field;
 
-    public TypeHelper(JFieldVar field) {
+    public FieldHelper(JFieldVar field) {
         this.field = field;
     }
 
@@ -24,6 +24,10 @@ public class TypeHelper {
 
     public boolean isArray() {
         return field.type().isArray();
+    }
+
+    public boolean isCustomType() {
+        return "JDirectClass".equals(field.type().getClass().getSimpleName());
     }
 
     private static final Set<String> NUMBERS = Arrays.stream(new Class<?>[]{

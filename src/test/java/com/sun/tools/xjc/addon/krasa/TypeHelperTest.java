@@ -28,31 +28,31 @@ public class TypeHelperTest {
 
     @Test
     public void testIsNumber() throws Exception {
-        assertFalse(TypeHelper.isNumber(String.class));
-        assertFalse(TypeHelper.isNumber(IllegalStateException.class));
-        assertTrue(TypeHelper.isNumber(BigDecimal.class));
+        assertFalse(FieldHelper.isNumber(String.class));
+        assertFalse(FieldHelper.isNumber(IllegalStateException.class));
+        assertTrue(FieldHelper.isNumber(BigDecimal.class));
     }
 
     @Test
     public void isFieldTypeNameNumber() {
-        assertTrue(TypeHelper.isFieldTypeNameNumber(BigDecimal.class.getSimpleName()));
-        assertTrue(TypeHelper.isFieldTypeNameNumber(Long.class.getSimpleName()));
-        assertTrue(TypeHelper.isFieldTypeNameNumber(Short.class.getSimpleName()));
-        assertTrue(TypeHelper.isFieldTypeNameNumber(Integer.class.getSimpleName()));
+        assertTrue(FieldHelper.isFieldTypeNameNumber(BigDecimal.class.getSimpleName()));
+        assertTrue(FieldHelper.isFieldTypeNameNumber(Long.class.getSimpleName()));
+        assertTrue(FieldHelper.isFieldTypeNameNumber(Short.class.getSimpleName()));
+        assertTrue(FieldHelper.isFieldTypeNameNumber(Integer.class.getSimpleName()));
 
-        assertFalse(TypeHelper.isFieldTypeNameNumber(String.class.getSimpleName()));
-        assertFalse(TypeHelper.isFieldTypeNameNumber(Boolean.class.getSimpleName()));
+        assertFalse(FieldHelper.isFieldTypeNameNumber(String.class.getSimpleName()));
+        assertFalse(FieldHelper.isFieldTypeNameNumber(Boolean.class.getSimpleName()));
     }
 
     @Test
     public void isFieldTypeFullNameNumber() {
-        assertTrue(TypeHelper.isFieldTypeFullNameNumber(BigDecimal.class.getCanonicalName()));
-        assertTrue(TypeHelper.isFieldTypeFullNameNumber(Long.class.getCanonicalName()));
-        assertTrue(TypeHelper.isFieldTypeFullNameNumber(Short.class.getCanonicalName()));
-        assertTrue(TypeHelper.isFieldTypeFullNameNumber(Integer.class.getCanonicalName()));
+        assertTrue(FieldHelper.isFieldTypeFullNameNumber(BigDecimal.class.getCanonicalName()));
+        assertTrue(FieldHelper.isFieldTypeFullNameNumber(Long.class.getCanonicalName()));
+        assertTrue(FieldHelper.isFieldTypeFullNameNumber(Short.class.getCanonicalName()));
+        assertTrue(FieldHelper.isFieldTypeFullNameNumber(Integer.class.getCanonicalName()));
 
-        assertFalse(TypeHelper.isFieldTypeFullNameNumber(String.class.getCanonicalName()));
-        assertFalse(TypeHelper.isFieldTypeFullNameNumber(Boolean.class.getCanonicalName()));
+        assertFalse(FieldHelper.isFieldTypeFullNameNumber(String.class.getCanonicalName()));
+        assertFalse(FieldHelper.isFieldTypeFullNameNumber(Boolean.class.getCanonicalName()));
     }
 
 }

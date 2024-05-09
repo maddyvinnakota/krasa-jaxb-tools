@@ -6,7 +6,6 @@ import cz.jirutka.validator.collection.constraints.EachDecimalMax;
 import cz.jirutka.validator.collection.constraints.EachDecimalMin;
 import cz.jirutka.validator.collection.constraints.EachDigits;
 import cz.jirutka.validator.collection.constraints.EachSize;
-import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 import java.util.Set;
 import javax.persistence.Column;
@@ -36,10 +35,6 @@ public class JaxbValidationsAnnotator {
             JaxbValidationsAnnotation annotationFactory) {
         this.annotationFactory = annotationFactory;
         this.annotations = new AnnotationMng(field);
-    }
-
-    boolean isAnnotatedWith(Class<? extends Annotation> annotation) {
-        return annotations.isAnnotatedWith(annotation);
     }
 
     void addEachSizeAnnotation(Integer minLength, Integer maxLength) {

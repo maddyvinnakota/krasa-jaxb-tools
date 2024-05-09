@@ -39,7 +39,7 @@ public class JaxbValidationsPlugin extends Plugin {
 
     static final String NAMESPACE = "http://jaxb.dev.java.net/plugin/code-injector";
 
-    JaxbValidationsOptions.Builder optionsBuilder = JaxbValidationsOptions.builder();
+    JaxbValidationsOptions.Builder pluginOptionsBuilder = JaxbValidationsOptions.builder();
     JaxbValidationsOptions options;
 
     @Override
@@ -50,7 +50,7 @@ public class JaxbValidationsPlugin extends Plugin {
     @Override
     public int parseArgument(Options opt, String[] args, int index)
             throws BadCommandLineException, IOException {
-        return JaxbValidationsArgument.parse(optionsBuilder, args[index]);
+        return JaxbValidationsArgument.parse(pluginOptionsBuilder, args[index]);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class JaxbValidationsPlugin extends Plugin {
     @Override
     public boolean run(Outline model, Options opt, ErrorHandler errorHandler) {
         if (opt.verbose) {
-            optionsBuilder.verbose(true);
+            pluginOptionsBuilder.verbose(true);
         }
 
         buildOptions();
@@ -109,10 +109,10 @@ public class JaxbValidationsPlugin extends Plugin {
         return true;
     }
 
-    // must be a separate method to help testing
+    // separate method to help testing
     void buildOptions() {
-        options = optionsBuilder.build();
-        optionsBuilder = null;
+        options = pluginOptionsBuilder.build();
+        pluginOptionsBuilder = null;
     }
 
     /**
@@ -230,46 +230,37 @@ public class JaxbValidationsPlugin extends Plugin {
     void processType(XSSimpleType simpleType, JFieldVar field, JaxbValidationsAnnotator annotator) {
 
         Facet facet = new Facet(simpleType);
-        TypeHelper typeHelper = new TypeHelper(field);
+        FieldHelper fieldHelper = new FieldHelper(field);
 
-        // add @Valid to complext types or custom elements with selected namespace
-        String elemNs = simpleType.getTargetNamespace();
-        if ((options.getTargetNamespace() != null && elemNs.startsWith(options.getTargetNamespace())) &&
-                ((simpleType.isComplexType() || Utils.isCustomType(field))) ) {
+        // add @Valid to complex types or custom elements with selected namespace
+        if ((facet.targetNamespaceEquals(options.getTargetNamespace())) &&
+                ((simpleType.isComplexType() || fieldHelper.isCustomType())) ) {
             annotator.addValidAnnotation();
         }
 
-        if (typeHelper.isString() || typeHelper.isArray()) {
+        if (fieldHelper.isString() || fieldHelper.isArray()) {
             annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
 
-            // TODO put this check in Field mng class
             if (options.isJpaAnnotations()) {
                 annotator.addJpaColumnAnnotation(facet.maxLength());
             }
         }
 
+        if (fieldHelper.isNumber()) {
+            annotator.addDecimalMinAnnotation(facet.minInclusive(), false);
+            annotator.addDecimalMinAnnotation(facet.minExclusive(), true);
 
-        if (typeHelper.isNumber()) {
-
-            if (!annotator.isAnnotatedWith(
-                    options.getAnnotationFactory().getDecimalMinClass())) {
-                annotator.addDecimalMinAnnotation(facet.minInclusive(), false);
-                annotator.addDecimalMinAnnotation(facet.minExclusive(), true);
-            }
-
-            if (!annotator.isAnnotatedWith(
-                    options.getAnnotationFactory().getDecimalMaxClass())) {
-                annotator.addDecimalMaxAnnotation(facet.maxInclusive(), false);
-                annotator.addDecimalMaxAnnotation(facet.maxExclusive(), true);
-            }
+            annotator.addDecimalMaxAnnotation(facet.maxInclusive(), false);
+            annotator.addDecimalMaxAnnotation(facet.maxExclusive(), true);
 
             annotator.addDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
+
             if (options.isJpaAnnotations()) {
                 annotator.addJpaColumnStringAnnotation(facet.totalDigits(), facet.fractionDigits());
             }
         }
 
-        if (typeHelper.isString()) {
+        if (fieldHelper.isString()) {
 
             final List<String> patternList = facet.patternList();
             patternList.add(facet.pattern());
@@ -332,11 +323,11 @@ public class JaxbValidationsPlugin extends Plugin {
     }
 
     // cxf-codegen fix
-    static boolean isValidRegexp(String pattern) {
+    private static boolean isValidRegexp(String pattern) {
         return pattern != null && !"\\c+".equals(pattern);
     }
 
-    static String replaceRegexp(String pattern) {
+    private static String replaceRegexp(String pattern) {
         return pattern
                 .replace("\\i", "[_:A-Za-z]")
                 .replace("\\c", "[-._:A-Za-z0-9]");

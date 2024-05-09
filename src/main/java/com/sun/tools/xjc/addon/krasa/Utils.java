@@ -1,6 +1,5 @@
 package com.sun.tools.xjc.addon.krasa;
 
-import com.sun.codemodel.JFieldVar;
 import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -165,12 +164,5 @@ class Utils {
 
     public static boolean isMax(String value) {
         return LONG_MAX.equals(value) || INTEGER_MAX.equals(value);
-    }
-
-    public static boolean isCustomType(JFieldVar var) {
-        if (var == null) {
-            return false;
-        }
-        return "JDirectClass".equals(var.type().getClass().getSimpleName());
     }
 }

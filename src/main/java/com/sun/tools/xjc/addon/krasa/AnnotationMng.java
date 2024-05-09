@@ -24,11 +24,6 @@ public class AnnotationMng {
         return new Annotate((Annotate) null, annotation);
     }
 
-    boolean isAnnotatedWith(Class<? extends Annotation> annotation) {
-        return annotationSet.contains(annotation);
-    }
-
-    // TODO add logging here
     public class Annotate {
         private final Annotate parent;
         private final JAnnotationUse annotationUse;
