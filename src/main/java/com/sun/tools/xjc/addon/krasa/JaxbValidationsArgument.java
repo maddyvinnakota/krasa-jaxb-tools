@@ -32,7 +32,7 @@ enum JaxbValidationsArgument {
             (p) ->  p.getTargetNamespace()),
     singlePattern(
             Boolean.class,
-            "uses a single javax validation @Pattern instead of @PatternList",
+            "uses a single javax validation @Pattern instead of @Pattern.List",
             (p, v) -> setBoolean(v, r -> p.singlePattern(r)),
             p -> p.isSinglePattern()),
     JSR_349(
