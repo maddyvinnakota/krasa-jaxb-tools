@@ -34,9 +34,9 @@ import org.jvnet.jaxb2.maven2.test.RunXJC2Mojo;
  */
 public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
 
-    private final JaxbValidationsAnnotation validationAnnotation;
+    private final ValidationsAnnotation validationAnnotation;
 
-    public RunXJC2MojoTestHelper(JaxbValidationsAnnotation validation) {
+    public RunXJC2MojoTestHelper(ValidationsAnnotation validation) {
         this.validationAnnotation = validation;
     }
 
@@ -47,7 +47,7 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
         return "";
     }
 
-    public JaxbValidationsAnnotation getAnnotation() {
+    public ValidationsAnnotation getAnnotation() {
         return this.validationAnnotation;
     }
 

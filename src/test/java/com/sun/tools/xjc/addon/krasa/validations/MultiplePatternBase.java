@@ -2,7 +2,7 @@ package com.sun.tools.xjc.addon.krasa.validations;
 
 public class MultiplePatternBase extends AnnotationsMojoTestHelper {
 
-    public MultiplePatternBase(JaxbValidationsAnnotation annotation) {
+    public MultiplePatternBase(ValidationsAnnotation annotation) {
         super("multiplePatterns", annotation);
     }
 

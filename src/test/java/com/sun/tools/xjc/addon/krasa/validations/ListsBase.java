@@ -10,7 +10,7 @@ package com.sun.tools.xjc.addon.krasa.validations;
  */
 public class ListsBase extends AnnotationsMojoTestHelper {
 
-    public ListsBase(JaxbValidationsAnnotation annotation) {
+    public ListsBase(ValidationsAnnotation annotation) {
         super("lists", annotation);
     }
 

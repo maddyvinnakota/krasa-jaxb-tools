@@ -14,7 +14,7 @@ import javax.persistence.Column;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-class Annotator {
+class FieldAnnotator {
 
     private static final String FRACTION = "fraction";
     private static final String INTEGER = "integer";
@@ -28,26 +28,24 @@ class Annotator {
     private static final String PRECISION = "precision";
     private static final String REGEXP = "regexp";
 
-    private final JaxbValidationsAnnotation annotationFactory;
-    private final AnnotationMng annotations;
+    private final ValidationsAnnotation annotationFactory;
+    private final XjcAnnotator xjcAnnotator;
 
-    public Annotator(
-            ValidationsLogger log,
-            JFieldVar field,
-            JaxbValidationsAnnotation annotationFactory) {
+    public FieldAnnotator(
+            JFieldVar field, ValidationsAnnotation annotationFactory, ValidationsLogger log) {
         this.annotationFactory = annotationFactory;
-        this.annotations = new AnnotationMng(log, field);
+        this.xjcAnnotator = new XjcAnnotator(field, log);
     }
 
     void addEachSizeAnnotation(Integer minLength, Integer maxLength) {
-        annotations.annotate(EachSize.class)
+        xjcAnnotator.annotate(EachSize.class)
                 .param(MIN, minLength)
                 .param(MAX, maxLength)
                 .log();
     }
 
     void addEachDigitsAnnotation(Integer totalDigits, Integer fractionDigits) {
-        annotations.annotate(EachDigits.class)
+        xjcAnnotator.annotate(EachDigits.class)
                 .param(INTEGER, totalDigits, 0)
                 .param(FRACTION, fractionDigits, 0)
                 .log();
@@ -55,7 +53,7 @@ class Annotator {
 
     void addEachDecimalMaxAnnotation(BigDecimal maxInclusive, BigDecimal maxExclusive) {
         if (maxInclusive != null || maxExclusive != null) {
-            annotations.annotate(EachDecimalMax.class)
+            xjcAnnotator.annotate(EachDecimalMax.class)
                     .param(VALUE, maxInclusive)
                     .param(VALUE, maxExclusive)
                     .param(INCLUSIVE, maxInclusive != null)
@@ -65,7 +63,7 @@ class Annotator {
 
     void addEachDecimalMinAnnotation(BigDecimal minInclusive, BigDecimal minExclusive) {
         if (minExclusive != null || minInclusive != null) {
-            annotations.annotate(EachDecimalMin.class)
+            xjcAnnotator.annotate(EachDecimalMin.class)
                     .param(VALUE, minInclusive)
                     .param(VALUE, minExclusive)
                     .param(INCLUSIVE, minInclusive != null)
@@ -74,24 +72,24 @@ class Annotator {
     }
 
     void addNotNullAnnotation(ClassOutline classOutline, JFieldVar field, String message) {
-        annotations.annotate(annotationFactory.getNotNullClass())
+        xjcAnnotator.annotate(annotationFactory.getNotNullClass())
                 .param(MESSAGE, message)
                 .log();
     }
 
     void addValidAnnotation() {
-        annotations.annotate(annotationFactory.getValidClass()).log();
+        xjcAnnotator.annotate(annotationFactory.getValidClass()).log();
     }
 
     void addSizeAnnotation(Integer minLength, Integer maxLength, Integer length) {
         if (isValidLength(minLength) || isValidLength(maxLength)) {
-            annotations.annotate(annotationFactory.getSizeClass())
+            xjcAnnotator.annotate(annotationFactory.getSizeClass())
                     .paramIf(isValidLength(minLength), MIN, minLength)
                     .paramIf(isValidLength(maxLength), MAX, maxLength)
                     .log();
 
         } else if (isValidLength(length)) {
-            annotations.annotate(annotationFactory.getSizeClass())
+            xjcAnnotator.annotate(annotationFactory.getSizeClass())
                     .param(MIN, length)
                     .param(MAX, length)
                     .log();
@@ -100,7 +98,7 @@ class Annotator {
 
     void addJpaColumnAnnotation(Integer maxLength) {
         if (maxLength != null) {
-            annotations.annotate(Column.class)
+            xjcAnnotator.annotate(Column.class)
                     .param(LENGTH, maxLength)
                     .log();
         }
@@ -108,7 +106,7 @@ class Annotator {
 
     void addDecimalMinAnnotation(BigDecimal min, boolean exclusive) {
         if (min != null && isValidValue(min)) {
-            annotations.annotate(annotationFactory.getDecimalMinClass())
+            xjcAnnotator.annotate(annotationFactory.getDecimalMinClass())
                     .param(VALUE, min.toString())
                     .param(INCLUSIVE, !exclusive)
                     .log();
@@ -118,7 +116,7 @@ class Annotator {
     //TODO minExclusive=0, fractionDigits=2 wrong annotation https://github.com/krasa/krasa-jaxb-tools/issues/38
     void addDecimalMaxAnnotation(BigDecimal max, boolean exclusive) {
         if (max != null && isValidValue(max)) {
-            annotations.annotate(annotationFactory.getDecimalMaxClass())
+            xjcAnnotator.annotate(annotationFactory.getDecimalMaxClass())
                     .param(VALUE, max.toString())
                     .param(INCLUSIVE, (!exclusive))
                     .log();
@@ -127,7 +125,7 @@ class Annotator {
 
     void addDigitsAnnotation(Integer totalDigits, Integer fractionDigits) {
         if (totalDigits != null) {
-            annotations.annotate(annotationFactory.getDigitsClass())
+            xjcAnnotator.annotate(annotationFactory.getDigitsClass())
                     .param(INTEGER, getValueOrZeroOnNull(totalDigits))
                     .param(FRACTION, getValueOrZeroOnNull(fractionDigits))
                     .log();
@@ -135,7 +133,7 @@ class Annotator {
     }
 
     void addJpaColumnStringAnnotation(Integer totalDigits, Integer fractionDigits) {
-        annotations.annotate(Column.class)
+        xjcAnnotator.annotate(Column.class)
                 .param(PRECISION, getValueOrZeroOnNull(totalDigits))
                 .param(SCALE, getValueOrZeroOnNull(fractionDigits))
                 .log();
@@ -154,7 +152,7 @@ class Annotator {
     /** Uses @Pattern.List to list all patterns. */
     void addPatternListAnnotation(Set<String> patterns) {
         if (patterns != null && !patterns.isEmpty()) {
-            AnnotationMng.Annotate.MultipleAnnotation multi = annotations
+            XjcAnnotator.Annotate.MultipleAnnotation multi = xjcAnnotator
                     .annotate(annotationFactory.getPatternListClass())
                     .multiple(VALUE);
 
@@ -170,7 +168,7 @@ class Annotator {
     }
 
     void addSinglePatternAnnotation(String pattern) {
-        annotations.annotate(annotationFactory.getPatternClass())
+        xjcAnnotator.annotate(annotationFactory.getPatternClass())
                 .param(REGEXP, pattern)
                 .log();
     }

@@ -2,7 +2,7 @@ package com.sun.tools.xjc.addon.krasa.validations;
 
 public abstract class ComplexBase extends RunXJC2MojoTestHelper {
 
-    public ComplexBase(JaxbValidationsAnnotation validation) {
+    public ComplexBase(ValidationsAnnotation validation) {
         super(validation);
     }
 

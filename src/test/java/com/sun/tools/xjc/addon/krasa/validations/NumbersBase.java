@@ -9,7 +9,7 @@ import java.math.BigInteger;
  */
 public class NumbersBase extends AnnotationsMojoTestHelper {
 
-    public NumbersBase(JaxbValidationsAnnotation annotation) {
+    public NumbersBase(ValidationsAnnotation annotation) {
         super("numbers", annotation);
     }
 

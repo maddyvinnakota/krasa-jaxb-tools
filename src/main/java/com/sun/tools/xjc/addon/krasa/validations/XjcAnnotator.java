@@ -14,12 +14,12 @@ import java.util.Set;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class AnnotationMng {
+public class XjcAnnotator {
     private final JFieldVar field;
     private final ValidationsLogger logger;
     private final Set<Class<? extends Annotation>> annotationSet = new HashSet<>();
 
-    public AnnotationMng(ValidationsLogger logger, JFieldVar field) {
+    public XjcAnnotator(JFieldVar field, ValidationsLogger logger) {
         this.field = field;
         this.logger = logger;
     }

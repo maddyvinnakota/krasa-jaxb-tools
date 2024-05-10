@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ClassNameBase extends AnnotationsMojoTestHelper {
 
-    public ClassNameBase(JaxbValidationsAnnotation validation) {
+    public ClassNameBase(ValidationsAnnotation validation) {
         super("notNull", validation);
     }
 

@@ -7,9 +7,9 @@ package com.sun.tools.xjc.addon.krasa.validations;
 public class AnnotationsMojoTestHelper extends RunXJC2MojoTestHelper {
 
     private final String folderName;
-    private final JaxbValidationsAnnotation annotation;
+    private final ValidationsAnnotation annotation;
 
-    public AnnotationsMojoTestHelper(String folderName, JaxbValidationsAnnotation annotation) {
+    public AnnotationsMojoTestHelper(String folderName, ValidationsAnnotation annotation) {
         super(annotation);
         this.folderName = folderName;
         this.annotation = annotation;
@@ -26,7 +26,7 @@ public class AnnotationsMojoTestHelper extends RunXJC2MojoTestHelper {
     }
 
     @Override
-    public JaxbValidationsAnnotation getAnnotation() {
+    public ValidationsAnnotation getAnnotation() {
         return annotation;
     }
 

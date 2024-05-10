@@ -46,7 +46,7 @@ public class ValidationsArgumentTest {
         ValidationsOptions options = plugin.buildOptions();
 
         assertEquals(NAMESPACE, options.getTargetNamespace());
-        assertEquals(JaxbValidationsAnnotation.JAVAX, options.getAnnotationFactory());
+        assertEquals(ValidationsAnnotation.JAVAX, options.getAnnotationFactory());
         assertTrue(options.isJsr349());
         assertTrue(options.isNotNullAnnotations());
         assertTrue(options.isGenerateStringListAnnotations());

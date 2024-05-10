@@ -1,5 +1,9 @@
 package com.sun.tools.xjc.addon.krasa.validations;
 
+import com.sun.tools.xjc.BadCommandLineException;
+import com.sun.tools.xjc.addon.krasa.JaxbValidationsPlugin;
+import java.util.Objects;
+
 /**
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
@@ -17,8 +21,33 @@ public class ValidationsOptions {
     private final String notNullCustomMessageText;
     private final boolean jpaAnnotations;
     private final boolean generateStringListAnnotations;
-    private final JaxbValidationsAnnotation annotationFactory;
+    private final ValidationsAnnotation annotationFactory;
 
+    public void logActualOptions() {
+        ValidationsLogger.log(getActualOptionValuesAsString());
+    }
+
+    /** @return a multi line string containing the value for each option. */
+    private String getActualOptionValuesAsString() {
+        String linePrefix = "    ";
+        StringBuilder buf = new StringBuilder();
+        buf
+                .append(linePrefix)
+                .append(JaxbValidationsPlugin.PLUGIN_NAME)
+                .append(" options:")
+                .append(System.lineSeparator());
+
+        for (ValidationsArgument a : ValidationsArgument.values()) {
+            buf
+                    .append(linePrefix)
+                    .append(a.name())
+                    .append(": ")
+                    .append(Objects.toString(a.getValue(this)))
+                    .append(System.lineSeparator());
+        }
+
+        return buf.toString();
+    }
 
     public String getTargetNamespace() {
         return targetNamespace;
@@ -64,7 +93,7 @@ public class ValidationsOptions {
         return generateStringListAnnotations;
     }
 
-    public JaxbValidationsAnnotation getAnnotationFactory() {
+    public ValidationsAnnotation getAnnotationFactory() {
         return annotationFactory;
     }
 
@@ -80,9 +109,46 @@ public class ValidationsOptions {
         private String notNullCustomMessageText = null;
         private boolean jpaAnnotations = false;
         private boolean generateStringListAnnotations;
-        private JaxbValidationsAnnotation annotationFactory = JaxbValidationsAnnotation.JAVAX;
+        private ValidationsAnnotation annotationFactory = ValidationsAnnotation.JAVAX;
 
         private Builder() {
+        }
+
+        /** @return 1 if the argument is referring to this plugin, 0 otherwise. */
+        public int parseArgument(String option)
+                throws BadCommandLineException {
+            if (option.startsWith(JaxbValidationsPlugin.PLUGIN_OPTION_NAME)) {
+                int idx = option.indexOf("=");
+                if (idx != -1) {
+                    final String name = option.substring(
+                            JaxbValidationsPlugin.PLUGIN_OPTION_NAME_LENGHT, idx);
+                    final String value = option.substring(idx + 1);
+                    ValidationsArgument argument = ValidationsArgument.parse(name);
+                    setValue(argument, value);
+                } else if (option.length() > JaxbValidationsPlugin.PLUGIN_OPTION_NAME_LENGHT) {
+                    final String name = option.substring(
+                            JaxbValidationsPlugin.PLUGIN_OPTION_NAME_LENGHT);
+                    ValidationsArgument argument = ValidationsArgument.parse(name);
+                    setValue(argument, "true");
+                }
+                return 1;
+            }
+            return 0;
+        }
+
+        private void setValue(ValidationsArgument argument, final String value)
+                throws BadCommandLineException {
+            try {
+                String error = argument.setValue(this, value);
+                if (error != null) {
+                    throw new BadCommandLineException(
+                            "option " + argument.name() + ": " +
+                            (error.length() > 0 ? error + ", " : "") +
+                            "cannot accept '" + value + "' as a " + argument.getTypeName());
+                }
+            } catch (NullPointerException ex) {
+                throw new BadCommandLineException(argument.errorMessage(value));
+            }
         }
 
         public Builder targetNamespace(final String value) {
@@ -140,7 +206,7 @@ public class ValidationsOptions {
             return this;
         }
 
-        public Builder annotationFactory(final JaxbValidationsAnnotation value) {
+        public Builder annotationFactory(final ValidationsAnnotation value) {
             this.annotationFactory = value;
             return this;
         }
@@ -163,7 +229,7 @@ public class ValidationsOptions {
             final boolean notNullCustomMessage, final boolean notNullPrefixFieldName,
             final boolean notNullPrefixClassName, final String notNullCustomMessageText,
             final boolean jpaAnnotations, final boolean generateStringListAnnotations,
-            final JaxbValidationsAnnotation annotationFactory) {
+            final ValidationsAnnotation annotationFactory) {
         this.targetNamespace = targetNamespace;
         this.singlePattern = singlePattern;
         this.jsr349 = jsr349;

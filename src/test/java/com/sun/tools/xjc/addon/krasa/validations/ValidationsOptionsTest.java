@@ -35,7 +35,7 @@ public class ValidationsOptionsTest {
         assertFalse(options.isVerbose());
         assertFalse(options.isJpaAnnotations());
         assertFalse(options.isGenerateStringListAnnotations());
-        assertEquals(JaxbValidationsAnnotation.JAVAX, options.getAnnotationFactory());
+        assertEquals(ValidationsAnnotation.JAVAX, options.getAnnotationFactory());
     }
 
     @Test
@@ -140,19 +140,19 @@ public class ValidationsOptionsTest {
     @Test
     public void shouldSetAnnotationFactoryTrue() {
         ValidationsOptions options = ValidationsOptions.builder()
-                .annotationFactory(JaxbValidationsAnnotation.JAVAX)
+                .annotationFactory(ValidationsAnnotation.JAVAX)
                 .build();
 
-        assertEquals(JaxbValidationsAnnotation.JAVAX, options.getAnnotationFactory());
+        assertEquals(ValidationsAnnotation.JAVAX, options.getAnnotationFactory());
     }
 
     @Test
     public void shouldSetAnnotationFactoryFalse() {
         ValidationsOptions options = ValidationsOptions.builder()
-                .annotationFactory(JaxbValidationsAnnotation.JAKARTA)
+                .annotationFactory(ValidationsAnnotation.JAKARTA)
                 .build();
 
-        assertEquals(JaxbValidationsAnnotation.JAKARTA, options.getAnnotationFactory());
+        assertEquals(ValidationsAnnotation.JAKARTA, options.getAnnotationFactory());
     }
 
 }

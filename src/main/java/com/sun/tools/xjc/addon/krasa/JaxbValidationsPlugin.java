@@ -3,10 +3,9 @@ package com.sun.tools.xjc.addon.krasa;
 import com.sun.tools.xjc.BadCommandLineException;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
-import com.sun.tools.xjc.addon.krasa.validations.ValidationsArgument;
-import com.sun.tools.xjc.addon.krasa.validations.ValidationsLogger;
-import com.sun.tools.xjc.addon.krasa.validations.ValidationsOptions;
 import com.sun.tools.xjc.addon.krasa.validations.Processor;
+import com.sun.tools.xjc.addon.krasa.validations.ValidationsArgument;
+import com.sun.tools.xjc.addon.krasa.validations.ValidationsOptions;
 import com.sun.tools.xjc.outline.Outline;
 import java.io.IOException;
 import java.util.Collections;
@@ -39,7 +38,7 @@ public class JaxbValidationsPlugin extends Plugin {
     @Override
     public int parseArgument(Options opt, String[] args, int index)
             throws BadCommandLineException, IOException {
-        return ValidationsArgument.parse(pluginOptionsBuilder, args[index]);
+        return pluginOptionsBuilder.parseArgument(args[index]);
     }
 
     @Override
@@ -62,9 +61,9 @@ public class JaxbValidationsPlugin extends Plugin {
         pluginOptionsBuilder.verbose(opt.verbose);
 
         ValidationsOptions options = buildOptions();
-        
+
         if (opt.verbose) {
-            ValidationsLogger.log(ValidationsArgument.getActualOptionValuesAsString(options, "    "));
+            options.logActualOptions();
         }
 
         new Processor(options).process(model);

@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class ValidationsLogger {
+class ValidationsLogger {
     private final boolean verbose;
     private final String className;
     private final String propertyName;

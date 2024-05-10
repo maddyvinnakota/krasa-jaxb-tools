@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
  */
 public class EnumerationBase extends AnnotationsMojoTestHelper {
 
-    public EnumerationBase(JaxbValidationsAnnotation annotation) {
+    public EnumerationBase(ValidationsAnnotation annotation) {
         super("enumeration", annotation);
     }
 

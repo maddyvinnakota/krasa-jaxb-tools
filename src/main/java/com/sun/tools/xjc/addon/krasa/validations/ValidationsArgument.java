@@ -102,14 +102,14 @@ public enum ValidationsArgument {
             (p) -> p.isJpaAnnotations()),
     validationAnnotations(
             String.class,
-            "selects which type of annotation to use: " + JaxbValidationsAnnotation.getValuesAsString(),
+            "selects which type of annotation to use: " + ValidationsAnnotation.getValuesAsString(),
             (p,v) -> {
-                JaxbValidationsAnnotation va;
+                ValidationsAnnotation va;
                 try {
-                    va = JaxbValidationsAnnotation.valueOf(v.toUpperCase());
+                    va = ValidationsAnnotation.valueOf(v.toUpperCase());
                 } catch (IllegalArgumentException | NullPointerException ex) {
                     return "passed value is not allowed, use one of: " +
-                            JaxbValidationsAnnotation.getValuesAsString();
+                            ValidationsAnnotation.getValuesAsString();
                 }
                 p.annotationFactory(va);
                 return null;
@@ -149,6 +149,18 @@ public enum ValidationsArgument {
         this.getter = getter;
     }
 
+    String setValue(ValidationsOptions.Builder optionBuilder, String value) {
+        return setter.apply(optionBuilder, value);
+    }
+
+    Object getValue(ValidationsOptions options) {
+        return getter.apply(options);
+    }
+
+    String getTypeName() {
+        return type.getSimpleName();
+    }
+
     String withValue(String value) {
         return JaxbValidationsPlugin.PLUGIN_OPTION_NAME + ":" + name() + "=" + value;
     }
@@ -159,42 +171,6 @@ public enum ValidationsArgument {
 
     String fullName() {
         return JaxbValidationsPlugin.PLUGIN_NAME + ":" + name();
-    }
-
-    /** @return 1 if the argument is referring to this plugin, 0 otherwise. */
-    public static int parse(ValidationsOptions.Builder options, String option)
-            throws BadCommandLineException {
-        if (option.startsWith(JaxbValidationsPlugin.PLUGIN_OPTION_NAME)) {
-            int idx = option.indexOf("=");
-            if (idx != -1) {
-                final String name = option.substring(JaxbValidationsPlugin.PLUGIN_OPTION_NAME_LENGHT, idx);
-                final String value = option.substring(idx + 1);
-                ValidationsArgument argument = parseJaxbValidationsArgument(name);
-                setValueToPlugin(options, argument, value);
-            } else if (option.length() > JaxbValidationsPlugin.PLUGIN_OPTION_NAME_LENGHT) {
-                final String name = option.substring(JaxbValidationsPlugin.PLUGIN_OPTION_NAME_LENGHT);
-                ValidationsArgument argument = parseJaxbValidationsArgument(name);
-                setValueToPlugin(options, argument, "true");
-            }
-            return 1;
-        }
-        return 0;
-    }
-
-    static void setValueToPlugin(
-            ValidationsOptions.Builder options, ValidationsArgument argument, final String value)
-            throws BadCommandLineException {
-        try {
-            String error = argument.setter.apply(options, value);
-            if (error != null) {
-                throw new BadCommandLineException(
-                        "option " + argument.name() + ": " +
-                        (error.length() > 0 ? error + ", " : "") +
-                        "cannot accept '" + value + "' as a " + argument.type.getSimpleName());
-            }
-        } catch (NullPointerException ex) {
-            throw new BadCommandLineException(argument.errorMessage(value));
-        }
     }
 
     public static String getUsageHelp() {
@@ -210,8 +186,7 @@ public enum ValidationsArgument {
                 .toString();
     }
 
-    static ValidationsArgument parseJaxbValidationsArgument(final String name) throws
-            BadCommandLineException {
+    static ValidationsArgument parse(final String name) throws BadCommandLineException {
         ValidationsArgument argument = ValidationsArgument.valueOf(name);
         if (argument == null) {
             throw new BadCommandLineException(JaxbValidationsPlugin.PLUGIN_NAME +
@@ -241,29 +216,6 @@ public enum ValidationsArgument {
     public String errorMessage(String wrongValue) {
         return fullName() + " option expected a value of type " + type.getSimpleName() +
                 " but got '" + Objects.toString(wrongValue) + "'";
-    }
-
-    /** @return a multi line string containing the value for each option. */
-    public static String getActualOptionValuesAsString(
-            ValidationsOptions options,
-            String linePrefix) {
-        StringBuilder buf = new StringBuilder();
-        buf
-                .append(linePrefix)
-                .append(JaxbValidationsPlugin.PLUGIN_NAME)
-                .append(" options:")
-                .append(System.lineSeparator());
-
-        for (ValidationsArgument a : values()) {
-            buf
-                    .append(linePrefix)
-                    .append(a.name())
-                    .append(": ")
-                    .append(Objects.toString(a.getter.apply(options)))
-                    .append(System.lineSeparator());
-        }
-
-        return buf.toString();
     }
 
     static String setBoolean(String value, Consumer<Boolean> setter) {

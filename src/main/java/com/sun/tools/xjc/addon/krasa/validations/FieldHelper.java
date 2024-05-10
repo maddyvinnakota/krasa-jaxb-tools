@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class FieldHelper {
+class FieldHelper {
     private final JFieldVar field;
 
     public FieldHelper(JFieldVar field) {

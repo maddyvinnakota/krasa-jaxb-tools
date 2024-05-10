@@ -3,7 +3,7 @@ package com.sun.tools.xjc.addon.krasa.validations;
 public class MultiplePatternsWithBaseJakartaTest extends MultiplePatternsWithBase {
 
     public MultiplePatternsWithBaseJakartaTest() {
-        super(JaxbValidationsAnnotation.JAKARTA);
+        super(ValidationsAnnotation.JAKARTA);
     }
 
 }

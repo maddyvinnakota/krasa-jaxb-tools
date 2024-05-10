@@ -7,7 +7,7 @@ package com.sun.tools.xjc.addon.krasa.validations;
 public class ComplexJavaxTest extends ComplexBase {
 
     public ComplexJavaxTest() {
-        super(JaxbValidationsAnnotation.JAVAX);
+        super(ValidationsAnnotation.JAVAX);
     }
 
 }

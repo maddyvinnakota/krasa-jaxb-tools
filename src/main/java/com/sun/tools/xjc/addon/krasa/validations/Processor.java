@@ -92,11 +92,10 @@ public class Processor {
             JFieldVar field = classOutline.implClass.fields().get(propertyName);
             XSType elementType = element.getType();
 
-            Annotator annotator =
-                    new Annotator(
-                            logger,
-                            field,
-                            options.getAnnotationFactory());
+            FieldAnnotator annotator =
+                    new FieldAnnotator(
+                                                        field,
+                            options.getAnnotationFactory(), logger);
 
             if (options.isNotNullAnnotations() && !nillable &&
                     (minOccurs > 0 || required || property.isCollectionRequired()) ) {
@@ -149,8 +148,8 @@ public class Processor {
             JFieldVar field = classOutline.implClass.fields().get(propertyName);
 
             if (field != null) {
-                Annotator annotator =
-                        new Annotator(logger, field, options.getAnnotationFactory());
+                FieldAnnotator annotator =
+                        new FieldAnnotator(field, options.getAnnotationFactory(), logger);
 
                 processType(simpleType, field, annotator);
             }
@@ -165,8 +164,8 @@ public class Processor {
             JFieldVar var = classOutline.implClass.fields().get(propertyName);
 
             if (var != null) {
-                Annotator annotator =
-                        new Annotator(logger, var, options.getAnnotationFactory());
+                FieldAnnotator annotator =
+                        new FieldAnnotator(var, options.getAnnotationFactory(), logger);
 
                 if (particle.isRequired()) {
                     String message = notNullMessage(classOutline, var);
@@ -178,7 +177,7 @@ public class Processor {
         }
 
 
-        private void processType(XSSimpleType simpleType, JFieldVar field, Annotator annotator) {
+        private void processType(XSSimpleType simpleType, JFieldVar field, FieldAnnotator annotator) {
 
             Facet facet = new Facet(simpleType);
             FieldHelper fieldHelper = new FieldHelper(field);

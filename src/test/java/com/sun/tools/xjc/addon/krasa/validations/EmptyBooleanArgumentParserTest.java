@@ -10,7 +10,7 @@ public class EmptyBooleanArgumentParserTest extends AnnotationsMojoTestHelper {
 
     // using an existing parsed XSD
     public EmptyBooleanArgumentParserTest() {
-        super("array", JaxbValidationsAnnotation.JAVAX);
+        super("array", ValidationsAnnotation.JAVAX);
     }
 
     @Override
