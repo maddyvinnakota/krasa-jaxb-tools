@@ -183,7 +183,7 @@ enum JaxbValidationsArgument {
         return 0;
     }
 
-    private static void setValueToPlugin(
+    static void setValueToPlugin(
             JaxbValidationsOptions.Builder options, JaxbValidationsArgument argument, final String value)
             throws BadCommandLineException {
         try {
@@ -199,7 +199,7 @@ enum JaxbValidationsArgument {
         }
     }
 
-    private static JaxbValidationsArgument parseJaxbValidationsArgument(final String name) throws
+    static JaxbValidationsArgument parseJaxbValidationsArgument(final String name) throws
             BadCommandLineException {
         JaxbValidationsArgument argument = JaxbValidationsArgument.valueOf(name);
         if (argument == null) {
@@ -232,7 +232,7 @@ enum JaxbValidationsArgument {
     }
 
     /** @return a multi line string containing the value for each option. */
-    public static String actualOptionValuesString(
+    public static String getActualOptionValuesAsString(
             JaxbValidationsOptions options,
             String linePrefix) {
         StringBuilder buf = new StringBuilder();

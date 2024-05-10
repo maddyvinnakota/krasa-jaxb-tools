@@ -175,18 +175,18 @@ public class JaxbValidationsAnnotator {
                 .log();
     }
 
-    private static boolean isValidLength(Integer length) {
+    static boolean isValidLength(Integer length) {
         return length != null && length != -1;
     }
 
-    private static Integer getValueOrZeroOnNull(Integer value) {
+    static Integer getValueOrZeroOnNull(Integer value) {
         return value == null ? Integer.valueOf(0) : value;
     }
 
     /**
      * cxf-codegen puts max and min as value when there is not anything defined in wsdl.
      */
-    private static boolean isValidValue(BigDecimal value) {
+    static boolean isValidValue(BigDecimal value) {
         if (value == null) {
             return false;
         }
