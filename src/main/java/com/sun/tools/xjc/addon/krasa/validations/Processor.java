@@ -174,11 +174,11 @@ public class Processor {
             }
 
             if (fieldHelper.isNumber()) {
-                annotator.addDecimalMinAnnotation(facet.minInclusive(), false);
-                annotator.addDecimalMinAnnotation(facet.minExclusive(), true);
+                annotator.addDecimalMinAnnotationInclusive(facet.minInclusive());
+                annotator.addDecimalMinAnnotationExclusive(facet.minExclusive());
 
-                annotator.addDecimalMaxAnnotation(facet.maxInclusive(), false);
-                annotator.addDecimalMaxAnnotation(facet.maxExclusive(), true);
+                annotator.addDecimalMaxAnnotationInclusive(facet.maxInclusive());
+                annotator.addDecimalMaxAnnotationExclusive(facet.maxExclusive());
 
                 annotator.addDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
 

@@ -104,7 +104,15 @@ class FieldAnnotator {
         }
     }
 
-    void addDecimalMinAnnotation(BigDecimal min, boolean exclusive) {
+    void addDecimalMinAnnotationExclusive(BigDecimal min) {
+        addDecimalMinAnnotation(min, true);
+    }
+
+    void addDecimalMinAnnotationInclusive(BigDecimal min) {
+        addDecimalMinAnnotation(min, false);
+    }
+
+    private void addDecimalMinAnnotation(BigDecimal min, boolean exclusive) {
         if (min != null && isValidValue(min)) {
             xjcAnnotator.annotate(annotationFactory.getDecimalMinClass())
                     .param(VALUE, min.toString())
@@ -113,8 +121,16 @@ class FieldAnnotator {
         }
     }
 
+    void addDecimalMaxAnnotationExclusive(BigDecimal max) {
+        addDecimalMaxAnnotation(max, true);
+    }
+
+    void addDecimalMaxAnnotationInclusive(BigDecimal max) {
+        addDecimalMaxAnnotation(max, false);
+    }
+
     //TODO minExclusive=0, fractionDigits=2 wrong annotation https://github.com/krasa/krasa-jaxb-tools/issues/38
-    void addDecimalMaxAnnotation(BigDecimal max, boolean exclusive) {
+    private void addDecimalMaxAnnotation(BigDecimal max, boolean exclusive) {
         if (max != null && isValidValue(max)) {
             xjcAnnotator.annotate(annotationFactory.getDecimalMaxClass())
                     .param(VALUE, max.toString())
