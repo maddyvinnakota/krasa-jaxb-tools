@@ -41,8 +41,9 @@ public class Processor {
                 String propertyName = property.getName(false);
                 String className = classOutline.implClass.name();
 
-                ValidationsLogger logger =
-                        new ValidationsLogger(options.isVerbose(), className, propertyName);
+                ValidationsLogger logger = options.isVerbose()
+                        ? new ActiveValidationsLogger(className, propertyName)
+                        : SilentValidationLogger.INSTANCE;
 
                 new TypeProcessor(classOutline, logger)
                         .processProperty(property);
@@ -93,9 +94,7 @@ public class Processor {
             XSType elementType = element.getType();
 
             FieldAnnotator annotator =
-                    new FieldAnnotator(
-                                                        field,
-                            options.getAnnotationFactory(), logger);
+                    new FieldAnnotator(field, options.getAnnotationFactory(), logger);
 
             if (options.isNotNullAnnotations() && !nillable &&
                     (minOccurs > 0 || required || property.isCollectionRequired()) ) {
