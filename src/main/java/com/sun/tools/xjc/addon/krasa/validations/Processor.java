@@ -32,7 +32,6 @@ public class Processor {
     }
 
     public void process(Outline model) {
-
         for (ClassOutline classOutline : model.getClasses()) {
             List<CPropertyInfo> properties = classOutline.target.getProperties();
 
@@ -76,14 +75,13 @@ public class Processor {
         }
 
         /**
-         * XS:Element
+         * parses xsd:element
          */
         private void processElement(CElementPropertyInfo property) {
+            String propertyName = property.getName(false);
 
             XSParticle particle = (XSParticle) property.getSchemaComponent();
             ElementDecl element = (ElementDecl) particle.getTerm();
-
-            String propertyName = property.getName(false);
 
             int minOccurs = particle.getMinOccurs().intValue();
             int maxOccurs = particle.getMaxOccurs().intValue();
@@ -137,13 +135,40 @@ public class Processor {
         }
 
         /**
-         * Attribute from parent declaration
+         * parses xsd:attribute
+         */
+        private void processAttribute(CAttributePropertyInfo property) {
+            String propertyName = property.getName(false);
+
+            XSComponent definition = property.getSchemaComponent();
+            AttributeUseImpl particle = (AttributeUseImpl) definition;
+            XSSimpleType type = particle.getDecl().getType();
+
+            JFieldVar field = classOutline.implClass.fields().get(propertyName);
+
+            if (field != null) {
+                FieldAnnotator annotator =
+                        new FieldAnnotator(field, options.getAnnotationFactory(), logger);
+
+                if (particle.isRequired()) {
+                    String message = notNullMessage(classOutline, field);
+                    annotator.addNotNullAnnotation(classOutline, field, message);
+                }
+
+                processType(type, field, annotator);
+            }
+        }
+
+        /**
+         * parses values
          */
         private void processAttribute(CValuePropertyInfo property) {
             String propertyName = property.getName(false);
+
             XSComponent definition = property.getSchemaComponent();
             SimpleTypeImpl particle = (SimpleTypeImpl) definition;
             XSSimpleType simpleType = particle.asSimpleType();
+
             JFieldVar field = classOutline.implClass.fields().get(propertyName);
 
             if (field != null) {
@@ -151,27 +176,6 @@ public class Processor {
                         new FieldAnnotator(field, options.getAnnotationFactory(), logger);
 
                 processType(simpleType, field, annotator);
-            }
-        }
-
-        private void processAttribute(CAttributePropertyInfo property) {
-            String propertyName = property.getName(false);
-
-            XSComponent definition = property.getSchemaComponent();
-            AttributeUseImpl particle = (AttributeUseImpl) definition;
-            XSSimpleType type = particle.getDecl().getType();
-            JFieldVar var = classOutline.implClass.fields().get(propertyName);
-
-            if (var != null) {
-                FieldAnnotator annotator =
-                        new FieldAnnotator(var, options.getAnnotationFactory(), logger);
-
-                if (particle.isRequired()) {
-                    String message = notNullMessage(classOutline, var);
-                    annotator.addNotNullAnnotation(classOutline, var, message);
-                }
-
-                processType(type, var, annotator);
             }
         }
 
@@ -212,58 +216,76 @@ public class Processor {
             if (fieldHelper.isString()) {
 
                 final List<String> patternList = facet.patternList();
-                patternList.add(facet.pattern());
+                addIfNotNull(patternList, facet.pattern());
 
                 final List<String> enumerationList = facet.enumerationList();
-                enumerationList.add(facet.enumeration());
+                addIfNotNull(enumerationList, facet.enumeration());
 
                 XSSimpleType baseType = simpleType;
                 while ((baseType = baseType.getSimpleBaseType()) != null) {
                     if (baseType instanceof XSRestrictionSimpleType) {
                         Facet baseFacet = new Facet((XSRestrictionSimpleType) baseType);
 
-                        patternList.add(baseFacet.pattern());
-                        patternList.addAll(baseFacet.patternList());
+                        addIfNotNull(patternList, baseFacet.pattern());
+                        addAllIfNotNull(patternList, baseFacet.patternList());
 
-                        enumerationList.add(baseFacet.enumeration());
-                        enumerationList.addAll(baseFacet.enumerationList());
+                        addIfNotNull(enumerationList, baseFacet.enumeration());
+                        addAllIfNotNull(enumerationList, baseFacet.enumerationList());
                     }
                 }
 
-                List<String> adjustedPatterns = patternList.stream()
-                        .filter(p -> isValidRegexp(p))
-                        .map(p -> replaceRegexp(p))
-                        .distinct()
-                        .collect(Collectors.toList());
+                if (!patternList.isEmpty() || !enumerationList.isEmpty()) {
+                    List<String> adjustedPatterns = patternList.stream()
+                            .filter(p -> isValidRegexp(p))
+                            .map(p -> replaceRegexp(p))
+                            .distinct()
+                            .collect(Collectors.toList());
 
-                // escaped enumuerations can be treated as patterns
-                List<String> adjustedEnumerations = enumerationList.stream()
-                        .filter(p -> p != null && !p.isEmpty())
-                        .map(p -> escapeRegexp(p))
-                        .distinct()
-                        .collect(Collectors.toList());
+                    // escaped enumuerations can be treated as patterns
+                    List<String> adjustedEnumerations = enumerationList.stream()
+                            .filter(p -> p != null && !p.isEmpty())
+                            .map(p -> escapeRegexp(p))
+                            .distinct()
+                            .collect(Collectors.toList());
 
-                adjustedPatterns.addAll(adjustedEnumerations);
+                    addAllIfNotNull(adjustedPatterns, adjustedEnumerations);
 
-                LinkedHashSet<String> patternSet = new LinkedHashSet<>(adjustedPatterns);
+                    LinkedHashSet<String> patternSet = new LinkedHashSet<>(adjustedPatterns);
 
-                switch (patternSet.size()) {
-                    case 0:
-                        // do nothing at all
-                        break;
-                    case 1:
-                        annotator.addSinglePatternAnnotation(patternSet.iterator().next());
-                        break;
-                    default:
-                        if (options.isSinglePattern()) {
-                            annotator.addAlternativePatternListAnnotation(patternSet);
-                        } else {
-                            annotator.addPatternListAnnotation(patternSet);
-                        }
+                    switch (patternSet.size()) {
+                        case 0:
+                            // do nothing at all
+                            break;
+                        case 1:
+                            annotator.addSinglePatternAnnotation(patternSet.iterator().next());
+                            break;
+                        default:
+                            if (options.isSinglePattern()) {
+                                annotator.addAlternativePatternListAnnotation(patternSet);
+                            } else {
+                                annotator.addPatternListAnnotation(patternSet);
+                            }
+                    }
                 }
             }
         }
 
+    }
+
+    static void addIfNotNull(List<String> list, String item) {
+        if (item != null) {
+            list.add(item);
+        }
+    }
+
+    static void addAllIfNotNull(List<String> dest, List<String> source) {
+        if (source != null && !source.isEmpty()) {
+            for (String s: source) {
+                if (s != null) {
+                    dest.add(s);
+                }
+            }
+        }
     }
 
     /*
