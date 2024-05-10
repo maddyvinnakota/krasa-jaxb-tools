@@ -13,22 +13,24 @@ import org.xml.sax.SAXException;
 
 public class PrimitiveFixerPlugin extends Plugin {
 
-    private static final String OPTION_NAME = "XReplacePrimitives";
+    private static final String PLUGIN_NAME = "XReplacePrimitives";
 
     @Override
     public String getOptionName() {
-        return OPTION_NAME;
+        return PLUGIN_NAME;
     }
 
     @Override
     public String getUsage() {
-        return "-" + OPTION_NAME
-                + "    :   Replaces primitive types of fields and methods by proper Class, WARNING: must be defined before XhashCode or Xequals.  \n";
+        return "-" + PLUGIN_NAME
+                + "    :   Replaces primitive types of fields and methods by proper Class, " +
+                "WARNING: must be defined before XhashCode or Xequals.  \n";
     }
 
     @Override
     public boolean run(Outline outline, Options opt, ErrorHandler errorHandler) throws SAXException {
         for (ClassOutline co : outline.getClasses()) {
+
             HashMap<String, Class> hashMap = new HashMap<String, Class>();
             hashMap.put("int", Integer.class);
             hashMap.put("long", Long.class);
@@ -37,6 +39,7 @@ public class PrimitiveFixerPlugin extends Plugin {
             hashMap.put("float", Float.class);
             hashMap.put("byte", Byte.class);
             hashMap.put("short", Short.class);
+
             Map<String, JFieldVar> fields = co.implClass.fields();
 
             for (Map.Entry<String, JFieldVar> stringJFieldVarEntry : fields.entrySet()) {
