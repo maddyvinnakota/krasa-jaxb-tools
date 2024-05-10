@@ -6,6 +6,8 @@ import com.sun.codemodel.JFieldVar;
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -14,22 +16,23 @@ import java.util.Set;
  */
 public class AnnotationMng {
     private final JFieldVar field;
+    private final JaxbValidationsLogger logger;
     private final Set<Class<? extends Annotation>> annotationSet = new HashSet<>();
 
-    public AnnotationMng(JFieldVar field) {
+    public AnnotationMng(JaxbValidationsLogger logger, JFieldVar field) {
         this.field = field;
+        this.logger = logger;
     }
 
     Annotate annotate(Class<? extends Annotation> annotation) {
-        return new Annotate((Annotate) null, annotation);
+        return new Annotate(annotation);
     }
 
     public class Annotate {
-        private final Annotate parent;
         private final JAnnotationUse annotationUse;
+        private final Map<String,String> parameterMap = new LinkedHashMap<>();
 
-        public Annotate(Annotate parent, Class<? extends Annotation> annotation) {
-            this.parent = parent;
+        public Annotate(Class<? extends Annotation> annotation) {
             if (!annotationSet.contains(annotation)) {
                 annotationUse = field.annotate(annotation);
                 annotationSet.add(annotation);
@@ -39,13 +42,13 @@ public class AnnotationMng {
         }
 
         private Annotate(JAnnotationUse annotationUse) {
-            this.parent = null;
             this.annotationUse = annotationUse;
         }
 
         public Annotate paramIf(boolean condition, String name, Integer value) {
             if (condition && annotationUse != null && value != null) {
                 annotationUse.param(name, value);
+                parameterMap.put(name, value.toString());
             }
             return this;
         }
@@ -53,6 +56,7 @@ public class AnnotationMng {
         public Annotate param(String name, Integer value) {
             if (annotationUse != null && value != null) {
                 annotationUse.param(name, value);
+                parameterMap.put(name, value.toString());
             }
             return this;
         }
@@ -60,6 +64,7 @@ public class AnnotationMng {
         public Annotate param(String name, Boolean value) {
             if (annotationUse != null && value != null) {
                 annotationUse.param(name, value);
+                parameterMap.put(name, value.toString());
             }
             return this;
         }
@@ -67,6 +72,7 @@ public class AnnotationMng {
         public Annotate param(String name, BigDecimal value) {
             if (annotationUse != null && value != null) {
                 annotationUse.param(name, value.toString());
+                parameterMap.put(name, value.toString());
             }
             return this;
         }
@@ -74,26 +80,32 @@ public class AnnotationMng {
         public Annotate param(String name, String value) {
             if (annotationUse != null && value != null) {
                 annotationUse.param(name, value.toString());
+                parameterMap.put(name, value.toString());
             }
             return this;
         }
 
         public Annotate param(String name, String value, String defaultValue) {
             if (annotationUse != null) {
-                annotationUse.param(name, value == null ? defaultValue : value);
+                String v = value == null ? defaultValue : value;
+                annotationUse.param(name, v);
+                parameterMap.put(name, v.toString());
             }
             return this;
         }
 
         public Annotate param(String name, Integer value, Integer defaultValue) {
             if (annotationUse != null) {
-                annotationUse.param(name, value == null ? defaultValue : value);
+                Integer v = value == null ? defaultValue : value;
+                annotationUse.param(name, v);
+                parameterMap.put(name, v.toString());
             }
             return this;
         }
 
-        public Annotate end() {
-            return parent;
+        public void log() {
+            String annotationName = annotationUse.getAnnotationClass().name();
+            logger.addAnnotation(annotationName, parameterMap);
         }
 
         public MultipleAnnotation multiple(String paramName) {

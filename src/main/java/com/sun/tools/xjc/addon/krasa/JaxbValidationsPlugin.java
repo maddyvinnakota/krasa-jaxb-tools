@@ -9,7 +9,6 @@ import com.sun.tools.xjc.model.CElementPropertyInfo;
 import com.sun.tools.xjc.model.CPropertyInfo;
 import com.sun.tools.xjc.model.CValuePropertyInfo;
 import com.sun.tools.xjc.outline.ClassOutline;
-import com.sun.tools.xjc.outline.FieldOutline;
 import com.sun.tools.xjc.outline.Outline;
 import com.sun.xml.xsom.XSComponent;
 import com.sun.xml.xsom.XSParticle;
@@ -79,29 +78,33 @@ public class JaxbValidationsPlugin extends Plugin {
 
     @Override
     public boolean run(Outline model, Options opt, ErrorHandler errorHandler) {
-        if (opt.verbose) {
-            pluginOptionsBuilder.verbose(true);
-        }
+        pluginOptionsBuilder.verbose(opt.verbose);
 
         buildOptions();
 
-        JaxbValidationsLogger logger = new JaxbValidationsLogger(options.isVerbose());
+        if (opt.verbose) {
+            JaxbValidationsLogger.log(JaxbValidationsArgument.actualOptionValuesString(options, "    "));
+        }
 
-        logger.log(JaxbValidationsArgument.actualOptionValuesString(options, "    "));
-
-
-        for (ClassOutline co : model.getClasses()) {
-            List<CPropertyInfo> properties = co.target.getProperties();
+        for (ClassOutline classOutline : model.getClasses()) {
+            List<CPropertyInfo> properties = classOutline.target.getProperties();
 
             for (CPropertyInfo property : properties) {
+
+                String propertyName = property.getName(false);
+                String className = classOutline.implClass.name();
+
+                JaxbValidationsLogger logger =
+                        new JaxbValidationsLogger(options.isVerbose(), className, propertyName);
+
                 if (property instanceof CElementPropertyInfo) {
-                    processElement((CElementPropertyInfo) property, co, model);
+                    processElement(logger, (CElementPropertyInfo) property, classOutline, model);
 
                 } else if (property instanceof CAttributePropertyInfo) {
-                    processAttribute((CAttributePropertyInfo) property, co, model);
+                    processAttribute(logger, (CAttributePropertyInfo) property, classOutline, model);
 
                 } else if (property instanceof CValuePropertyInfo) {
-                    processAttribute((CValuePropertyInfo) property, co, model);
+                    processAttribute(logger, (CValuePropertyInfo) property, classOutline, model);
 
                 }
             }
@@ -118,7 +121,7 @@ public class JaxbValidationsPlugin extends Plugin {
     /**
      * XS:Element
      */
-    public void processElement(CElementPropertyInfo property,
+    void processElement(JaxbValidationsLogger logger, CElementPropertyInfo property,
             ClassOutline classOutline, Outline model) {
 
         XSParticle particle = (XSParticle) property.getSchemaComponent();
@@ -134,18 +137,10 @@ public class JaxbValidationsPlugin extends Plugin {
         JFieldVar field = classOutline.implClass.fields().get(propertyName);
         XSType elementType = element.getType();
 
-        // using https://github.com/jirutka/validator-collection to annotate Lists of primitives
-        final XSSimpleType simpleType;
-        if (!(elementType instanceof XSSimpleType)) {
-            // is a complex type, get the base type
-            simpleType = elementType.getBaseType().asSimpleType();
-        } else {
-            // simple type
-            simpleType = elementType.asSimpleType();
-        }
-
         JaxbValidationsAnnotator annotator =
-                new JaxbValidationsAnnotator(field,
+                new JaxbValidationsAnnotator(
+                        logger,
+                        field,
                         options.getAnnotationFactory());
 
         if (options.isNotNullAnnotations() && !nillable &&
@@ -164,6 +159,16 @@ public class JaxbValidationsPlugin extends Plugin {
             }
         }
 
+        // using https://github.com/jirutka/validator-collection to annotate Lists of primitives
+        final XSSimpleType simpleType;
+        if (!(elementType instanceof XSSimpleType)) {
+            // is a complex type, get the base type
+            simpleType = elementType.getBaseType().asSimpleType();
+        } else {
+            // simple type
+            simpleType = elementType.asSimpleType();
+        }
+
         if (simpleType != null) {
             Facet facet = new Facet(simpleType);
 
@@ -174,60 +179,54 @@ public class JaxbValidationsPlugin extends Plugin {
                 annotator.addEachDecimalMaxAnnotation(facet.maxInclusive(), facet.maxExclusive());
             }
 
-            processType(simpleType, field, annotator);
+            processType(logger, simpleType, field, annotator);
         }
     }
 
     /**
      * Attribute from parent declaration
      */
-    void processAttribute(CValuePropertyInfo property,
-            ClassOutline clase, Outline model) {
-        FieldOutline field = model.getField(property);
+    void processAttribute(JaxbValidationsLogger logger, CValuePropertyInfo property,
+            ClassOutline classOutline, Outline model) {
         String propertyName = property.getName(false);
-        String className = clase.implClass.name();
-
-//        logger.log("Attribute " + propertyName + " added to class " + className);
         XSComponent definition = property.getSchemaComponent();
         SimpleTypeImpl particle = (SimpleTypeImpl) definition;
-        XSSimpleType type = particle.asSimpleType();
-        JFieldVar var = clase.implClass.fields().get(propertyName);
+        XSSimpleType simpleType = particle.asSimpleType();
+        JFieldVar field = classOutline.implClass.fields().get(propertyName);
 
-        if (var != null) {
+        if (field != null) {
             JaxbValidationsAnnotator annotator =
-                    new JaxbValidationsAnnotator(var, options.getAnnotationFactory());
+                    new JaxbValidationsAnnotator(logger, field, options.getAnnotationFactory());
 
-            processType(type, var, annotator);
+            processType(logger, simpleType, field, annotator);
         }
     }
 
-    void processAttribute(CAttributePropertyInfo property,
-            ClassOutline clase, Outline model) {
-        FieldOutline field = model.getField(property);
+    void processAttribute(JaxbValidationsLogger logger, CAttributePropertyInfo property,
+            ClassOutline classOutline, Outline model) {
         String propertyName = property.getName(false);
-        String className = clase.implClass.name();
 
-//        logger.log("Attribute " + propertyName + " added to class " + className);
         XSComponent definition = property.getSchemaComponent();
         AttributeUseImpl particle = (AttributeUseImpl) definition;
         XSSimpleType type = particle.getDecl().getType();
-        JFieldVar var = clase.implClass.fields().get(propertyName);
+        JFieldVar var = classOutline.implClass.fields().get(propertyName);
 
         if (var != null) {
             JaxbValidationsAnnotator annotator =
-                    new JaxbValidationsAnnotator(var, options.getAnnotationFactory());
+                    new JaxbValidationsAnnotator(logger, var, options.getAnnotationFactory());
 
             if (particle.isRequired()) {
-                String message = notNullMessage(clase, var);
-                annotator.addNotNullAnnotation(clase, var, message);
+                String message = notNullMessage(classOutline, var);
+                annotator.addNotNullAnnotation(classOutline, var, message);
             }
 
-            processType(type, var, annotator);
+            processType(logger, type, var, annotator);
         }
     }
 
 
-    void processType(XSSimpleType simpleType, JFieldVar field, JaxbValidationsAnnotator annotator) {
+    void processType(JaxbValidationsLogger logger,
+            XSSimpleType simpleType, JFieldVar field, JaxbValidationsAnnotator annotator) {
 
         Facet facet = new Facet(simpleType);
         FieldHelper fieldHelper = new FieldHelper(field);
@@ -318,22 +317,22 @@ public class JaxbValidationsPlugin extends Plugin {
     /*
 	 * \Q indicates begin of quoted regex text, \E indicates end of quoted regex text
      */
-    private static String escapeRegexp(String pattern) {
+    static String escapeRegexp(String pattern) {
         return java.util.regex.Pattern.quote(pattern);
     }
 
     // cxf-codegen fix
-    private static boolean isValidRegexp(String pattern) {
+    static boolean isValidRegexp(String pattern) {
         return pattern != null && !"\\c+".equals(pattern);
     }
 
-    private static String replaceRegexp(String pattern) {
+    static String replaceRegexp(String pattern) {
         return pattern
                 .replace("\\i", "[_:A-Za-z]")
                 .replace("\\c", "[-._:A-Za-z0-9]");
     }
 
-    private String notNullMessage(ClassOutline classOutline, JFieldVar field) {
+    String notNullMessage(ClassOutline classOutline, JFieldVar field) {
         final String className = classOutline.implClass.name();
         final Class<? extends Annotation> notNullClass = options.getAnnotationFactory().getNotNullClass();
 

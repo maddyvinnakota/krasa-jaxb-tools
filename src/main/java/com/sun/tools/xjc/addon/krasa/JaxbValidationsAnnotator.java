@@ -31,22 +31,26 @@ public class JaxbValidationsAnnotator {
     private final JaxbValidationsAnnotation annotationFactory;
     private final AnnotationMng annotations;
 
-    public JaxbValidationsAnnotator(JFieldVar field,
+    public JaxbValidationsAnnotator(
+            JaxbValidationsLogger log,
+            JFieldVar field,
             JaxbValidationsAnnotation annotationFactory) {
         this.annotationFactory = annotationFactory;
-        this.annotations = new AnnotationMng(field);
+        this.annotations = new AnnotationMng(log, field);
     }
 
     void addEachSizeAnnotation(Integer minLength, Integer maxLength) {
         annotations.annotate(EachSize.class)
                 .param(MIN, minLength)
-                .param(MAX, maxLength);
+                .param(MAX, maxLength)
+                .log();
     }
 
     void addEachDigitsAnnotation(Integer totalDigits, Integer fractionDigits) {
         annotations.annotate(EachDigits.class)
                 .param(INTEGER, totalDigits, 0)
-                .param(FRACTION, fractionDigits, 0);
+                .param(FRACTION, fractionDigits, 0)
+                .log();
     }
 
     void addEachDecimalMaxAnnotation(BigDecimal maxInclusive, BigDecimal maxExclusive) {
@@ -54,7 +58,8 @@ public class JaxbValidationsAnnotator {
             annotations.annotate(EachDecimalMax.class)
                     .param(VALUE, maxInclusive)
                     .param(VALUE, maxExclusive)
-                    .param(INCLUSIVE, maxInclusive != null);
+                    .param(INCLUSIVE, maxInclusive != null)
+                    .log();
         }
     }
 
@@ -63,36 +68,41 @@ public class JaxbValidationsAnnotator {
             annotations.annotate(EachDecimalMin.class)
                     .param(VALUE, minInclusive)
                     .param(VALUE, minExclusive)
-                    .param(INCLUSIVE, minInclusive != null);
+                    .param(INCLUSIVE, minInclusive != null)
+                    .log();
         }
     }
 
     void addNotNullAnnotation(ClassOutline classOutline, JFieldVar field, String message) {
         annotations.annotate(annotationFactory.getNotNullClass())
-                .param(MESSAGE, message);
+                .param(MESSAGE, message)
+                .log();
     }
 
     void addValidAnnotation() {
-        annotations.annotate(annotationFactory.getValidClass());
+        annotations.annotate(annotationFactory.getValidClass()).log();
     }
 
     void addSizeAnnotation(Integer minLength, Integer maxLength, Integer length) {
         if (isValidLength(minLength) || isValidLength(maxLength)) {
             annotations.annotate(annotationFactory.getSizeClass())
                     .paramIf(isValidLength(minLength), MIN, minLength)
-                    .paramIf(isValidLength(maxLength), MAX, maxLength);
+                    .paramIf(isValidLength(maxLength), MAX, maxLength)
+                    .log();
 
         } else if (isValidLength(length)) {
             annotations.annotate(annotationFactory.getSizeClass())
                     .param(MIN, length)
-                    .param(MAX, length);
+                    .param(MAX, length)
+                    .log();
         }
     }
 
     void addJpaColumnAnnotation(Integer maxLength) {
         if (maxLength != null) {
             annotations.annotate(Column.class)
-                    .param(LENGTH, maxLength);
+                    .param(LENGTH, maxLength)
+                    .log();
         }
     }
 
@@ -100,7 +110,8 @@ public class JaxbValidationsAnnotator {
         if (min != null && isValidValue(min)) {
             annotations.annotate(annotationFactory.getDecimalMinClass())
                     .param(VALUE, min.toString())
-                    .param(INCLUSIVE, !exclusive);
+                    .param(INCLUSIVE, !exclusive)
+                    .log();
         }
     }
 
@@ -109,7 +120,8 @@ public class JaxbValidationsAnnotator {
         if (max != null && isValidValue(max)) {
             annotations.annotate(annotationFactory.getDecimalMaxClass())
                     .param(VALUE, max.toString())
-                    .param(INCLUSIVE, (!exclusive));
+                    .param(INCLUSIVE, (!exclusive))
+                    .log();
         }
     }
 
@@ -117,14 +129,16 @@ public class JaxbValidationsAnnotator {
         if (totalDigits != null) {
             annotations.annotate(annotationFactory.getDigitsClass())
                     .param(INTEGER, getValueOrZeroOnNull(totalDigits))
-                    .param(FRACTION, getValueOrZeroOnNull(fractionDigits));
+                    .param(FRACTION, getValueOrZeroOnNull(fractionDigits))
+                    .log();
         }
     }
 
     void addJpaColumnStringAnnotation(Integer totalDigits, Integer fractionDigits) {
         annotations.annotate(Column.class)
                 .param(PRECISION, getValueOrZeroOnNull(totalDigits))
-                .param(SCALE, getValueOrZeroOnNull(fractionDigits));
+                .param(SCALE, getValueOrZeroOnNull(fractionDigits))
+                .log();
     }
 
     /** Adds all the patterns (A, B, C) as options in a single one (A|B|C). */
@@ -147,15 +161,18 @@ public class JaxbValidationsAnnotator {
             for (String p : patterns) {
                 if (p != null && !p.isEmpty()) {
                     multi.annotate(annotationFactory.getPatternClass())
-                            .param(REGEXP, p);
+                            .param(REGEXP, p)
+                            .log();
                 }
             }
+
         }
     }
 
     void addSinglePatternAnnotation(String pattern) {
         annotations.annotate(annotationFactory.getPatternClass())
-                .param(REGEXP, pattern);
+                .param(REGEXP, pattern)
+                .log();
     }
 
     private static boolean isValidLength(Integer length) {
