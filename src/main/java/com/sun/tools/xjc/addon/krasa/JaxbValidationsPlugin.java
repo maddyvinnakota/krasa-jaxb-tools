@@ -3,6 +3,10 @@ package com.sun.tools.xjc.addon.krasa;
 import com.sun.tools.xjc.BadCommandLineException;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
+import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsArgument;
+import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsLogger;
+import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsOptions;
+import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsProcessor;
 import com.sun.tools.xjc.model.CAttributePropertyInfo;
 import com.sun.tools.xjc.model.CElementPropertyInfo;
 import com.sun.tools.xjc.model.CPropertyInfo;
@@ -102,7 +106,7 @@ public class JaxbValidationsPlugin extends Plugin {
     }
 
     /** used in tests */
-    JaxbValidationsOptions buildOptions() {
+    public JaxbValidationsOptions buildOptions() {
         return pluginOptionsBuilder.build();
     }
 

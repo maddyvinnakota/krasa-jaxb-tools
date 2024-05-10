@@ -1,5 +1,6 @@
 package com.sun.tools.xjc.addon.krasa;
 
+import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsArgument;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
