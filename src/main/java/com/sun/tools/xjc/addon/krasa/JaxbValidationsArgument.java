@@ -1,10 +1,9 @@
 package com.sun.tools.xjc.addon.krasa;
 
 import com.sun.tools.xjc.BadCommandLineException;
-import static com.sun.tools.xjc.addon.krasa.Utils.setBoolean;
-import static com.sun.tools.xjc.addon.krasa.Utils.toBoolean;
 import java.util.Objects;
 import java.util.function.BiFunction;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
@@ -253,6 +252,44 @@ enum JaxbValidationsArgument {
         }
 
         return buf.toString();
+    }
+
+    static String setBoolean(String value, Consumer<Boolean> setter) {
+        if (value == null || "".equals(value.trim())) {
+            setter.accept(true);
+            return null;
+        }
+        Boolean bool = toBoolean(value);
+        if (bool == null) {
+            return "argument not valid, must be 'true' or 'false'";
+        }
+        setter.accept(bool);
+        return null;
+    }
+
+    /**
+     * @return the boolean value of v (no case sensitive) or null otherwise.
+     */
+    static boolean toBoolean(String v, Boolean defaultIfNull) {
+        if (v != null) {
+            return toBoolean(v);
+        }
+        return defaultIfNull != null ? defaultIfNull : false;
+    }
+
+    /**
+     * @return the boolean value of v (no case sensitive) or null otherwise.
+     */
+    static Boolean toBoolean(String v) {
+        if (v != null) {
+            String lc = v.toLowerCase().trim();
+            if ("true".equals(lc)) {
+                return Boolean.TRUE;
+            } else if ("false".equals(lc)) {
+                return Boolean.FALSE;
+            }
+        }
+        return null;
     }
 
 }

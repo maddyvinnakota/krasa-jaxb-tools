@@ -109,4 +109,37 @@ public class JaxbValidationsArgumentTest {
         plugin.buildOptions();
         return plugin;
     }
+
+
+
+    @Test
+    public void shouldConvertToBooleanWithDefault() {
+        assertTrue(JaxbValidationsArgument.toBoolean("True", false));
+        assertTrue(JaxbValidationsArgument.toBoolean("true", false));
+        assertTrue(JaxbValidationsArgument.toBoolean("TRUE", false));
+        assertTrue(JaxbValidationsArgument.toBoolean(" true", false));
+        assertTrue(JaxbValidationsArgument.toBoolean("true ", false));
+        assertTrue(JaxbValidationsArgument.toBoolean(" true ", false));
+
+        assertFalse(JaxbValidationsArgument.toBoolean("False", true));
+        assertFalse(JaxbValidationsArgument.toBoolean("false", true));
+        assertFalse(JaxbValidationsArgument.toBoolean("FALSE", true));
+        assertFalse(JaxbValidationsArgument.toBoolean("FalSe", true));
+    }
+
+    @Test
+    public void shouldConvertToBoolean() {
+        assertTrue(JaxbValidationsArgument.toBoolean("True"));
+        assertTrue(JaxbValidationsArgument.toBoolean("true"));
+        assertTrue(JaxbValidationsArgument.toBoolean("TRUE"));
+        assertTrue(JaxbValidationsArgument.toBoolean(" true"));
+        assertTrue(JaxbValidationsArgument.toBoolean("true "));
+        assertTrue(JaxbValidationsArgument.toBoolean(" true "));
+
+        assertFalse(JaxbValidationsArgument.toBoolean("False"));
+        assertFalse(JaxbValidationsArgument.toBoolean("false"));
+        assertFalse(JaxbValidationsArgument.toBoolean("FALSE"));
+        assertFalse(JaxbValidationsArgument.toBoolean("FalSe"));
+    }
+
 }
