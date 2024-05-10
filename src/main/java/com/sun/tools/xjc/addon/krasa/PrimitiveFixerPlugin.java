@@ -110,7 +110,8 @@ public class PrimitiveFixerPlugin extends Plugin {
             }
 
         }
-        throw new RuntimeException("Failed to find " + type + " for " + field.name() + ", disable XReplacePrimitives and report a bug");
+        throw new RuntimeException("Failed to find " + type + " for " + field.name() +
+                ", disable XReplacePrimitives and report a bug");
     }
 
     public static String getterBody(JStatement jStatement) {
