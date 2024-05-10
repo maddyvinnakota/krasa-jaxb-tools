@@ -98,7 +98,7 @@ class Facet {
         final XSFacet facet = simpleType.getFacet(param);
         if (facet != null) {
             try {
-                return Integer.parseInt(facet.getValue().value);
+                return Integer.valueOf(facet.getValue().value);
             } catch (NumberFormatException e) {
                 // ignore
             }

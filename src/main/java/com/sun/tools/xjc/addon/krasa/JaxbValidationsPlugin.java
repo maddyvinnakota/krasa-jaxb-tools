@@ -28,7 +28,7 @@ public class JaxbValidationsPlugin extends Plugin {
     public static final String PLUGIN_OPTION_NAME = "-" + PLUGIN_NAME;
     public static final int PLUGIN_OPTION_NAME_LENGHT = PLUGIN_OPTION_NAME.length() + 1;
 
-    ValidationsOptions.Builder pluginOptionsBuilder = ValidationsOptions.builder();
+    ValidationsOptions.Builder optionsBuilder = ValidationsOptions.builder();
 
     @Override
     public String getOptionName() {
@@ -38,7 +38,7 @@ public class JaxbValidationsPlugin extends Plugin {
     @Override
     public int parseArgument(Options opt, String[] args, int index)
             throws BadCommandLineException, IOException {
-        return pluginOptionsBuilder.parseArgument(args[index]);
+        return optionsBuilder.parseArgument(args[index]);
     }
 
     @Override
@@ -58,7 +58,7 @@ public class JaxbValidationsPlugin extends Plugin {
 
     @Override
     public boolean run(Outline model, Options opt, ErrorHandler errorHandler) {
-        pluginOptionsBuilder.verbose(opt.verbose);
+        optionsBuilder.verbose(opt.verbose);
 
         ValidationsOptions options = buildOptions();
 
@@ -73,7 +73,7 @@ public class JaxbValidationsPlugin extends Plugin {
 
     /** used in tests */
     public ValidationsOptions buildOptions() {
-        return pluginOptionsBuilder.build();
+        return optionsBuilder.build();
     }
 
 }

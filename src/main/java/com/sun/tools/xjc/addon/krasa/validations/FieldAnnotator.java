@@ -154,7 +154,7 @@ class FieldAnnotator {
         if (patterns != null && !patterns.isEmpty()) {
             XjcAnnotator.Annotate.MultipleAnnotation multi = xjcAnnotator
                     .annotate(annotationFactory.getPatternListClass())
-                    .multiple(VALUE);
+                    .multipleAnnotationContainer(VALUE);
 
             for (String p : patterns) {
                 if (p != null && !p.isEmpty()) {

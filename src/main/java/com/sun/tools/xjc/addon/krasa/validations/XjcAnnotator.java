@@ -14,7 +14,7 @@ import java.util.Set;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class XjcAnnotator {
+class XjcAnnotator {
     private final JFieldVar field;
     private final ValidationsLogger logger;
     private final Set<Class<? extends Annotation>> annotationSet = new HashSet<>();
@@ -79,8 +79,8 @@ public class XjcAnnotator {
 
         public Annotate param(String name, String value) {
             if (annotationUse != null && value != null) {
-                annotationUse.param(name, value.toString());
-                parameterMap.put(name, value.toString());
+                annotationUse.param(name, value);
+                parameterMap.put(name, value);
             }
             return this;
         }
@@ -89,7 +89,7 @@ public class XjcAnnotator {
             if (annotationUse != null) {
                 String v = value == null ? defaultValue : value;
                 annotationUse.param(name, v);
-                parameterMap.put(name, v.toString());
+                parameterMap.put(name, v);
             }
             return this;
         }
@@ -108,7 +108,7 @@ public class XjcAnnotator {
             logger.addAnnotation(annotationName, parameterMap);
         }
 
-        public MultipleAnnotation multiple(String paramName) {
+        public MultipleAnnotation multipleAnnotationContainer(String paramName) {
             JAnnotationArrayMember array = annotationUse.paramArray(paramName);
             return new MultipleAnnotation(array);
         }
