@@ -24,11 +24,11 @@ import org.junit.Test;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class JaxbValidationsOptionsTest {
+public class ValidationsOptionsTest {
 
     @Test
     public void shouldGetDafaults() {
-        JaxbValidationsOptions options = JaxbValidationsOptions.builder().build();
+        ValidationsOptions options = ValidationsOptions.builder().build();
 
         assertTrue(options.isSinglePattern());
         assertFalse(options.isJsr349());
@@ -40,7 +40,7 @@ public class JaxbValidationsOptionsTest {
 
     @Test
     public void shouldSetTargetNamespace() {
-        JaxbValidationsOptions options = JaxbValidationsOptions.builder()
+        ValidationsOptions options = ValidationsOptions.builder()
                 .targetNamespace("something.there")
                 .build();
 
@@ -49,7 +49,7 @@ public class JaxbValidationsOptionsTest {
 
     @Test
     public void shouldSetSinglePatternTrue() {
-        JaxbValidationsOptions options = JaxbValidationsOptions.builder()
+        ValidationsOptions options = ValidationsOptions.builder()
                 .singlePattern(true)
                 .build();
 
@@ -58,7 +58,7 @@ public class JaxbValidationsOptionsTest {
 
     @Test
     public void shouldSetSinglePatternFalse() {
-        JaxbValidationsOptions options = JaxbValidationsOptions.builder()
+        ValidationsOptions options = ValidationsOptions.builder()
                 .singlePattern(false)
                 .build();
 
@@ -67,7 +67,7 @@ public class JaxbValidationsOptionsTest {
 
     @Test
     public void shouldSetJsr349True() {
-        JaxbValidationsOptions options = JaxbValidationsOptions.builder()
+        ValidationsOptions options = ValidationsOptions.builder()
                 .jsr349(true)
                 .build();
 
@@ -76,7 +76,7 @@ public class JaxbValidationsOptionsTest {
 
     @Test
     public void shouldSetJsr349False() {
-        JaxbValidationsOptions options = JaxbValidationsOptions.builder()
+        ValidationsOptions options = ValidationsOptions.builder()
                 .jsr349(false)
                 .build();
 
@@ -85,7 +85,7 @@ public class JaxbValidationsOptionsTest {
 
     @Test
     public void shouldSetVerboseTrue() {
-        JaxbValidationsOptions options = JaxbValidationsOptions.builder()
+        ValidationsOptions options = ValidationsOptions.builder()
                 .verbose(true)
                 .build();
 
@@ -94,7 +94,7 @@ public class JaxbValidationsOptionsTest {
 
     @Test
     public void shouldSetVerboseFalse() {
-        JaxbValidationsOptions options = JaxbValidationsOptions.builder()
+        ValidationsOptions options = ValidationsOptions.builder()
                 .verbose(false)
                 .build();
 
@@ -103,7 +103,7 @@ public class JaxbValidationsOptionsTest {
 
     @Test
     public void shouldSetJpaAnnotationsTrue() {
-        JaxbValidationsOptions options = JaxbValidationsOptions.builder()
+        ValidationsOptions options = ValidationsOptions.builder()
                 .jpaAnnotations(true)
                 .build();
 
@@ -112,7 +112,7 @@ public class JaxbValidationsOptionsTest {
 
     @Test
     public void shouldSetJpaAnnotationsFalse() {
-        JaxbValidationsOptions options = JaxbValidationsOptions.builder()
+        ValidationsOptions options = ValidationsOptions.builder()
                 .jpaAnnotations(false)
                 .build();
 
@@ -121,7 +121,7 @@ public class JaxbValidationsOptionsTest {
 
     @Test
     public void shouldSetGenerateStringListAnnotationsTrue() {
-        JaxbValidationsOptions options = JaxbValidationsOptions.builder()
+        ValidationsOptions options = ValidationsOptions.builder()
                 .generateStringListAnnotations(true)
                 .build();
 
@@ -130,7 +130,7 @@ public class JaxbValidationsOptionsTest {
 
     @Test
     public void shouldSetGenerateStringListAnnotationsFalse() {
-        JaxbValidationsOptions options = JaxbValidationsOptions.builder()
+        ValidationsOptions options = ValidationsOptions.builder()
                 .generateStringListAnnotations(false)
                 .build();
 
@@ -139,7 +139,7 @@ public class JaxbValidationsOptionsTest {
 
     @Test
     public void shouldSetAnnotationFactoryTrue() {
-        JaxbValidationsOptions options = JaxbValidationsOptions.builder()
+        ValidationsOptions options = ValidationsOptions.builder()
                 .annotationFactory(JaxbValidationsAnnotation.JAVAX)
                 .build();
 
@@ -148,7 +148,7 @@ public class JaxbValidationsOptionsTest {
 
     @Test
     public void shouldSetAnnotationFactoryFalse() {
-        JaxbValidationsOptions options = JaxbValidationsOptions.builder()
+        ValidationsOptions options = ValidationsOptions.builder()
                 .annotationFactory(JaxbValidationsAnnotation.JAKARTA)
                 .build();
 

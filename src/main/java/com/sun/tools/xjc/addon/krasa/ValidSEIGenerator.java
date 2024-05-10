@@ -1,6 +1,6 @@
 package com.sun.tools.xjc.addon.krasa;
 
-import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsArgument;
+import com.sun.tools.xjc.addon.krasa.validations.ValidationsArgument;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -75,7 +75,7 @@ public class ValidSEIGenerator extends SEIGenerator {
 			for (String arg : xjcArgs) {
 				String[] parts = arg.split("=");
 				if (parts.length == 2 &&
-                        parts[0].contains(JaxbValidationsArgument.generateServiceValidationAnnotations.name())) {
+                        parts[0].contains(ValidationsArgument.generateServiceValidationAnnotations.name())) {
 					parseValidationPolicy(parts[1]);
 				}
 				LOG.log(Level.FINE, "xjc arg:" + arg);

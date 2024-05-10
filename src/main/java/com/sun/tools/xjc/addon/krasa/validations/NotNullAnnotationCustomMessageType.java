@@ -4,12 +4,12 @@ package com.sun.tools.xjc.addon.krasa.validations;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-enum CustomMessageType {
+enum NotNullAnnotationCustomMessageType {
     Fieldname("fieldname"), Classname("classname");
 
     private String value;
 
-    private CustomMessageType(String value) {
+    private NotNullAnnotationCustomMessageType(String value) {
         this.value = value;
     }
 

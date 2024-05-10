@@ -8,12 +8,12 @@ import java.util.stream.Collectors;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class JaxbValidationsLogger {
+public class ValidationsLogger {
     private final boolean verbose;
     private final String className;
     private final String propertyName;
 
-    public JaxbValidationsLogger(boolean verbose, String className, String propertyName) {
+    public ValidationsLogger(boolean verbose, String className, String propertyName) {
         this.verbose = verbose;
         this.className = className;
         this.propertyName = propertyName;

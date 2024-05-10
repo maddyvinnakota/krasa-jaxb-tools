@@ -82,11 +82,11 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
     @Override
     public List<String> getArgs() {
         return ArgumentBuilder.builder()
-                .add(JaxbValidationsArgument.generateNotNullAnnotations, true)
-                .add(JaxbValidationsArgument.generateStringListAnnotations, true)
-                .add(JaxbValidationsArgument.targetNamespace, getNamespace())
-                .add(JaxbValidationsArgument.JSR_349, true)
-                .add(JaxbValidationsArgument.validationAnnotations, getAnnotation().name())
+                .add(ValidationsArgument.generateNotNullAnnotations, true)
+                .add(ValidationsArgument.generateStringListAnnotations, true)
+                .add(ValidationsArgument.targetNamespace, getNamespace())
+                .add(ValidationsArgument.JSR_349, true)
+                .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
                 .getOptionList();
     }
 

@@ -19,12 +19,12 @@ public class ClassNameBase extends AnnotationsMojoTestHelper {
     @Override
     public List<String> getArgs() {
         return ArgumentBuilder.builder()
-                .add(JaxbValidationsArgument.notNullAnnotationsCustomMessages, "ClassName")
-                .add(JaxbValidationsArgument.JSR_349, true)
-                .add(JaxbValidationsArgument.generateNotNullAnnotations, true)
-                .add(JaxbValidationsArgument.generateStringListAnnotations, true)
-                .add(JaxbValidationsArgument.targetNamespace, getNamespace())
-                .add(JaxbValidationsArgument.validationAnnotations, getAnnotation().name())
+                .add(ValidationsArgument.notNullAnnotationsCustomMessages, "ClassName")
+                .add(ValidationsArgument.JSR_349, true)
+                .add(ValidationsArgument.generateNotNullAnnotations, true)
+                .add(ValidationsArgument.generateStringListAnnotations, true)
+                .add(ValidationsArgument.targetNamespace, getNamespace())
+                .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
                 .getOptionList();
     }
 }

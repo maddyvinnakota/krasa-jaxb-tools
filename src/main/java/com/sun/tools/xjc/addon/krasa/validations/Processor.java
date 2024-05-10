@@ -24,10 +24,10 @@ import java.util.stream.Collectors;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class JaxbValidationsProcessor {
-    private final JaxbValidationsOptions options;
+public class Processor {
+    private final ValidationsOptions options;
 
-    public JaxbValidationsProcessor(JaxbValidationsOptions options) {
+    public Processor(ValidationsOptions options) {
         this.options = options;
     }
 
@@ -41,38 +41,43 @@ public class JaxbValidationsProcessor {
                 String propertyName = property.getName(false);
                 String className = classOutline.implClass.name();
 
-                JaxbValidationsLogger logger =
-                        new JaxbValidationsLogger(options.isVerbose(), className, propertyName);
+                ValidationsLogger logger =
+                        new ValidationsLogger(options.isVerbose(), className, propertyName);
 
-                TypeProcessor typeProcessor = new TypeProcessor(logger, classOutline);
+                new TypeProcessor(classOutline, logger)
+                        .processProperty(property);
 
-                if (property instanceof CElementPropertyInfo) {
-                    typeProcessor.processElement((CElementPropertyInfo) property);
-
-                } else if (property instanceof CAttributePropertyInfo) {
-                    typeProcessor.processAttribute((CAttributePropertyInfo) property);
-
-                } else if (property instanceof CValuePropertyInfo) {
-                    typeProcessor.processAttribute((CValuePropertyInfo) property);
-
-                }
             }
         }
     }
 
     class TypeProcessor {
-        private final JaxbValidationsLogger logger;
+        private final ValidationsLogger logger;
         private final ClassOutline classOutline;
 
-        public TypeProcessor(JaxbValidationsLogger logger, ClassOutline classOutline) {
+        public TypeProcessor(ClassOutline classOutline, ValidationsLogger logger) {
             this.logger = logger;
             this.classOutline = classOutline;
+        }
+
+
+        public void processProperty(CPropertyInfo property) {
+            if (property instanceof CElementPropertyInfo) {
+                processElement((CElementPropertyInfo) property);
+
+            } else if (property instanceof CAttributePropertyInfo) {
+                processAttribute((CAttributePropertyInfo) property);
+
+            } else if (property instanceof CValuePropertyInfo) {
+                processAttribute((CValuePropertyInfo) property);
+
+            }
         }
 
         /**
          * XS:Element
          */
-        public void processElement(CElementPropertyInfo property) {
+        private void processElement(CElementPropertyInfo property) {
 
             XSParticle particle = (XSParticle) property.getSchemaComponent();
             ElementDecl element = (ElementDecl) particle.getTerm();
@@ -87,8 +92,8 @@ public class JaxbValidationsProcessor {
             JFieldVar field = classOutline.implClass.fields().get(propertyName);
             XSType elementType = element.getType();
 
-            JaxbValidationsAnnotator annotator =
-                    new JaxbValidationsAnnotator(
+            Annotator annotator =
+                    new Annotator(
                             logger,
                             field,
                             options.getAnnotationFactory());
@@ -136,7 +141,7 @@ public class JaxbValidationsProcessor {
         /**
          * Attribute from parent declaration
          */
-        public void processAttribute(CValuePropertyInfo property) {
+        private void processAttribute(CValuePropertyInfo property) {
             String propertyName = property.getName(false);
             XSComponent definition = property.getSchemaComponent();
             SimpleTypeImpl particle = (SimpleTypeImpl) definition;
@@ -144,14 +149,14 @@ public class JaxbValidationsProcessor {
             JFieldVar field = classOutline.implClass.fields().get(propertyName);
 
             if (field != null) {
-                JaxbValidationsAnnotator annotator =
-                        new JaxbValidationsAnnotator(logger, field, options.getAnnotationFactory());
+                Annotator annotator =
+                        new Annotator(logger, field, options.getAnnotationFactory());
 
                 processType(simpleType, field, annotator);
             }
         }
 
-        public void processAttribute(CAttributePropertyInfo property) {
+        private void processAttribute(CAttributePropertyInfo property) {
             String propertyName = property.getName(false);
 
             XSComponent definition = property.getSchemaComponent();
@@ -160,8 +165,8 @@ public class JaxbValidationsProcessor {
             JFieldVar var = classOutline.implClass.fields().get(propertyName);
 
             if (var != null) {
-                JaxbValidationsAnnotator annotator =
-                        new JaxbValidationsAnnotator(logger, var, options.getAnnotationFactory());
+                Annotator annotator =
+                        new Annotator(logger, var, options.getAnnotationFactory());
 
                 if (particle.isRequired()) {
                     String message = notNullMessage(classOutline, var);
@@ -173,7 +178,7 @@ public class JaxbValidationsProcessor {
         }
 
 
-        void processType(XSSimpleType simpleType, JFieldVar field, JaxbValidationsAnnotator annotator) {
+        private void processType(XSSimpleType simpleType, JFieldVar field, Annotator annotator) {
 
             Facet facet = new Facet(simpleType);
             FieldHelper fieldHelper = new FieldHelper(field);

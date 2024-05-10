@@ -16,10 +16,10 @@ import java.util.Set;
  */
 public class AnnotationMng {
     private final JFieldVar field;
-    private final JaxbValidationsLogger logger;
+    private final ValidationsLogger logger;
     private final Set<Class<? extends Annotation>> annotationSet = new HashSet<>();
 
-    public AnnotationMng(JaxbValidationsLogger logger, JFieldVar field) {
+    public AnnotationMng(ValidationsLogger logger, JFieldVar field) {
         this.field = field;
         this.logger = logger;
     }

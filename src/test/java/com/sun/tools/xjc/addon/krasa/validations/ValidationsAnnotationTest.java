@@ -7,7 +7,7 @@ import org.junit.Test;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class JaxbValidationsAnnotationTest {
+public class ValidationsAnnotationTest {
 
     @Test
     public void testConversionFromJavaxClassNames() throws ClassNotFoundException {

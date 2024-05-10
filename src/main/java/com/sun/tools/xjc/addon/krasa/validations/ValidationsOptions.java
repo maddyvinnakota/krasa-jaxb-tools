@@ -4,7 +4,7 @@ package com.sun.tools.xjc.addon.krasa.validations;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class JaxbValidationsOptions {
+public class ValidationsOptions {
     // sets default values in Builder not here
     private final String targetNamespace;
     private final boolean singlePattern;
@@ -145,19 +145,19 @@ public class JaxbValidationsOptions {
             return this;
         }
 
-        public JaxbValidationsOptions build() {
-            return new com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsOptions(targetNamespace, singlePattern, jsr349,
+        public ValidationsOptions build() {
+            return new com.sun.tools.xjc.addon.krasa.validations.ValidationsOptions(targetNamespace, singlePattern, jsr349,
                     verbose, notNullAnnotations, notNullCustomMessage, notNullPrefixFieldName,
                     notNullPrefixClassName, notNullCustomMessageText, jpaAnnotations,
                     generateStringListAnnotations, annotationFactory);
         }
     }
 
-    public static JaxbValidationsOptions.Builder builder() {
-        return new JaxbValidationsOptions.Builder();
+    public static ValidationsOptions.Builder builder() {
+        return new ValidationsOptions.Builder();
     }
 
-    private JaxbValidationsOptions(final String targetNamespace,
+    private ValidationsOptions(final String targetNamespace,
             final boolean singlePattern, final boolean jsr349,
             final boolean verbose, final boolean notNullAnnotations,
             final boolean notNullCustomMessage, final boolean notNullPrefixFieldName,

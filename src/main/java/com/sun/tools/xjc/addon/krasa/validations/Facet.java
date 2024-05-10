@@ -11,14 +11,14 @@ import java.util.stream.Collectors;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class Facet {
+class Facet {
     private final XSSimpleType simpleType;
 
-    public Facet(XSSimpleType simpleType) {
+    Facet(XSSimpleType simpleType) {
         this.simpleType = simpleType;
     }
 
-    public boolean targetNamespaceEquals(String namespace) {
+    boolean targetNamespaceEquals(String namespace) {
         if (namespace == null || namespace.isEmpty()) {
             return false;
         }
@@ -26,55 +26,55 @@ public class Facet {
         return elemNs.startsWith(namespace);
     }
 
-    public Integer minLength() {
+    Integer minLength() {
         return getIntegerFacet(XSFacet.FACET_MINLENGTH);
     }
 
-    public Integer maxLength() {
+    Integer maxLength() {
         return getIntegerFacet(XSFacet.FACET_MAXLENGTH);
     }
 
-    public Integer length() {
+    Integer length() {
         return getIntegerFacet(XSFacet.FACET_LENGTH);
     }
 
-    public Integer totalDigits() {
+    Integer totalDigits() {
         return getIntegerFacet(XSFacet.FACET_TOTALDIGITS);
     }
 
-    public Integer fractionDigits() {
+    Integer fractionDigits() {
         return getIntegerFacet(XSFacet.FACET_FRACTIONDIGITS);
     }
 
-    public BigDecimal minInclusive() {
+    BigDecimal minInclusive() {
         return getDecimalFacet(XSFacet.FACET_MININCLUSIVE);
     }
 
-    public BigDecimal minExclusive() {
+    BigDecimal minExclusive() {
         return getDecimalFacet(XSFacet.FACET_MINEXCLUSIVE);
     }
 
-    public BigDecimal maxInclusive() {
+    BigDecimal maxInclusive() {
         return getDecimalFacet(XSFacet.FACET_MAXINCLUSIVE);
     }
 
-    public BigDecimal maxExclusive() {
+    BigDecimal maxExclusive() {
         return getDecimalFacet(XSFacet.FACET_MAXEXCLUSIVE);
     }
 
-    public String pattern() {
+    String pattern() {
         return getStringFacet(XSFacet.FACET_PATTERN);
     }
 
-    public List<String> patternList() {
+    List<String> patternList() {
         return getMultipleStringFacets(XSFacet.FACET_PATTERN);
     }
 
-    public String enumeration() {
+    String enumeration() {
         return getStringFacet(XSFacet.FACET_ENUMERATION);
     }
 
-    public List<String> enumerationList() {
+    List<String> enumerationList() {
         return getMultipleStringFacets(XSFacet.FACET_ENUMERATION);
     }
 

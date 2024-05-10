@@ -16,12 +16,12 @@ public class MissingBooleanArgumentParserTest extends AnnotationsMojoTestHelper 
     @Override
     public List<String> getArgs() {
         return ArgumentBuilder.builder()
-                .addWithoutValue(JaxbValidationsArgument.JSR_349)
-                .addWithoutValue(JaxbValidationsArgument.generateStringListAnnotations)
-                .addWithoutValue(JaxbValidationsArgument.generateNotNullAnnotations)
-                .addWithoutValue(JaxbValidationsArgument.verbose)
-                .addWithoutValue(JaxbValidationsArgument.jpa)
-                .addWithoutValue(JaxbValidationsArgument.generateServiceValidationAnnotations)
+                .addWithoutValue(ValidationsArgument.JSR_349)
+                .addWithoutValue(ValidationsArgument.generateStringListAnnotations)
+                .addWithoutValue(ValidationsArgument.generateNotNullAnnotations)
+                .addWithoutValue(ValidationsArgument.verbose)
+                .addWithoutValue(ValidationsArgument.jpa)
+                .addWithoutValue(ValidationsArgument.generateServiceValidationAnnotations)
                 .getOptionList();
     }
 

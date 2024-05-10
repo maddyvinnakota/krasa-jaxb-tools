@@ -20,12 +20,12 @@ class ArgumentBuilder {
         list.add(JaxbValidationsPlugin.PLUGIN_OPTION_NAME);
     }
 
-    public ArgumentBuilder add(JaxbValidationsArgument argument, Object value) {
+    public ArgumentBuilder add(ValidationsArgument argument, Object value) {
         list.add(argument.withValue(java.util.Objects.toString(value)));
         return this;
     }
 
-    public ArgumentBuilder addWithoutValue(JaxbValidationsArgument argument) {
+    public ArgumentBuilder addWithoutValue(ValidationsArgument argument) {
         list.add(argument.fullOptionName());
         return this;
     }

@@ -3,10 +3,10 @@ package com.sun.tools.xjc.addon.krasa;
 import com.sun.tools.xjc.BadCommandLineException;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
-import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsArgument;
-import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsLogger;
-import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsOptions;
-import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsProcessor;
+import com.sun.tools.xjc.addon.krasa.validations.ValidationsArgument;
+import com.sun.tools.xjc.addon.krasa.validations.ValidationsLogger;
+import com.sun.tools.xjc.addon.krasa.validations.ValidationsOptions;
+import com.sun.tools.xjc.addon.krasa.validations.Processor;
 import com.sun.tools.xjc.outline.Outline;
 import java.io.IOException;
 import java.util.Collections;
@@ -29,7 +29,7 @@ public class JaxbValidationsPlugin extends Plugin {
     public static final String PLUGIN_OPTION_NAME = "-" + PLUGIN_NAME;
     public static final int PLUGIN_OPTION_NAME_LENGHT = PLUGIN_OPTION_NAME.length() + 1;
 
-    JaxbValidationsOptions.Builder pluginOptionsBuilder = JaxbValidationsOptions.builder();
+    ValidationsOptions.Builder pluginOptionsBuilder = ValidationsOptions.builder();
 
     @Override
     public String getOptionName() {
@@ -39,7 +39,7 @@ public class JaxbValidationsPlugin extends Plugin {
     @Override
     public int parseArgument(Options opt, String[] args, int index)
             throws BadCommandLineException, IOException {
-        return JaxbValidationsArgument.parse(pluginOptionsBuilder, args[index]);
+        return ValidationsArgument.parse(pluginOptionsBuilder, args[index]);
     }
 
     @Override
@@ -54,27 +54,26 @@ public class JaxbValidationsPlugin extends Plugin {
 
     @Override
     public String getUsage() {
-        return JaxbValidationsArgument.getUsageHelp();
+        return ValidationsArgument.getUsageHelp();
     }
 
     @Override
     public boolean run(Outline model, Options opt, ErrorHandler errorHandler) {
         pluginOptionsBuilder.verbose(opt.verbose);
 
-        JaxbValidationsOptions options = buildOptions();
+        ValidationsOptions options = buildOptions();
         
         if (opt.verbose) {
-            JaxbValidationsLogger.log(
-                    JaxbValidationsArgument.getActualOptionValuesAsString(options, "    "));
+            ValidationsLogger.log(ValidationsArgument.getActualOptionValuesAsString(options, "    "));
         }
 
-        new JaxbValidationsProcessor(options).process(model);
+        new Processor(options).process(model);
 
         return true;
     }
 
     /** used in tests */
-    public JaxbValidationsOptions buildOptions() {
+    public ValidationsOptions buildOptions() {
         return pluginOptionsBuilder.build();
     }
 

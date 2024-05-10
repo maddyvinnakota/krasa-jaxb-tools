@@ -14,7 +14,7 @@ import javax.persistence.Column;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class JaxbValidationsAnnotator {
+class Annotator {
 
     private static final String FRACTION = "fraction";
     private static final String INTEGER = "integer";
@@ -31,8 +31,8 @@ public class JaxbValidationsAnnotator {
     private final JaxbValidationsAnnotation annotationFactory;
     private final AnnotationMng annotations;
 
-    public JaxbValidationsAnnotator(
-            JaxbValidationsLogger log,
+    public Annotator(
+            ValidationsLogger log,
             JFieldVar field,
             JaxbValidationsAnnotation annotationFactory) {
         this.annotationFactory = annotationFactory;

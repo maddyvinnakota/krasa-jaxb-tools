@@ -12,7 +12,7 @@ import java.util.function.Function;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public enum JaxbValidationsArgument {
+public enum ValidationsArgument {
     targetNamespace(
             // type:
             String.class,
@@ -55,12 +55,12 @@ public enum JaxbValidationsArgument {
                 if (b != null) {
                     p.notNullCustomMessage(b);
                 } else {
-                    if (CustomMessageType.Classname.equalsIgnoreCase(v)) {
+                    if (NotNullAnnotationCustomMessageType.Classname.equalsIgnoreCase(v)) {
                         p.notNullCustomMessage(true);
                         p.notNullPrefixFieldName(false);
                         p.notNullPrefixClassName(true);
                         p.notNullCustomMessageText(null);
-                    } else if (CustomMessageType.Fieldname.equalsIgnoreCase(v)) {
+                    } else if (NotNullAnnotationCustomMessageType.Fieldname.equalsIgnoreCase(v)) {
                         p.notNullCustomMessage(true);
                         p.notNullPrefixFieldName(true);
                         p.notNullPrefixClassName(false);
@@ -133,16 +133,16 @@ public enum JaxbValidationsArgument {
     private final String help;
 
     // set the value and return null if ok or a text with the error
-    private final BiFunction<JaxbValidationsOptions.Builder, String, String> setter;
+    private final BiFunction<ValidationsOptions.Builder, String, String> setter;
 
     // get the value
-    private final Function<JaxbValidationsOptions, Object> getter;
+    private final Function<ValidationsOptions, Object> getter;
 
-    JaxbValidationsArgument(
+    ValidationsArgument(
             Class<?> type,
             String help,
-            BiFunction<JaxbValidationsOptions.Builder, String, String> setter,
-            Function<JaxbValidationsOptions, Object> getter) {
+            BiFunction<ValidationsOptions.Builder, String, String> setter,
+            Function<ValidationsOptions, Object> getter) {
         this.type = type;
         this.help = help;
         this.setter = setter;
@@ -162,18 +162,18 @@ public enum JaxbValidationsArgument {
     }
 
     /** @return 1 if the argument is referring to this plugin, 0 otherwise. */
-    public static int parse(JaxbValidationsOptions.Builder options, String option)
+    public static int parse(ValidationsOptions.Builder options, String option)
             throws BadCommandLineException {
         if (option.startsWith(JaxbValidationsPlugin.PLUGIN_OPTION_NAME)) {
             int idx = option.indexOf("=");
             if (idx != -1) {
                 final String name = option.substring(JaxbValidationsPlugin.PLUGIN_OPTION_NAME_LENGHT, idx);
                 final String value = option.substring(idx + 1);
-                JaxbValidationsArgument argument = parseJaxbValidationsArgument(name);
+                ValidationsArgument argument = parseJaxbValidationsArgument(name);
                 setValueToPlugin(options, argument, value);
             } else if (option.length() > JaxbValidationsPlugin.PLUGIN_OPTION_NAME_LENGHT) {
                 final String name = option.substring(JaxbValidationsPlugin.PLUGIN_OPTION_NAME_LENGHT);
-                JaxbValidationsArgument argument = parseJaxbValidationsArgument(name);
+                ValidationsArgument argument = parseJaxbValidationsArgument(name);
                 setValueToPlugin(options, argument, "true");
             }
             return 1;
@@ -182,7 +182,7 @@ public enum JaxbValidationsArgument {
     }
 
     static void setValueToPlugin(
-            JaxbValidationsOptions.Builder options, JaxbValidationsArgument argument, final String value)
+            ValidationsOptions.Builder options, ValidationsArgument argument, final String value)
             throws BadCommandLineException {
         try {
             String error = argument.setter.apply(options, value);
@@ -210,13 +210,13 @@ public enum JaxbValidationsArgument {
                 .toString();
     }
 
-    static JaxbValidationsArgument parseJaxbValidationsArgument(final String name) throws
+    static ValidationsArgument parseJaxbValidationsArgument(final String name) throws
             BadCommandLineException {
-        JaxbValidationsArgument argument = JaxbValidationsArgument.valueOf(name);
+        ValidationsArgument argument = ValidationsArgument.valueOf(name);
         if (argument == null) {
             throw new BadCommandLineException(JaxbValidationsPlugin.PLUGIN_NAME +
                     " unrecognized option " + name + ", usage:\n" +
-                    JaxbValidationsArgument.helpMessageWithPrefix(""));
+                    ValidationsArgument.helpMessageWithPrefix(""));
         }
         return argument;
     }
@@ -224,7 +224,7 @@ public enum JaxbValidationsArgument {
     /** @return a multi line string containing an help for each option. */
     public static String helpMessageWithPrefix(String linePrefix) {
         StringBuilder buf = new StringBuilder();
-        for (JaxbValidationsArgument a : values()) {
+        for (ValidationsArgument a : values()) {
             buf
                     .append(linePrefix)
                     .append(a.name())
@@ -245,7 +245,7 @@ public enum JaxbValidationsArgument {
 
     /** @return a multi line string containing the value for each option. */
     public static String getActualOptionValuesAsString(
-            JaxbValidationsOptions options,
+            ValidationsOptions options,
             String linePrefix) {
         StringBuilder buf = new StringBuilder();
         buf
@@ -254,7 +254,7 @@ public enum JaxbValidationsArgument {
                 .append(" options:")
                 .append(System.lineSeparator());
 
-        for (JaxbValidationsArgument a : values()) {
+        for (ValidationsArgument a : values()) {
             buf
                     .append(linePrefix)
                     .append(a.name())

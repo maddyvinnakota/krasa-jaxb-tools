@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
  *
  * @author Francesco Illuminati
  */
-public enum JaxbValidationsAnnotation {
+enum JaxbValidationsAnnotation {
 
     JAVAX {
         @Override

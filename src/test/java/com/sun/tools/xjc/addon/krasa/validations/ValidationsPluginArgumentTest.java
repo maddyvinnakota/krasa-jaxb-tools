@@ -27,39 +27,39 @@ import org.junit.Test;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class JaxbValidationsPluginArgumentTest {
+public class ValidationsPluginArgumentTest {
     private JaxbValidationsPlugin plugin;
     private Options opt;
 
-    public JaxbValidationsPluginArgumentTest() {
+    public ValidationsPluginArgumentTest() {
         plugin = new JaxbValidationsPlugin();
         opt = new Options();
     }
 
     @Test
     public void shouldSetVersbose() throws BadCommandLineException, IOException {
-        setArguments(JaxbValidationsArgument.verbose.withValue("true"));
-        JaxbValidationsOptions options = plugin.buildOptions();
+        setArguments(ValidationsArgument.verbose.withValue("true"));
+        ValidationsOptions options = plugin.buildOptions();
         assertTrue(options.isVerbose());
     }
 
     @Test
     public void shouldSetVersboseWithCapital() throws BadCommandLineException, IOException {
-        setArguments(JaxbValidationsArgument.verbose.withValue("TRue"));
-        JaxbValidationsOptions options = plugin.buildOptions();
+        setArguments(ValidationsArgument.verbose.withValue("TRue"));
+        ValidationsOptions options = plugin.buildOptions();
         assertTrue(options.isVerbose());
     }
 
     @Test(expected = BadCommandLineException.class)
     public void shouldNotSetErroneousVerbose() throws BadCommandLineException, IOException {
-        setArguments(JaxbValidationsArgument.verbose.withValue("ERROR"));
+        setArguments(ValidationsArgument.verbose.withValue("ERROR"));
     }
 
     @Test
     public void shouldSetTargetNamespace() throws BadCommandLineException, IOException {
         String ns = "target.namespace";
-        setArguments(JaxbValidationsArgument.targetNamespace.withValue(ns));
-        JaxbValidationsOptions options = plugin.buildOptions();
+        setArguments(ValidationsArgument.targetNamespace.withValue(ns));
+        ValidationsOptions options = plugin.buildOptions();
         assertEquals(options.getTargetNamespace(), ns);
     }
 

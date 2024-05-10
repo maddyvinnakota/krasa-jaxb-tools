@@ -3,12 +3,6 @@ package com.sun.tools.xjc.addon.krasa.validations;
 import com.sun.tools.xjc.BadCommandLineException;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.addon.krasa.JaxbValidationsPlugin;
-import com.sun.tools.xjc.addon.krasa.JaxbValidationsPlugin;
-import com.sun.tools.xjc.addon.krasa.validations.ArgumentBuilder;
-import com.sun.tools.xjc.addon.krasa.validations.CustomMessageType;
-import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsAnnotation;
-import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsArgument;
-import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsOptions;
 import java.io.IOException;
 import java.util.List;
 import static junit.framework.TestCase.assertEquals;
@@ -20,7 +14,7 @@ import org.junit.Test;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class JaxbValidationsArgumentTest {
+public class ValidationsArgumentTest {
 
     private static final String NAMESPACE = "xyz";
     private static final String ANNOTATION = "javax";
@@ -31,15 +25,15 @@ public class JaxbValidationsArgumentTest {
         JaxbValidationsPlugin plugin = new JaxbValidationsPlugin();
 
         List<String> arguments = ArgumentBuilder.builder()
-                .add(JaxbValidationsArgument.targetNamespace, NAMESPACE)
-                .add(JaxbValidationsArgument.JSR_349, true)
-                .add(JaxbValidationsArgument.generateStringListAnnotations, true)
-                .add(JaxbValidationsArgument.validationAnnotations, ANNOTATION)
-                .add(JaxbValidationsArgument.generateNotNullAnnotations, true)
-                .add(JaxbValidationsArgument.generateServiceValidationAnnotations, true)
-                .add(JaxbValidationsArgument.notNullAnnotationsCustomMessages, MESSAGE)
-                .add(JaxbValidationsArgument.jpa, true)
-                .add(JaxbValidationsArgument.verbose, true)
+                .add(ValidationsArgument.targetNamespace, NAMESPACE)
+                .add(ValidationsArgument.JSR_349, true)
+                .add(ValidationsArgument.generateStringListAnnotations, true)
+                .add(ValidationsArgument.validationAnnotations, ANNOTATION)
+                .add(ValidationsArgument.generateNotNullAnnotations, true)
+                .add(ValidationsArgument.generateServiceValidationAnnotations, true)
+                .add(ValidationsArgument.notNullAnnotationsCustomMessages, MESSAGE)
+                .add(ValidationsArgument.jpa, true)
+                .add(ValidationsArgument.verbose, true)
                 .getOptionList();
 
         String[] args = arguments.toArray(new String[arguments.size()]);
@@ -49,7 +43,7 @@ public class JaxbValidationsArgumentTest {
             plugin.parseArgument(opt, args, i);
         }
 
-        JaxbValidationsOptions options = plugin.buildOptions();
+        ValidationsOptions options = plugin.buildOptions();
 
         assertEquals(NAMESPACE, options.getTargetNamespace());
         assertEquals(JaxbValidationsAnnotation.JAVAX, options.getAnnotationFactory());
@@ -65,7 +59,7 @@ public class JaxbValidationsArgumentTest {
     @Test
     public void shouldNotNullFlagsBeFalseByDefault() {
         JaxbValidationsPlugin plugin = new JaxbValidationsPlugin();
-        JaxbValidationsOptions options = plugin.buildOptions();
+        ValidationsOptions options = plugin.buildOptions();
 
         assertFalse(options.isNotNullCustomMessage());
         assertFalse(options.isNotNullPrefixFieldName());
@@ -76,10 +70,10 @@ public class JaxbValidationsArgumentTest {
     public void shouldSetNotNullAnnotationsCustomMessagesOnClassName()
             throws BadCommandLineException, IOException {
 
-        String option = CustomMessageType.Classname.value();
+        String option = NotNullAnnotationCustomMessageType.Classname.value();
 
         JaxbValidationsPlugin plugin = setupNotNullMessage(option);
-        JaxbValidationsOptions options = plugin.buildOptions();
+        ValidationsOptions options = plugin.buildOptions();
 
         assertTrue(options.isNotNullCustomMessage());
         assertFalse(options.isNotNullPrefixFieldName());
@@ -90,10 +84,10 @@ public class JaxbValidationsArgumentTest {
     public void shouldSetNotNullAnnotationsCustomMessagesOnFieldName()
             throws BadCommandLineException, IOException {
 
-        String option = CustomMessageType.Fieldname.value();
+        String option = NotNullAnnotationCustomMessageType.Fieldname.value();
 
         JaxbValidationsPlugin plugin = setupNotNullMessage(option);
-        JaxbValidationsOptions options = plugin.buildOptions();
+        ValidationsOptions options = plugin.buildOptions();
 
         assertTrue(options.isNotNullCustomMessage());
         assertTrue(options.isNotNullPrefixFieldName());
@@ -105,7 +99,7 @@ public class JaxbValidationsArgumentTest {
         JaxbValidationsPlugin plugin = new JaxbValidationsPlugin();
 
         List<String> arguments = ArgumentBuilder.builder()
-                .add(JaxbValidationsArgument.notNullAnnotationsCustomMessages, option)
+                .add(ValidationsArgument.notNullAnnotationsCustomMessages, option)
                 .getOptionList();
 
         String[] args = arguments.toArray(new String[arguments.size()]);
@@ -121,32 +115,32 @@ public class JaxbValidationsArgumentTest {
 
     @Test
     public void shouldConvertToBooleanWithDefault() {
-        assertTrue(JaxbValidationsArgument.toBoolean("True", false));
-        assertTrue(JaxbValidationsArgument.toBoolean("true", false));
-        assertTrue(JaxbValidationsArgument.toBoolean("TRUE", false));
-        assertTrue(JaxbValidationsArgument.toBoolean(" true", false));
-        assertTrue(JaxbValidationsArgument.toBoolean("true ", false));
-        assertTrue(JaxbValidationsArgument.toBoolean(" true ", false));
+        assertTrue(ValidationsArgument.toBoolean("True", false));
+        assertTrue(ValidationsArgument.toBoolean("true", false));
+        assertTrue(ValidationsArgument.toBoolean("TRUE", false));
+        assertTrue(ValidationsArgument.toBoolean(" true", false));
+        assertTrue(ValidationsArgument.toBoolean("true ", false));
+        assertTrue(ValidationsArgument.toBoolean(" true ", false));
 
-        assertFalse(JaxbValidationsArgument.toBoolean("False", true));
-        assertFalse(JaxbValidationsArgument.toBoolean("false", true));
-        assertFalse(JaxbValidationsArgument.toBoolean("FALSE", true));
-        assertFalse(JaxbValidationsArgument.toBoolean("FalSe", true));
+        assertFalse(ValidationsArgument.toBoolean("False", true));
+        assertFalse(ValidationsArgument.toBoolean("false", true));
+        assertFalse(ValidationsArgument.toBoolean("FALSE", true));
+        assertFalse(ValidationsArgument.toBoolean("FalSe", true));
     }
 
     @Test
     public void shouldConvertToBoolean() {
-        assertTrue(JaxbValidationsArgument.toBoolean("True"));
-        assertTrue(JaxbValidationsArgument.toBoolean("true"));
-        assertTrue(JaxbValidationsArgument.toBoolean("TRUE"));
-        assertTrue(JaxbValidationsArgument.toBoolean(" true"));
-        assertTrue(JaxbValidationsArgument.toBoolean("true "));
-        assertTrue(JaxbValidationsArgument.toBoolean(" true "));
+        assertTrue(ValidationsArgument.toBoolean("True"));
+        assertTrue(ValidationsArgument.toBoolean("true"));
+        assertTrue(ValidationsArgument.toBoolean("TRUE"));
+        assertTrue(ValidationsArgument.toBoolean(" true"));
+        assertTrue(ValidationsArgument.toBoolean("true "));
+        assertTrue(ValidationsArgument.toBoolean(" true "));
 
-        assertFalse(JaxbValidationsArgument.toBoolean("False"));
-        assertFalse(JaxbValidationsArgument.toBoolean("false"));
-        assertFalse(JaxbValidationsArgument.toBoolean("FALSE"));
-        assertFalse(JaxbValidationsArgument.toBoolean("FalSe"));
+        assertFalse(ValidationsArgument.toBoolean("False"));
+        assertFalse(ValidationsArgument.toBoolean("false"));
+        assertFalse(ValidationsArgument.toBoolean("FALSE"));
+        assertFalse(ValidationsArgument.toBoolean("FalSe"));
     }
 
 }

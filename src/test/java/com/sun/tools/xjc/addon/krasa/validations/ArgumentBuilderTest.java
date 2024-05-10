@@ -18,18 +18,18 @@ public class ArgumentBuilderTest {
     @Test
     public void shouldBuildArguments() {
         List<String> list = ArgumentBuilder.builder()
-                .add(JaxbValidationsArgument.targetNamespace, NAMESPACE)
-                .add(JaxbValidationsArgument.JSR_349, true)
-                .add(JaxbValidationsArgument.generateStringListAnnotations, true)
-                .add(JaxbValidationsArgument.validationAnnotations, ANNOTATION)
+                .add(ValidationsArgument.targetNamespace, NAMESPACE)
+                .add(ValidationsArgument.JSR_349, true)
+                .add(ValidationsArgument.generateStringListAnnotations, true)
+                .add(ValidationsArgument.validationAnnotations, ANNOTATION)
                 .getOptionList();
 
         Iterator<String> it = list.iterator();
         assertEquals(JaxbValidationsPlugin.PLUGIN_OPTION_NAME, it.next());
-        assertEquals(JaxbValidationsArgument.targetNamespace.withValue(NAMESPACE), it.next());
-        assertEquals(JaxbValidationsArgument.JSR_349.withValue("true"), it.next());
-        assertEquals(JaxbValidationsArgument.generateStringListAnnotations.withValue("true"), it.next());
-        assertEquals(JaxbValidationsArgument.validationAnnotations.withValue(ANNOTATION), it.next());
+        assertEquals(ValidationsArgument.targetNamespace.withValue(NAMESPACE), it.next());
+        assertEquals(ValidationsArgument.JSR_349.withValue("true"), it.next());
+        assertEquals(ValidationsArgument.generateStringListAnnotations.withValue("true"), it.next());
+        assertEquals(ValidationsArgument.validationAnnotations.withValue(ANNOTATION), it.next());
     }
 
 }
