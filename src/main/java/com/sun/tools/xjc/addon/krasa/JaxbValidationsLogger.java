@@ -19,13 +19,15 @@ public class JaxbValidationsLogger {
     }
 
     void addAnnotation(String annotationName, Map<String, String> parameterMap) {
-        String params = parameterMap.entrySet().stream()
-                .map(e -> e.getKey() + "=" + e.getValue())
-                .collect(Collectors.joining(", "));
-        if (!params.isEmpty()) {
-            params = "(" + params + ")";
+        if (verbose) {
+            String params = parameterMap.entrySet().stream()
+                    .map(e -> e.getKey() + "=" + e.getValue())
+                    .collect(Collectors.joining(", "));
+            if (!params.isEmpty()) {
+                params = "(" + params + ")";
+            }
+            log("adding @" + annotationName + params + " to " + className + "." + propertyName);
         }
-        log("adding @" + annotationName + params + " to " + className + "." + propertyName);
     }
 
     static void log(String message) {
