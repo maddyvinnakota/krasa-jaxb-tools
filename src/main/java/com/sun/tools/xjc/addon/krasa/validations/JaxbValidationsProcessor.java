@@ -3,6 +3,7 @@ package com.sun.tools.xjc.addon.krasa.validations;
 import com.sun.codemodel.JFieldVar;
 import com.sun.tools.xjc.model.CAttributePropertyInfo;
 import com.sun.tools.xjc.model.CElementPropertyInfo;
+import com.sun.tools.xjc.model.CPropertyInfo;
 import com.sun.tools.xjc.model.CValuePropertyInfo;
 import com.sun.tools.xjc.outline.ClassOutline;
 import com.sun.tools.xjc.outline.Outline;
@@ -30,200 +31,236 @@ public class JaxbValidationsProcessor {
         this.options = options;
     }
 
-    /**
-     * XS:Element
-     */
-    public void processElement(JaxbValidationsLogger logger, CElementPropertyInfo property,
-            ClassOutline classOutline, Outline model) {
+    public void process(Outline model) {
 
-        XSParticle particle = (XSParticle) property.getSchemaComponent();
-        ElementDecl element = (ElementDecl) particle.getTerm();
+        for (ClassOutline classOutline : model.getClasses()) {
+            List<CPropertyInfo> properties = classOutline.target.getProperties();
 
-        String propertyName = property.getName(false);
+            for (CPropertyInfo property : properties) {
 
-        int minOccurs = particle.getMinOccurs().intValue();
-        int maxOccurs = particle.getMaxOccurs().intValue();
-        boolean required = property.isRequired();
-        boolean nillable = element.isNillable();
+                String propertyName = property.getName(false);
+                String className = classOutline.implClass.name();
 
-        JFieldVar field = classOutline.implClass.fields().get(propertyName);
-        XSType elementType = element.getType();
+                JaxbValidationsLogger logger =
+                        new JaxbValidationsLogger(options.isVerbose(), className, propertyName);
 
-        JaxbValidationsAnnotator annotator =
-                new JaxbValidationsAnnotator(
-                        logger,
-                        field,
-                        options.getAnnotationFactory());
+                TypeProcessor typeProcessor = new TypeProcessor(logger, classOutline);
 
-        if (options.isNotNullAnnotations() && !nillable &&
-                (minOccurs > 0 || required || property.isCollectionRequired()) ) {
-            String message = notNullMessage(classOutline, field);
-            annotator.addNotNullAnnotation(classOutline, field, message);
-        }
+                if (property instanceof CElementPropertyInfo) {
+                    typeProcessor.processElement((CElementPropertyInfo) property);
 
-        if (property.isCollection()) {
-            // add @Valid to all collections
-            annotator.addValidAnnotation();
+                } else if (property instanceof CAttributePropertyInfo) {
+                    typeProcessor.processAttribute((CAttributePropertyInfo) property);
 
-            if (maxOccurs != 0 || minOccurs != 0) {
-                // http://www.dimuthu.org/blog/2008/08/18/xml-schema-nillabletrue-vs-minoccurs0/comment-page-1/
-                annotator.addSizeAnnotation(minOccurs, maxOccurs, null);
+                } else if (property instanceof CValuePropertyInfo) {
+                    typeProcessor.processAttribute((CValuePropertyInfo) property);
+
+                }
             }
-        }
-
-        // using https://github.com/jirutka/validator-collection to annotate Lists of primitives
-        final XSSimpleType simpleType;
-        if (!(elementType instanceof XSSimpleType)) {
-            // is a complex type, get the base type
-            simpleType = elementType.getBaseType().asSimpleType();
-        } else {
-            // simple type
-            simpleType = elementType.asSimpleType();
-        }
-
-        if (simpleType != null) {
-            Facet facet = new Facet(simpleType);
-
-            if ((options.isGenerateStringListAnnotations() && property.isCollection()) ) {
-                annotator.addEachSizeAnnotation(facet.minLength(), facet.maxLength());
-                annotator.addEachDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
-                annotator.addEachDecimalMinAnnotation(facet.minInclusive(), facet.minExclusive());
-                annotator.addEachDecimalMaxAnnotation(facet.maxInclusive(), facet.maxExclusive());
-            }
-
-            processType(logger, simpleType, field, annotator);
         }
     }
 
-    /**
-     * Attribute from parent declaration
-     */
-    public void processAttribute(JaxbValidationsLogger logger, CValuePropertyInfo property,
-            ClassOutline classOutline, Outline model) {
-        String propertyName = property.getName(false);
-        XSComponent definition = property.getSchemaComponent();
-        SimpleTypeImpl particle = (SimpleTypeImpl) definition;
-        XSSimpleType simpleType = particle.asSimpleType();
-        JFieldVar field = classOutline.implClass.fields().get(propertyName);
+    class TypeProcessor {
+        private final JaxbValidationsLogger logger;
+        private final ClassOutline classOutline;
 
-        if (field != null) {
+        public TypeProcessor(JaxbValidationsLogger logger, ClassOutline classOutline) {
+            this.logger = logger;
+            this.classOutline = classOutline;
+        }
+
+        /**
+         * XS:Element
+         */
+        public void processElement(CElementPropertyInfo property) {
+
+            XSParticle particle = (XSParticle) property.getSchemaComponent();
+            ElementDecl element = (ElementDecl) particle.getTerm();
+
+            String propertyName = property.getName(false);
+
+            int minOccurs = particle.getMinOccurs().intValue();
+            int maxOccurs = particle.getMaxOccurs().intValue();
+            boolean required = property.isRequired();
+            boolean nillable = element.isNillable();
+
+            JFieldVar field = classOutline.implClass.fields().get(propertyName);
+            XSType elementType = element.getType();
+
             JaxbValidationsAnnotator annotator =
-                    new JaxbValidationsAnnotator(logger, field, options.getAnnotationFactory());
+                    new JaxbValidationsAnnotator(
+                            logger,
+                            field,
+                            options.getAnnotationFactory());
 
-            processType(logger, simpleType, field, annotator);
-        }
-    }
-
-    public void processAttribute(JaxbValidationsLogger logger, CAttributePropertyInfo property,
-            ClassOutline classOutline, Outline model) {
-        String propertyName = property.getName(false);
-
-        XSComponent definition = property.getSchemaComponent();
-        AttributeUseImpl particle = (AttributeUseImpl) definition;
-        XSSimpleType type = particle.getDecl().getType();
-        JFieldVar var = classOutline.implClass.fields().get(propertyName);
-
-        if (var != null) {
-            JaxbValidationsAnnotator annotator =
-                    new JaxbValidationsAnnotator(logger, var, options.getAnnotationFactory());
-
-            if (particle.isRequired()) {
-                String message = notNullMessage(classOutline, var);
-                annotator.addNotNullAnnotation(classOutline, var, message);
+            if (options.isNotNullAnnotations() && !nillable &&
+                    (minOccurs > 0 || required || property.isCollectionRequired()) ) {
+                String message = notNullMessage(classOutline, field);
+                annotator.addNotNullAnnotation(classOutline, field, message);
             }
 
-            processType(logger, type, var, annotator);
-        }
-    }
+            if (property.isCollection()) {
+                // add @Valid to all collections
+                annotator.addValidAnnotation();
 
-
-    void processType(JaxbValidationsLogger logger,
-            XSSimpleType simpleType, JFieldVar field, JaxbValidationsAnnotator annotator) {
-
-        Facet facet = new Facet(simpleType);
-        FieldHelper fieldHelper = new FieldHelper(field);
-
-        // add @Valid to complex types or custom elements with selected namespace
-        if ((facet.targetNamespaceEquals(options.getTargetNamespace())) &&
-                ((simpleType.isComplexType() || fieldHelper.isCustomType())) ) {
-            annotator.addValidAnnotation();
-        }
-
-        if (fieldHelper.isString() || fieldHelper.isArray()) {
-            annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
-
-            if (options.isJpaAnnotations()) {
-                annotator.addJpaColumnAnnotation(facet.maxLength());
-            }
-        }
-
-        if (fieldHelper.isNumber()) {
-            annotator.addDecimalMinAnnotation(facet.minInclusive(), false);
-            annotator.addDecimalMinAnnotation(facet.minExclusive(), true);
-
-            annotator.addDecimalMaxAnnotation(facet.maxInclusive(), false);
-            annotator.addDecimalMaxAnnotation(facet.maxExclusive(), true);
-
-            annotator.addDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
-
-            if (options.isJpaAnnotations()) {
-                annotator.addJpaColumnStringAnnotation(facet.totalDigits(), facet.fractionDigits());
-            }
-        }
-
-        if (fieldHelper.isString()) {
-
-            final List<String> patternList = facet.patternList();
-            patternList.add(facet.pattern());
-
-            final List<String> enumerationList = facet.enumerationList();
-            enumerationList.add(facet.enumeration());
-
-            XSSimpleType baseType = simpleType;
-            while ((baseType = baseType.getSimpleBaseType()) != null) {
-                if (baseType instanceof XSRestrictionSimpleType) {
-                    Facet baseFacet = new Facet((XSRestrictionSimpleType) baseType);
-
-                    patternList.add(baseFacet.pattern());
-                    patternList.addAll(baseFacet.patternList());
-
-                    enumerationList.add(baseFacet.enumeration());
-                    enumerationList.addAll(baseFacet.enumerationList());
+                if (maxOccurs != 0 || minOccurs != 0) {
+                    // http://www.dimuthu.org/blog/2008/08/18/xml-schema-nillabletrue-vs-minoccurs0/comment-page-1/
+                    annotator.addSizeAnnotation(minOccurs, maxOccurs, null);
                 }
             }
 
-            List<String> adjustedPatterns = patternList.stream()
-                    .filter(p -> isValidRegexp(p))
-                    .map(p -> replaceRegexp(p))
-                    .distinct()
-                    .collect(Collectors.toList());
+            // using https://github.com/jirutka/validator-collection to annotate Lists of primitives
+            final XSSimpleType simpleType;
+            if (!(elementType instanceof XSSimpleType)) {
+                // is a complex type, get the base type
+                simpleType = elementType.getBaseType().asSimpleType();
+            } else {
+                // simple type
+                simpleType = elementType.asSimpleType();
+            }
 
-            // escaped enumuerations can be treated as patterns
-            List<String> adjustedEnumerations = enumerationList.stream()
-                    .filter(p -> p != null && !p.isEmpty())
-                    .map(p -> escapeRegexp(p))
-                    .distinct()
-                    .collect(Collectors.toList());
+            if (simpleType != null) {
+                Facet facet = new Facet(simpleType);
 
-            adjustedPatterns.addAll(adjustedEnumerations);
+                if ((options.isGenerateStringListAnnotations() && property.isCollection()) ) {
+                    annotator.addEachSizeAnnotation(facet.minLength(), facet.maxLength());
+                    annotator.addEachDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
+                    annotator.addEachDecimalMinAnnotation(facet.minInclusive(), facet.minExclusive());
+                    annotator.addEachDecimalMaxAnnotation(facet.maxInclusive(), facet.maxExclusive());
+                }
 
-            LinkedHashSet<String> patternSet = new LinkedHashSet<>(adjustedPatterns);
-
-            switch (patternSet.size()) {
-                case 0:
-                    // do nothing at all
-                    break;
-                case 1:
-                    annotator.addSinglePatternAnnotation(patternSet.iterator().next());
-                    break;
-                default:
-                    if (options.isSinglePattern()) {
-                        annotator.addAlternativePatternListAnnotation(patternSet);
-                    } else {
-                        annotator.addPatternListAnnotation(patternSet);
-                    }
+                processType(simpleType, field, annotator);
             }
         }
+
+        /**
+         * Attribute from parent declaration
+         */
+        public void processAttribute(CValuePropertyInfo property) {
+            String propertyName = property.getName(false);
+            XSComponent definition = property.getSchemaComponent();
+            SimpleTypeImpl particle = (SimpleTypeImpl) definition;
+            XSSimpleType simpleType = particle.asSimpleType();
+            JFieldVar field = classOutline.implClass.fields().get(propertyName);
+
+            if (field != null) {
+                JaxbValidationsAnnotator annotator =
+                        new JaxbValidationsAnnotator(logger, field, options.getAnnotationFactory());
+
+                processType(simpleType, field, annotator);
+            }
+        }
+
+        public void processAttribute(CAttributePropertyInfo property) {
+            String propertyName = property.getName(false);
+
+            XSComponent definition = property.getSchemaComponent();
+            AttributeUseImpl particle = (AttributeUseImpl) definition;
+            XSSimpleType type = particle.getDecl().getType();
+            JFieldVar var = classOutline.implClass.fields().get(propertyName);
+
+            if (var != null) {
+                JaxbValidationsAnnotator annotator =
+                        new JaxbValidationsAnnotator(logger, var, options.getAnnotationFactory());
+
+                if (particle.isRequired()) {
+                    String message = notNullMessage(classOutline, var);
+                    annotator.addNotNullAnnotation(classOutline, var, message);
+                }
+
+                processType(type, var, annotator);
+            }
+        }
+
+
+        void processType(XSSimpleType simpleType, JFieldVar field, JaxbValidationsAnnotator annotator) {
+
+            Facet facet = new Facet(simpleType);
+            FieldHelper fieldHelper = new FieldHelper(field);
+
+            // add @Valid to complex types or custom elements with selected namespace
+            if ((facet.targetNamespaceEquals(options.getTargetNamespace())) &&
+                    ((simpleType.isComplexType() || fieldHelper.isCustomType())) ) {
+                annotator.addValidAnnotation();
+            }
+
+            if (fieldHelper.isString() || fieldHelper.isArray()) {
+                annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
+
+                if (options.isJpaAnnotations()) {
+                    annotator.addJpaColumnAnnotation(facet.maxLength());
+                }
+            }
+
+            if (fieldHelper.isNumber()) {
+                annotator.addDecimalMinAnnotation(facet.minInclusive(), false);
+                annotator.addDecimalMinAnnotation(facet.minExclusive(), true);
+
+                annotator.addDecimalMaxAnnotation(facet.maxInclusive(), false);
+                annotator.addDecimalMaxAnnotation(facet.maxExclusive(), true);
+
+                annotator.addDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
+
+                if (options.isJpaAnnotations()) {
+                    annotator.addJpaColumnStringAnnotation(facet.totalDigits(), facet.fractionDigits());
+                }
+            }
+
+            if (fieldHelper.isString()) {
+
+                final List<String> patternList = facet.patternList();
+                patternList.add(facet.pattern());
+
+                final List<String> enumerationList = facet.enumerationList();
+                enumerationList.add(facet.enumeration());
+
+                XSSimpleType baseType = simpleType;
+                while ((baseType = baseType.getSimpleBaseType()) != null) {
+                    if (baseType instanceof XSRestrictionSimpleType) {
+                        Facet baseFacet = new Facet((XSRestrictionSimpleType) baseType);
+
+                        patternList.add(baseFacet.pattern());
+                        patternList.addAll(baseFacet.patternList());
+
+                        enumerationList.add(baseFacet.enumeration());
+                        enumerationList.addAll(baseFacet.enumerationList());
+                    }
+                }
+
+                List<String> adjustedPatterns = patternList.stream()
+                        .filter(p -> isValidRegexp(p))
+                        .map(p -> replaceRegexp(p))
+                        .distinct()
+                        .collect(Collectors.toList());
+
+                // escaped enumuerations can be treated as patterns
+                List<String> adjustedEnumerations = enumerationList.stream()
+                        .filter(p -> p != null && !p.isEmpty())
+                        .map(p -> escapeRegexp(p))
+                        .distinct()
+                        .collect(Collectors.toList());
+
+                adjustedPatterns.addAll(adjustedEnumerations);
+
+                LinkedHashSet<String> patternSet = new LinkedHashSet<>(adjustedPatterns);
+
+                switch (patternSet.size()) {
+                    case 0:
+                        // do nothing at all
+                        break;
+                    case 1:
+                        annotator.addSinglePatternAnnotation(patternSet.iterator().next());
+                        break;
+                    default:
+                        if (options.isSinglePattern()) {
+                            annotator.addAlternativePatternListAnnotation(patternSet);
+                        } else {
+                            annotator.addPatternListAnnotation(patternSet);
+                        }
+                }
+            }
+        }
+
     }
 
     /*

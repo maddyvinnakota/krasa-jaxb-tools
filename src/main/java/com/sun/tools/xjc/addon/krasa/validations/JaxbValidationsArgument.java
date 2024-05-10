@@ -2,6 +2,7 @@ package com.sun.tools.xjc.addon.krasa.validations;
 
 import com.sun.tools.xjc.BadCommandLineException;
 import com.sun.tools.xjc.addon.krasa.JaxbValidationsPlugin;
+import static com.sun.tools.xjc.addon.krasa.JaxbValidationsPlugin.PLUGIN_OPTION_NAME;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -196,12 +197,26 @@ public enum JaxbValidationsArgument {
         }
     }
 
+    public static String getUsageHelp() {
+        return new StringBuilder()
+                .append("  -")
+                .append(PLUGIN_OPTION_NAME)
+                .append("      :  ")
+                .append("inject Bean validation annotations (JSR 303)")
+                .append(System.lineSeparator())
+                .append("   Options:")
+                .append(helpMessageWithPrefix("     "))
+                .append(System.lineSeparator())
+                .toString();
+    }
+
     static JaxbValidationsArgument parseJaxbValidationsArgument(final String name) throws
             BadCommandLineException {
         JaxbValidationsArgument argument = JaxbValidationsArgument.valueOf(name);
         if (argument == null) {
             throw new BadCommandLineException(JaxbValidationsPlugin.PLUGIN_NAME +
-                    " unrecognized option " + name + ", usage:\n" + JaxbValidationsArgument.helpMessageWithPrefix(""));
+                    " unrecognized option " + name + ", usage:\n" +
+                    JaxbValidationsArgument.helpMessageWithPrefix(""));
         }
         return argument;
     }

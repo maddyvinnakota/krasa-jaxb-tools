@@ -7,11 +7,6 @@ import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsArgument;
 import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsLogger;
 import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsOptions;
 import com.sun.tools.xjc.addon.krasa.validations.JaxbValidationsProcessor;
-import com.sun.tools.xjc.model.CAttributePropertyInfo;
-import com.sun.tools.xjc.model.CElementPropertyInfo;
-import com.sun.tools.xjc.model.CPropertyInfo;
-import com.sun.tools.xjc.model.CValuePropertyInfo;
-import com.sun.tools.xjc.outline.ClassOutline;
 import com.sun.tools.xjc.outline.Outline;
 import java.io.IOException;
 import java.util.Collections;
@@ -59,16 +54,7 @@ public class JaxbValidationsPlugin extends Plugin {
 
     @Override
     public String getUsage() {
-        return new StringBuilder()
-                .append("  -")
-                .append(PLUGIN_OPTION_NAME)
-                .append("      :  ")
-                .append("inject Bean validation annotations (JSR 303)")
-                .append(System.lineSeparator())
-                .append("   Options:")
-                .append(JaxbValidationsArgument.helpMessageWithPrefix("     "))
-                .append(System.lineSeparator())
-                .toString();
+        return JaxbValidationsArgument.getUsageHelp();
     }
 
     @Override
@@ -76,36 +62,14 @@ public class JaxbValidationsPlugin extends Plugin {
         pluginOptionsBuilder.verbose(opt.verbose);
 
         JaxbValidationsOptions options = buildOptions();
+        
         if (opt.verbose) {
             JaxbValidationsLogger.log(
                     JaxbValidationsArgument.getActualOptionValuesAsString(options, "    "));
         }
 
-        JaxbValidationsProcessor processor = new JaxbValidationsProcessor(options);
+        new JaxbValidationsProcessor(options).process(model);
 
-        for (ClassOutline classOutline : model.getClasses()) {
-            List<CPropertyInfo> properties = classOutline.target.getProperties();
-
-            for (CPropertyInfo property : properties) {
-
-                String propertyName = property.getName(false);
-                String className = classOutline.implClass.name();
-
-                JaxbValidationsLogger logger =
-                        new JaxbValidationsLogger(options.isVerbose(), className, propertyName);
-
-                if (property instanceof CElementPropertyInfo) {
-                    processor.processElement(logger, (CElementPropertyInfo) property, classOutline, model);
-
-                } else if (property instanceof CAttributePropertyInfo) {
-                    processor.processAttribute(logger, (CAttributePropertyInfo) property, classOutline, model);
-
-                } else if (property instanceof CValuePropertyInfo) {
-                    processor.processAttribute(logger, (CValuePropertyInfo) property, classOutline, model);
-
-                }
-            }
-        }
         return true;
     }
 
