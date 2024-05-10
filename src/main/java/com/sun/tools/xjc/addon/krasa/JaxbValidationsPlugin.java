@@ -62,9 +62,7 @@ public class JaxbValidationsPlugin extends Plugin {
 
         ValidationsOptions options = buildOptions();
 
-        if (opt.verbose) {
-            options.logActualOptions();
-        }
+        options.logActualOptions();
 
         new Processor(options).process(model);
 

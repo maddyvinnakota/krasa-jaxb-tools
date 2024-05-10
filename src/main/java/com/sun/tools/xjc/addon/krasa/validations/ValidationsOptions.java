@@ -24,7 +24,9 @@ public class ValidationsOptions {
     private final ValidationsAnnotation annotationFactory;
 
     public void logActualOptions() {
-        ValidationsLogger.log(getActualOptionValuesAsString());
+        if (verbose) {
+            ValidationsLogger.log(getActualOptionValuesAsString());
+        }
     }
 
     /** @return a multi line string containing the value for each option. */
