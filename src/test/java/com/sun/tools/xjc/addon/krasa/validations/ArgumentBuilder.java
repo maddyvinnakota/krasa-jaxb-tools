@@ -1,5 +1,6 @@
 package com.sun.tools.xjc.addon.krasa.validations;
 
+import com.sun.tools.xjc.addon.krasa.JaxbValidationsPlugin;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,7 @@ class ArgumentBuilder {
     private final List<String> list = new ArrayList<>();
 
     public ArgumentBuilder() {
-        list.add(JaxbValidationsArgument.PLUGIN_OPTION_NAME);
+        list.add(JaxbValidationsPlugin.PLUGIN_OPTION_NAME);
     }
 
     public ArgumentBuilder add(JaxbValidationsArgument argument, Object value) {

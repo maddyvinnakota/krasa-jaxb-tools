@@ -30,11 +30,15 @@ public class JaxbValidationsPlugin extends Plugin {
 
     static final String NAMESPACE = "http://jaxb.dev.java.net/plugin/code-injector";
 
+    public static final String PLUGIN_NAME = "XJsr303Annotations";
+    public static final String PLUGIN_OPTION_NAME = "-" + PLUGIN_NAME;
+    public static final int PLUGIN_OPTION_NAME_LENGHT = PLUGIN_OPTION_NAME.length() + 1;
+
     JaxbValidationsOptions.Builder pluginOptionsBuilder = JaxbValidationsOptions.builder();
 
     @Override
     public String getOptionName() {
-        return JaxbValidationsArgument.PLUGIN_NAME;
+        return PLUGIN_NAME;
     }
 
     @Override
@@ -57,7 +61,7 @@ public class JaxbValidationsPlugin extends Plugin {
     public String getUsage() {
         return new StringBuilder()
                 .append("  -")
-                .append(JaxbValidationsArgument.PLUGIN_OPTION_NAME)
+                .append(PLUGIN_OPTION_NAME)
                 .append("      :  ")
                 .append("inject Bean validation annotations (JSR 303)")
                 .append(System.lineSeparator())

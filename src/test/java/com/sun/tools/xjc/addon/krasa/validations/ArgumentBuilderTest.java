@@ -1,5 +1,6 @@
 package com.sun.tools.xjc.addon.krasa.validations;
 
+import com.sun.tools.xjc.addon.krasa.JaxbValidationsPlugin;
 import java.util.Iterator;
 import java.util.List;
 import static junit.framework.TestCase.assertEquals;
@@ -24,7 +25,7 @@ public class ArgumentBuilderTest {
                 .getOptionList();
 
         Iterator<String> it = list.iterator();
-        assertEquals(JaxbValidationsArgument.PLUGIN_OPTION_NAME, it.next());
+        assertEquals(JaxbValidationsPlugin.PLUGIN_OPTION_NAME, it.next());
         assertEquals(JaxbValidationsArgument.targetNamespace.withValue(NAMESPACE), it.next());
         assertEquals(JaxbValidationsArgument.JSR_349.withValue("true"), it.next());
         assertEquals(JaxbValidationsArgument.generateStringListAnnotations.withValue("true"), it.next());

@@ -1,6 +1,7 @@
 package com.sun.tools.xjc.addon.krasa.validations;
 
 import com.sun.tools.xjc.BadCommandLineException;
+import com.sun.tools.xjc.addon.krasa.JaxbValidationsPlugin;
 import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -124,11 +125,6 @@ public enum JaxbValidationsArgument {
             (p,v) -> setBoolean(v, r -> p.generateStringListAnnotations(r)),
             (p) -> p.isGenerateStringListAnnotations());
 
-    // TODO must be moved to plugin!
-    public static final String PLUGIN_NAME = "XJsr303Annotations";
-    public static final String PLUGIN_OPTION_NAME = "-" + PLUGIN_NAME;
-    public static final int PLUGIN_OPTION_NAME_LENGHT = PLUGIN_OPTION_NAME.length() + 1;
-
     // parameter type
     private final Class<?> type;
 
@@ -153,29 +149,29 @@ public enum JaxbValidationsArgument {
     }
 
     String withValue(String value) {
-        return PLUGIN_OPTION_NAME + ":" + name() + "=" + value;
+        return JaxbValidationsPlugin.PLUGIN_OPTION_NAME + ":" + name() + "=" + value;
     }
 
     String fullOptionName() {
-        return PLUGIN_OPTION_NAME + ":" + name();
+        return JaxbValidationsPlugin.PLUGIN_OPTION_NAME + ":" + name();
     }
 
     String fullName() {
-        return PLUGIN_NAME + ":" + name();
+        return JaxbValidationsPlugin.PLUGIN_NAME + ":" + name();
     }
 
     /** @return 1 if the argument is referring to this plugin, 0 otherwise. */
     public static int parse(JaxbValidationsOptions.Builder options, String option)
             throws BadCommandLineException {
-        if (option.startsWith(PLUGIN_OPTION_NAME)) {
+        if (option.startsWith(JaxbValidationsPlugin.PLUGIN_OPTION_NAME)) {
             int idx = option.indexOf("=");
             if (idx != -1) {
-                final String name = option.substring(PLUGIN_OPTION_NAME_LENGHT, idx);
+                final String name = option.substring(JaxbValidationsPlugin.PLUGIN_OPTION_NAME_LENGHT, idx);
                 final String value = option.substring(idx + 1);
                 JaxbValidationsArgument argument = parseJaxbValidationsArgument(name);
                 setValueToPlugin(options, argument, value);
-            } else if (option.length() > PLUGIN_OPTION_NAME_LENGHT) {
-                final String name = option.substring(PLUGIN_OPTION_NAME_LENGHT);
+            } else if (option.length() > JaxbValidationsPlugin.PLUGIN_OPTION_NAME_LENGHT) {
+                final String name = option.substring(JaxbValidationsPlugin.PLUGIN_OPTION_NAME_LENGHT);
                 JaxbValidationsArgument argument = parseJaxbValidationsArgument(name);
                 setValueToPlugin(options, argument, "true");
             }
@@ -204,7 +200,7 @@ public enum JaxbValidationsArgument {
             BadCommandLineException {
         JaxbValidationsArgument argument = JaxbValidationsArgument.valueOf(name);
         if (argument == null) {
-            throw new BadCommandLineException(PLUGIN_NAME +
+            throw new BadCommandLineException(JaxbValidationsPlugin.PLUGIN_NAME +
                     " unrecognized option " + name + ", usage:\n" + JaxbValidationsArgument.helpMessageWithPrefix(""));
         }
         return argument;
@@ -239,7 +235,7 @@ public enum JaxbValidationsArgument {
         StringBuilder buf = new StringBuilder();
         buf
                 .append(linePrefix)
-                .append(PLUGIN_NAME)
+                .append(JaxbValidationsPlugin.PLUGIN_NAME)
                 .append(" options:")
                 .append(System.lineSeparator());
 
