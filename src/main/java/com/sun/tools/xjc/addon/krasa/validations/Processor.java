@@ -4,7 +4,6 @@ import com.sun.codemodel.JFieldVar;
 import com.sun.tools.xjc.model.CAttributePropertyInfo;
 import com.sun.tools.xjc.model.CElementPropertyInfo;
 import com.sun.tools.xjc.model.CPropertyInfo;
-import com.sun.tools.xjc.model.CValuePropertyInfo;
 import com.sun.tools.xjc.outline.ClassOutline;
 import com.sun.tools.xjc.outline.Outline;
 import com.sun.xml.xsom.XSComponent;
@@ -14,7 +13,6 @@ import com.sun.xml.xsom.XSSimpleType;
 import com.sun.xml.xsom.XSType;
 import com.sun.xml.xsom.impl.AttributeUseImpl;
 import com.sun.xml.xsom.impl.ElementDecl;
-import com.sun.xml.xsom.impl.SimpleTypeImpl;
 import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -67,9 +65,6 @@ public class Processor {
 
             } else if (property instanceof CAttributePropertyInfo) {
                 processAttribute((CAttributePropertyInfo) property);
-
-            } else if (property instanceof CValuePropertyInfo) {
-                processAttribute((CValuePropertyInfo) property);
 
             }
         }
@@ -158,27 +153,6 @@ public class Processor {
                 processType(type, field, annotator);
             }
         }
-
-        /**
-         * parses values
-         */
-        private void processAttribute(CValuePropertyInfo property) {
-            String propertyName = property.getName(false);
-
-            XSComponent definition = property.getSchemaComponent();
-            SimpleTypeImpl particle = (SimpleTypeImpl) definition;
-            XSSimpleType simpleType = particle.asSimpleType();
-
-            JFieldVar field = classOutline.implClass.fields().get(propertyName);
-
-            if (field != null) {
-                FieldAnnotator annotator =
-                        new FieldAnnotator(field, options.getAnnotationFactory(), logger);
-
-                processType(simpleType, field, annotator);
-            }
-        }
-
 
         private void processType(XSSimpleType simpleType, JFieldVar field, FieldAnnotator annotator) {
 
@@ -269,7 +243,6 @@ public class Processor {
                 }
             }
         }
-
     }
 
     static void addIfNotNull(List<String> list, String item) {
