@@ -7,11 +7,11 @@ import java.util.stream.Collectors;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-class ActiveValidationsLogger implements ValidationsLogger {
+class SystemOutValidationsLogger implements ValidationsLogger {
     private final String className;
     private final String propertyName;
 
-    public ActiveValidationsLogger(String className, String propertyName) {
+    public SystemOutValidationsLogger(String className, String propertyName) {
         this.className = className;
         this.propertyName = propertyName;
     }
@@ -24,8 +24,11 @@ class ActiveValidationsLogger implements ValidationsLogger {
         if (!params.isEmpty()) {
             params = "(" + params + ")";
         }
-        ValidationsLogger.log("adding @" + annotationName + params +
-                " to " + className + "." + propertyName);
+        log("adding @" + annotationName + params + " to " + className + "." + propertyName);
+    }
+
+    private static void log(String message) {
+        System.out.println(PREFIX + message);
     }
 
 }

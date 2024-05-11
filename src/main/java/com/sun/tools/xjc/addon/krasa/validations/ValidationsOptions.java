@@ -25,7 +25,7 @@ public class ValidationsOptions {
 
     public void logActualOptions() {
         if (verbose) {
-            ValidationsLogger.log(getActualOptionValuesAsString());
+            System.out.println(getActualOptionValuesAsString());
         }
     }
 
@@ -34,7 +34,7 @@ public class ValidationsOptions {
         String linePrefix = "    ";
         StringBuilder buf = new StringBuilder();
         buf
-                .append(linePrefix)
+                .append("[info] ")
                 .append(JaxbValidationsPlugin.PLUGIN_NAME)
                 .append(" options:")
                 .append(System.lineSeparator());

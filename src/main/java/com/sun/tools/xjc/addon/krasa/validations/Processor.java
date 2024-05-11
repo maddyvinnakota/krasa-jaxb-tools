@@ -39,7 +39,7 @@ public class Processor {
                 String className = classOutline.implClass.name();
 
                 ValidationsLogger logger = options.isVerbose()
-                        ? new ActiveValidationsLogger(className, propertyName)
+                        ? new SystemOutValidationsLogger(className, propertyName)
                         : SilentValidationLogger.INSTANCE;
 
                 new TypeProcessor(classOutline, logger)
