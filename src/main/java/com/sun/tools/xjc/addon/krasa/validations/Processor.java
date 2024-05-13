@@ -10,6 +10,7 @@ import com.sun.xml.xsom.XSComponent;
 import com.sun.xml.xsom.XSParticle;
 import com.sun.xml.xsom.XSRestrictionSimpleType;
 import com.sun.xml.xsom.XSSimpleType;
+import com.sun.xml.xsom.XSTerm;
 import com.sun.xml.xsom.XSType;
 import com.sun.xml.xsom.impl.AttributeUseImpl;
 import com.sun.xml.xsom.impl.ElementDecl;
@@ -76,7 +77,11 @@ public class Processor {
             String propertyName = property.getName(false);
 
             XSParticle particle = (XSParticle) property.getSchemaComponent();
-            ElementDecl element = (ElementDecl) particle.getTerm();
+            XSTerm term = particle.getTerm();
+            if (!(term instanceof ElementDecl)) {
+                return;
+            }
+            ElementDecl element = (ElementDecl) term;
 
             int minOccurs = particle.getMinOccurs().intValue();
             int maxOccurs = particle.getMaxOccurs().intValue();
