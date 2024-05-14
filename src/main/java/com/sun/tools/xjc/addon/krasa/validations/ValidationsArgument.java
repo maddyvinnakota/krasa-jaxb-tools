@@ -120,11 +120,12 @@ public enum ValidationsArgument {
             "generates github.com/jirutka/validator-collection annotations",
             (p,v) -> setBoolean(v, r -> p.generateStringListAnnotations(r)),
             (p) -> p.isGenerateStringListAnnotations()),
+    // it's just a placeholder that will be read directly by ValidSEIGenerator 
     generateServiceValidationAnnotations(
-            Boolean.class,
-            "-- deprecated, use generateStringListAnnotations instead --",
-            (p,v) -> setBoolean(v, r -> p.generateStringListAnnotations(r)),
-            (p) -> p.isGenerateStringListAnnotations());
+            String.class,
+            "used by cxf-codegen to performs validation on fields annotated with @Valid",
+            (p,v) -> null, // read by ValidSEIGenerator
+            (p) -> null);
 
     // parameter type
     private final Class<?> type;

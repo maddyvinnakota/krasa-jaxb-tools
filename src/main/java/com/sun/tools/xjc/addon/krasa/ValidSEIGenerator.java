@@ -3,7 +3,6 @@ package com.sun.tools.xjc.addon.krasa;
 import com.sun.tools.xjc.addon.krasa.validations.ValidationsArgument;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import javax.validation.Valid;
 import javax.xml.namespace.QName;
 import org.apache.cxf.helpers.CastUtils;
@@ -21,16 +20,21 @@ import org.apache.cxf.tools.wsdlto.frontend.jaxws.processor.WSDLToJavaProcessor;
 /**
  * Performs validation on fields annotated with {@link Valid} annotation.
  *
+ * It works with the cxf-codegen-plugin, please see the krasa-jaxb-tools-example module
+ * in the krasa-jaxb-tools-example project for an example.
+ *
  * @author Vojtěch Krása
  */
 public class ValidSEIGenerator extends SEIGenerator {
-
+    private static final String NAME = ValidSEIGenerator.class.getSimpleName();
+    private static final String LOG_PREFIX = NAME + ": ";
 	private static final String VALID_PARAM = "VALID_PARAM";
 	private static final String VALID_RETURN = "VALID_RETURN";
     private static final JAnnotation VALID_ANNOTATION_CLASS = new JAnnotation(Valid.class);
 
 	private boolean validIn = true;
 	private boolean validOut = true;
+    private boolean verbose = false;
 
     @Override
 	public String getName() {
@@ -52,13 +56,16 @@ public class ValidSEIGenerator extends SEIGenerator {
 				for (JavaMethod method : methods) {
 					List<JavaParameter> parameters = method.getParameters();
 					if (validOut) {
+                        log("adding annotation to " + method.getSignature());
 						method.addAnnotation(VALID_RETURN, VALID_ANNOTATION_CLASS);
 					}
 					for (JavaParameter param : parameters) {
 						if (validIn && (param.isIN() || param.isINOUT())) {
+                            log("adding " + param.getName());
 							param.addAnnotation(VALID_PARAM, VALID_ANNOTATION_CLASS);
 						}
 						if (validOut && (param.isOUT() || param.isINOUT())) {
+                            log("adding " + param.getName());
 							param.addAnnotation(VALID_RETURN, VALID_ANNOTATION_CLASS);
 						}
 					}
@@ -78,16 +85,27 @@ public class ValidSEIGenerator extends SEIGenerator {
                         parts[0].contains(ValidationsArgument.generateServiceValidationAnnotations.name())) {
 					parseValidationPolicy(parts[1]);
 				}
-				LOG.log(Level.FINE, "xjc arg:" + arg);
+                if (arg.contains("verbose") && !arg.contains("false")) {
+                    verbose = true;
+                    log("set verbose=true");
+                }
 			}
 		}
 	}
 
-	public void parseValidationPolicy(String policy) {
-		if ("in".equalsIgnoreCase(policy)) {
+	void parseValidationPolicy(String policy) {
+        String lcPolicy = policy.toLowerCase();
+		if ("in".equals(lcPolicy)) {
 			validOut = false;
-		} else if ("out".equalsIgnoreCase(policy)) {
+		} else if ("out".equals(lcPolicy)) {
 			validIn = false;
 		}
+        log("'" + policy + "' parsed as " + "in = " + validIn + ", out = " + validOut);
 	}
+
+    void log(String message) {
+        if (verbose) {
+            System.out.println(LOG_PREFIX + message);
+        }
+    }
 }
