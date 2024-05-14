@@ -9,9 +9,9 @@ import java.util.List;
  *
  * @author Francesco Illuminati
  */
-public class PrimitiveBase extends AnnotationsMojoTestHelper {
+public class PrimitiveFixerPluginBase extends AnnotationsMojoTestHelper {
 
-    public PrimitiveBase(ValidationsAnnotation annotation) {
+    public PrimitiveFixerPluginBase(ValidationsAnnotation annotation) {
         super("primitive", annotation);
     }
 

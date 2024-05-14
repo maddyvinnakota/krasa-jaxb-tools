@@ -12,7 +12,7 @@ import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
 /**
- * Substitute all primitive types with their respective boxed type.
+ * Substitute all primitive types with their respective boxed type (i.e. int -> Integer)
  *
  * @author Vojtěch Krása
  */
