@@ -11,9 +11,14 @@ import java.util.Map;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 
+/**
+ * Substitute all primitive types with their respective boxed type.
+ *
+ * @author Vojtěch Krása
+ */
 public class PrimitiveFixerPlugin extends Plugin {
 
-    private static final String PLUGIN_NAME = "XReplacePrimitives";
+    public static final String PLUGIN_NAME = "XReplacePrimitives";
 
     @Override
     public String getOptionName() {
