@@ -14,7 +14,8 @@ The project is bounded to support **Java 8** (**JDK 1.8**) because of some old p
 
 ## Version
 
-- `2.3` Added `singlePattern` option. A huge refactoring has been performed to clean up the code with some minor fixes. Some dependencies have been updated to the latest version still supporting JDK 1.8.
+- `2.3` Added `singlePattern` option, fixed `generateServiceValidationAnnotations` used by `ValidSEIGenerator`.
+  A huge refactoring has been performed to clean up the code with some minor fixes. Some dependencies have been updated to the latest version still supporting JDK 1.8. A maven rule has been set to force compilation with JDK 1.8.
 
 - `2.2` Some new features added because of PR requests
   
@@ -48,8 +49,6 @@ Options
 - `notNullAnnotationsCustomMessages` (boolean or string, optional, default=`false`): values are `true`, `FieldName`, `ClassName`, or an *actual message*
 - `JSR_349` (boolean, optional, defalut=`false`) generates [JSR349](https://beanvalidation.org/1.1/) compatible annotations for `@DecimalMax` and `@DecimalMin` inclusive parameter
 - `verbose` (boolean, optional, default=`false`) print verbose messages to output
-
-
 
 **`@NotNull`**'s default validation message is not always helpful, so it can be customized with **-XJsr303Annotations:notNullAnnotationsCustomMessages=OPTION** where **OPTION** is one of the following:
 
