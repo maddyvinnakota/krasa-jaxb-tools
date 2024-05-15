@@ -2,20 +2,32 @@
 
 # Plugin to generate Bean Validation Annotations ([JSR-303](https://beanvalidation.org/1.0/spec/))
 
-It works with:
+It works with (and possibly other plugins using `xjc`):
 
 - [`maven-jaxb2-plugin`](https://github.com/highsource/jaxb-tools)
+- [`jaxb2-maven-plugin`](https://github.com/mojohaus/jaxb2-maven-plugin)
 - [`cxf-codegen-plugin`](https://cxf.apache.org/docs/maven-cxf-codegen-plugin-wsdl-to-java.html)
 - [`cxf-xjc-plugin`](https://cxf.apache.org/cxf-xjc-plugin.html)
 
-## JDK Support
+Refer to the [`krasa-jaxb-tools-example`](https://github.com/fillumina/krasa-jaxb-tools-example) project for usage examples.
+
+
+
+## JDK 1.8 Support
 
 The project is bounded to support **Java 8** (**JDK 1.8**) because of some old projects still requiring it. All dependencies are selected from the latest available versions still supporting that.
 
 ## Version
 
-- `2.3` Added `singlePattern` option, fixed `generateServiceValidationAnnotations` used by `ValidSEIGenerator`.
-  A huge refactoring has been performed to clean up the code with some minor fixes. Some dependencies have been updated to the latest version still supporting JDK 1.8. A maven rule has been set to force compilation with JDK 1.8.
+- `2.3` A huge refactoring and fixing bugs:
+  
+  - added `singlePattern` option
+  
+  - fixed `generateServiceValidationAnnotations` used by `ValidSEIGenerator` to accept string parameter
+  
+  - dependencies updated to the latest version still supporting JDK 1.8
+  
+  - a maven rule has been set to force compilation with JDK 1.8
 
 - `2.2` Some new features added because of PR requests
   
@@ -42,13 +54,18 @@ Release
 Options
 ----------------
 
-- `singlePattern`  uses a single javax validation `@Pattern` instead of `@Pattern.List`
+- `verbose` (boolean, optional, default=`false`) print verbose messages to output
+- `singlePattern`  uses a single javax validation `@Pattern(A|B)` instead of `@Pattern.List( @Pattern(A), @Pattern(B) )`
 - `validationAnnotations` (`javax` | `jakarta`, optional, default=`javax`): selects the library to use for annotations
 - `targetNamespace` (string, optional): adds @Valid annotation to all elements with given namespace
 - `generateNotNullAnnotations` (boolean, optional, default=`true`): adds a `@NotNull` annotation if an element has `minOccours` not 0, is `required` or is not `nillable`.
-- `notNullAnnotationsCustomMessages` (boolean or string, optional, default=`false`): values are `true`, `FieldName`, `ClassName`, or an *actual message*
+- `notNullAnnotationsCustomMessages` (boolean or string, optional, default=`false`): values are `true`, `FieldName`, `ClassName`, or an *actual message* (see further explanation down below).
 - `JSR_349` (boolean, optional, defalut=`false`) generates [JSR349](https://beanvalidation.org/1.1/) compatible annotations for `@DecimalMax` and `@DecimalMin` inclusive parameter
-- `verbose` (boolean, optional, default=`false`) print verbose messages to output
+- `jpa` (boolean, optional, default `false`) adds JPA `@Column` annotation for fields with multiplicity greater than 0
+- `generateStringListAnnotations` (boolean, optional, default `false`) generates [validator-collection annotations](https://github.com/jirutka/validator-collection annotations) 
+- `generateServiceValidationAnnotations` (string, accepts: `in`, `out`, `inout`, works with  `apache-cxf` only) adds `@Valid` annotations to respective message direction (in, out or both).
+
+----
 
 **`@NotNull`**'s default validation message is not always helpful, so it can be customized with **-XJsr303Annotations:notNullAnnotationsCustomMessages=OPTION** where **OPTION** is one of the following:
 

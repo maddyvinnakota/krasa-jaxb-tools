@@ -61,11 +61,11 @@ public class ValidSEIGenerator extends SEIGenerator {
 					}
 					for (JavaParameter param : parameters) {
 						if (validIn && (param.isIN() || param.isINOUT())) {
-                            log("adding " + param.getName());
+                            log("adding in " + param.getName());
 							param.addAnnotation(VALID_PARAM, VALID_ANNOTATION_CLASS);
 						}
 						if (validOut && (param.isOUT() || param.isINOUT())) {
-                            log("adding " + param.getName());
+                            log("adding out " + param.getName());
 							param.addAnnotation(VALID_RETURN, VALID_ANNOTATION_CLASS);
 						}
 					}
