@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 /**
  *
- * @author Francesco Illuminati <fillumina@gmail.com>
+ * @author Francesco Illuminati 
  */
 public class Processor {
     private final ValidationsOptions options;

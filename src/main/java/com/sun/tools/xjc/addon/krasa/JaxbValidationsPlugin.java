@@ -69,7 +69,7 @@ public class JaxbValidationsPlugin extends Plugin {
         return true;
     }
 
-    /** used in tests */
+    // used in tests
     public ValidationsOptions buildOptions() {
         return optionsBuilder.build();
     }

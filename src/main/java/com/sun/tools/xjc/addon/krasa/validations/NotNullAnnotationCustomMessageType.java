@@ -2,7 +2,7 @@ package com.sun.tools.xjc.addon.krasa.validations;
 
 /**
  *
- * @author Francesco Illuminati <fillumina@gmail.com>
+ * @author Francesco Illuminati 
  */
 enum NotNullAnnotationCustomMessageType {
     Fieldname("fieldname"), Classname("classname");

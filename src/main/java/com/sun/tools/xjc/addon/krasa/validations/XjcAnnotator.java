@@ -12,7 +12,7 @@ import java.util.Set;
 
 /**
  *
- * @author Francesco Illuminati <fillumina@gmail.com>
+ * @author Francesco Illuminati 
  */
 class XjcAnnotator {
     private final JFieldVar field;

@@ -96,6 +96,17 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.6.3</version>
+        <configuration>
+          <!-- temurin 8.0.412 put javadoc here: -->
+          <javadocExecutable>${JAVA_HOME}/bin/javadoc</javadocExecutable>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 

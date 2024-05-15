@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Francesco Illuminati <fillumina@gmail.com>.
+ * Copyright 2024 Francesco Illuminati .
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.junit.Test;
 
 /**
  *
- * @author Francesco Illuminati <fillumina@gmail.com>
+ * @author Francesco Illuminati 
  */
 public class ValidationsOptionsTest {
 

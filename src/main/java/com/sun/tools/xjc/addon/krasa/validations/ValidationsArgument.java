@@ -10,7 +10,7 @@ import java.util.function.Function;
 
 /**
  *
- * @author Francesco Illuminati <fillumina@gmail.com>
+ * @author Francesco Illuminati
  */
 public enum ValidationsArgument {
     targetNamespace(
@@ -120,7 +120,7 @@ public enum ValidationsArgument {
             "generates github.com/jirutka/validator-collection annotations",
             (p,v) -> setBoolean(v, r -> p.generateStringListAnnotations(r)),
             (p) -> p.isGenerateStringListAnnotations()),
-    // it's just a placeholder that will be read directly by ValidSEIGenerator 
+    // it's just a placeholder that will be read directly by ValidSEIGenerator
     generateServiceValidationAnnotations(
             String.class,
             "used by cxf-codegen to performs validation on fields annotated with @Valid",
@@ -197,7 +197,10 @@ public enum ValidationsArgument {
         return argument;
     }
 
-    /** @return a multi line string containing an help for each option. */
+    /**
+     * @param linePrefix a string prefixed to each output line
+     * @return a multi line string containing an help for each option.
+     */
     public static String helpMessageWithPrefix(String linePrefix) {
         StringBuilder buf = new StringBuilder();
         for (ValidationsArgument a : values()) {

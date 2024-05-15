@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  *
- * @author Francesco Illuminati <fillumina@gmail.com>
+ * @author Francesco Illuminati 
  */
 interface ValidationsLogger {
     static final String PREFIX = "[" + JaxbValidationsPlugin.PLUGIN_NAME + "] ";

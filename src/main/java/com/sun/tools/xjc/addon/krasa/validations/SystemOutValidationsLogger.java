@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 /**
  *
- * @author Francesco Illuminati <fillumina@gmail.com>
+ * @author Francesco Illuminati 
  */
 class SystemOutValidationsLogger implements ValidationsLogger {
     private final String className;

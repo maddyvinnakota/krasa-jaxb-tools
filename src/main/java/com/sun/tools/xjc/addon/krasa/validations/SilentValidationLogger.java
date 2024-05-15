@@ -4,7 +4,7 @@ import java.util.Map;
 
 /**
  *
- * @author Francesco Illuminati <fillumina@gmail.com>
+ * @author Francesco Illuminati 
  */
 public class SilentValidationLogger implements ValidationsLogger {
 
