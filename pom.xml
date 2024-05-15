@@ -3,15 +3,18 @@
   <modelVersion>4.0.0</modelVersion>
 
   <!--
-    deploy with (-X is for verbose error reporting):
+    - deploy with (-X is for verbose error reporting):
       mvn -Possrh clean deploy -X
-    check results on:
+    - check results on:
       https://oss.sonatype.org/#nexus-search;quick~com.fillumina
+    - look for the 'Staging repository' and then 'close' it.
+    - wait a little until it says 'repository closed'
+    - click on 'release'
   -->
 
   <groupId>com.fillumina</groupId>
   <artifactId>krasa-jaxb-tools</artifactId>
-  <version>2.3</version>
+  <version>2.4-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>krasa-jaxb-tools</name>
 
