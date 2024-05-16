@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 public class Processor {
     private final ValidationsOptions options;
@@ -112,12 +112,12 @@ public class Processor {
 
             // using https://github.com/jirutka/validator-collection to annotate Lists of primitives
             final XSSimpleType simpleType;
-            if (!(elementType instanceof XSSimpleType)) {
-                // is a complex type, get the base type
-                simpleType = elementType.getBaseType().asSimpleType();
-            } else {
+            if (elementType instanceof XSSimpleType) {
                 // simple type
                 simpleType = elementType.asSimpleType();
+            } else {
+                // complex type
+                simpleType = elementType.getBaseType().asSimpleType();
             }
 
             if (simpleType != null) {
@@ -130,7 +130,7 @@ public class Processor {
                     annotator.addEachDecimalMaxAnnotation(facet.maxInclusive(), facet.maxExclusive());
                 }
 
-                processType(simpleType, field, annotator);
+                processType(simpleType, field, annotator, facet);
             }
         }
 
@@ -160,8 +160,16 @@ public class Processor {
         }
 
         private void processType(XSSimpleType simpleType, JFieldVar field, FieldAnnotator annotator) {
-
             Facet facet = new Facet(simpleType);
+            processType(simpleType, field, annotator, facet);
+        }
+
+        private void processType(
+                XSSimpleType simpleType,
+                JFieldVar field,
+                FieldAnnotator annotator,
+                Facet facet) {
+
             FieldHelper fieldHelper = new FieldHelper(field);
 
             // add @Valid to complex types or custom elements with selected namespace
