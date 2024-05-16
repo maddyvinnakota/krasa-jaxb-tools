@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 class Facet {
     private final XSSimpleType simpleType;
@@ -20,7 +20,7 @@ class Facet {
 
     boolean targetNamespaceEquals(String namespace) {
         if (namespace == null || namespace.isEmpty()) {
-            return false;
+            return true; // default to add @Valild annotation to all elements
         }
         String elemNs = simpleType.getTargetNamespace();
         return elemNs.startsWith(namespace);
