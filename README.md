@@ -20,17 +20,17 @@ The project is bounded to support **Java 8** (**JDK 1.8**) because of some old p
 ## Version
 
 - `2.3` A huge refactoring and fixing bugs:
-  
+
   - added `singlePattern` option
-  
+
   - fixed `generateServiceValidationAnnotations` used by `ValidSEIGenerator` to accept string parameter
-  
+
   - dependencies updated to the latest version still supporting JDK 1.8
-  
+
   - a maven rule has been set to force compilation with JDK 1.8
 
 - `2.2` Some new features added because of PR requests
-  
+
   - Added `@Valid` annotation to `sequence`s to force items validation
   - Added support for `Jakarta EE 9` with parameter `validationAnnotations`
 
@@ -62,7 +62,7 @@ Options
 - `notNullAnnotationsCustomMessages` (boolean or string, optional, default=`false`): values are `true`, `FieldName`, `ClassName`, or an *actual message* (see further explanation down below).
 - `JSR_349` (boolean, optional, defalut=`false`) generates [JSR349](https://beanvalidation.org/1.1/) compatible annotations for `@DecimalMax` and `@DecimalMin` inclusive parameter
 - `jpa` (boolean, optional, default `false`) adds JPA `@Column` annotation for fields with multiplicity greater than 0
-- `generateStringListAnnotations` (boolean, optional, default `false`) generates [validator-collection annotations](https://github.com/jirutka/validator-collection annotations) 
+- `generateStringListAnnotations` (boolean, optional, default `false`) generates [validator-collection annotations](https://github.com/jirutka/validator-collection annotations)
 - `generateServiceValidationAnnotations` (string, accepts: `in`, `out`, `inout`, works with  `apache-cxf` only) adds `@Valid` annotations to respective message direction (in, out or both).
 
 ----
@@ -100,6 +100,6 @@ Example project with tests
 
 This other project is maintained to allow testing and showcase usage:
 
-https://github.com/krasa/krasa-jaxb-tools-example
+https://github.com/fillumina/krasa-jaxb-tools-example
 
-Note that the JDK 8 compatibility requirement impose serious restrictions on the dependency versions available so it is *highly advisable* to check the used versions and general usage carefully in this test project. 
+Note that the JDK 8 compatibility requirement impose serious restrictions on the dependency versions available so it is *highly advisable* to check the used versions and general usage carefully in this test project.
