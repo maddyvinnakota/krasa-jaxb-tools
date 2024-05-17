@@ -22,7 +22,7 @@ import org.junit.Test;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 public class ValidationsOptionsTest {
 
@@ -34,7 +34,7 @@ public class ValidationsOptionsTest {
         assertFalse(options.isJsr349());
         assertFalse(options.isVerbose());
         assertFalse(options.isJpaAnnotations());
-        assertFalse(options.isGenerateStringListAnnotations());
+        assertTrue(options.isGenerateStringListAnnotations());
         assertEquals(ValidationsAnnotation.JAVAX, options.getAnnotationFactory());
     }
 

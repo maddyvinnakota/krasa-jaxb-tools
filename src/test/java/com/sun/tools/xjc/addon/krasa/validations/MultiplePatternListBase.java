@@ -9,6 +9,23 @@ public class MultiplePatternListBase extends AnnotationsMojoTestHelper {
         super("multiplePatterns", annotation);
     }
 
+    @Override
+    public String getAnnotationFileName() {
+        return "MultiplePatternListBase-annotation.txt";
+    }
+
+    @Override
+    public List<String> getArgs() {
+        return ArgumentBuilder.builder()
+                .add(ValidationsArgument.singlePattern, false)
+                .add(ValidationsArgument.generateNotNullAnnotations, true)
+                .add(ValidationsArgument.generateStringListAnnotations, true)
+                .add(ValidationsArgument.targetNamespace, getNamespace())
+                .add(ValidationsArgument.JSR_349, true)
+                .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
+                .getOptionList();
+    }
+
     public void test() throws ClassNotFoundException {
 
         List<String> annotations = element("Multipattern")
@@ -27,18 +44,6 @@ public class MultiplePatternListBase extends AnnotationsMojoTestHelper {
             "})";
 
         assertEquals(expected, text);
-    }
-
-    @Override
-    public List<String> getArgs() {
-        return ArgumentBuilder.builder()
-                .add(ValidationsArgument.singlePattern, false)
-                .add(ValidationsArgument.generateNotNullAnnotations, true)
-                .add(ValidationsArgument.generateStringListAnnotations, true)
-                .add(ValidationsArgument.targetNamespace, getNamespace())
-                .add(ValidationsArgument.JSR_349, true)
-                .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
-                .getOptionList();
     }
 
 }

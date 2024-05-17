@@ -1,8 +1,8 @@
 package com.sun.tools.xjc.addon.krasa.validations;
 
-public class ChoicesBase extends AnnotationsMojoTestHelper {
+public class ChoiceBase extends AnnotationsMojoTestHelper {
 
-    public ChoicesBase(ValidationsAnnotation annotation) {
+    public ChoiceBase(ValidationsAnnotation annotation) {
         super("choices", annotation);
     }
 
@@ -12,11 +12,15 @@ public class ChoicesBase extends AnnotationsMojoTestHelper {
                         .annotation("XmlElement")
                                 .assertParam("name", "Tea")
                         .end()
+                        // a member of a <xsd:choice> cannot be @NotNull
+                        .assertAnnotationNotPresent("NotNull")
                 .end()
                 .attribute("coffee")
                         .annotation("XmlElement")
                                 .assertParam("name", "Coffee")
                         .end()
+                        // a member of a <xsd:choice> cannot be @NotNull
+                        .assertAnnotationNotPresent("NotNull")
                 .end();
     }
 

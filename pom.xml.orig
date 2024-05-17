@@ -1,0 +1,246 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!--
+    - deploy with (-X is for verbose error reporting):
+      mvn -Possrh clean deploy -X
+    - check results on:
+      https://oss.sonatype.org/#nexus-search;quick~com.fillumina
+    - look for the 'Staging repository' and then 'close' it.
+    - wait a little until it says 'repository closed'
+    - click on 'release'
+  -->
+
+  <groupId>com.fillumina</groupId>
+  <artifactId>krasa-jaxb-tools</artifactId>
+  <version>2.4-SNAPSHOT</version>
+  <packaging>jar</packaging>
+  <name>krasa-jaxb-tools</name>
+
+  <description>
+    JAXB plugin to generate Bean Validation Annotations (JSR-303) from XSDs
+  </description>
+
+  <url>https://github.com/fillumina/krasa-jaxb-tools/</url>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:git@github.com:fillumina/krasa-jaxb-tools.git</connection>
+    <url>git@github.com:fillumina/krasa-jaxb-tools.git</url>
+    <developerConnection>scm:git:git@github.com:fillumina/krasa-jaxb-tools.git</developerConnection>
+  </scm>
+
+  <developers>
+    <developer>
+      <name>Francesco Illuminati</name>
+      <email>fillumina@gmail.com</email>
+    </developer>
+    <developer>
+      <name>Vojtech Krasa</name>
+      <email>vojta.krasa@gmail.com</email>
+    </developer>
+  </developers>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+<<<<<<< HEAD
+          <version>3.2.5</version>
+=======
+          <version>2.22.2</version>
+>>>>>>> default-options
+          <configuration>
+            <trimStackTrace>false</trimStackTrace>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>1.4.1</version>
+        <executions>
+          <execution>
+            <id>enforce-versions</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireJavaVersion>
+                  <version>1.8</version>
+                </requireJavaVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.10.1</version>
+        <configuration>
+          <!-- must keep JDK 8 compatibility because of some old projects depending on it -->
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+
+  <dependencies>
+
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>2.0.1.Final</version>
+    </dependency>
+
+    <dependency>
+      <groupId>jakarta.validation</groupId>
+      <artifactId>jakarta.validation-api</artifactId>
+      <version>3.0.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>cz.jirutka.validator</groupId>
+      <artifactId>validator-collection</artifactId>
+      <version>2.2.0</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-tools-wsdlto-frontend-jaxws</artifactId>
+      <version>3.5.8</version>
+    </dependency>
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.13.2</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jvnet.jaxb2.maven2</groupId>
+      <artifactId>maven-jaxb2-plugin-testing</artifactId>
+      <version>0.15.3</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.eclipse.persistence</groupId>
+      <artifactId>javax.persistence</artifactId>
+      <version>2.2.1</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-core</artifactId>
+      <version>3.9.6</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <profiles>
+    <profile>
+      <id>ossrh</id>
+      <activation>
+        <property>
+          <name>performRelease</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>3.3.1</version>
+            <executions>
+              <execution>
+                <phase>verify</phase>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar-no-fork</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>3.6.3</version>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <javadocExecutable>
+                ${java.home}/bin/javadoc
+              </javadocExecutable>
+            </configuration>
+          </plugin>
+          <plugin>
+            <!-- https://central.sonatype.org/publish/publish-maven/#gpg-signed-components -->
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>3.2.4</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+                <configuration>
+                  <keyname>${gpg.keyname}</keyname>
+                  <passphraseServerId>${gpg.passphrase}</passphraseServerId>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh</id>
+      <!-- I'm on an old legacy repository... -->
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <!--<url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>-->
+    </snapshotRepository>
+    <repository>
+      <id>ossrh</id>
+      <!-- I'm on an old legacy repository... -->
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+      <!--<url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+    </repository>
+  </distributionManagement>
+
+</project>

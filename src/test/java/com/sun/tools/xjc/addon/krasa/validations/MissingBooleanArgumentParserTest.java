@@ -4,13 +4,19 @@ import java.util.List;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 public class MissingBooleanArgumentParserTest extends AnnotationsMojoTestHelper {
 
     // using an existing parsed XSD
     public MissingBooleanArgumentParserTest() {
         super("array", ValidationsAnnotation.JAVAX);
+    }
+
+
+    @Override
+    public String getAnnotationFileName() {
+        return "MissingBooleanArgumentParserTest-annotation.txt";
     }
 
     @Override

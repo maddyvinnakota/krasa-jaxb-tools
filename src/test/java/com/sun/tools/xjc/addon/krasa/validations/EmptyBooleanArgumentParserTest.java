@@ -4,13 +4,18 @@ import java.util.List;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 public class EmptyBooleanArgumentParserTest extends AnnotationsMojoTestHelper {
 
     // using an existing parsed XSD
     public EmptyBooleanArgumentParserTest() {
         super("array", ValidationsAnnotation.JAVAX);
+    }
+
+    @Override
+    public String getAnnotationFileName() {
+        return "EmptyBooleanArgumentParserTest-annotation.txt";
     }
 
     @Override

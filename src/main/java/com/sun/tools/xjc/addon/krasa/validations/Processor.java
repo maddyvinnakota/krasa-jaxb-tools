@@ -4,6 +4,7 @@ import com.sun.codemodel.JFieldVar;
 import com.sun.tools.xjc.model.CAttributePropertyInfo;
 import com.sun.tools.xjc.model.CElementPropertyInfo;
 import com.sun.tools.xjc.model.CPropertyInfo;
+import com.sun.tools.xjc.model.CValuePropertyInfo;
 import com.sun.tools.xjc.outline.ClassOutline;
 import com.sun.tools.xjc.outline.Outline;
 import com.sun.xml.xsom.XSComponent;
@@ -14,6 +15,7 @@ import com.sun.xml.xsom.XSTerm;
 import com.sun.xml.xsom.XSType;
 import com.sun.xml.xsom.impl.AttributeUseImpl;
 import com.sun.xml.xsom.impl.ElementDecl;
+import com.sun.xml.xsom.impl.SimpleTypeImpl;
 import java.lang.annotation.Annotation;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
  * @author Francesco Illuminati
  */
 public class Processor {
+
     private final ValidationsOptions options;
 
     public Processor(ValidationsOptions options) {
@@ -32,12 +35,12 @@ public class Processor {
 
     public void process(Outline model) {
         for (ClassOutline classOutline : model.getClasses()) {
+            String className = classOutline.implClass.name();
             List<CPropertyInfo> properties = classOutline.target.getProperties();
 
             for (CPropertyInfo property : properties) {
 
                 String propertyName = property.getName(false);
-                String className = classOutline.implClass.name();
 
                 ValidationsLogger logger = options.isVerbose()
                         ? new SystemOutValidationsLogger(className, propertyName)
@@ -51,6 +54,7 @@ public class Processor {
     }
 
     class TypeProcessor {
+
         private final ValidationsLogger logger;
         private final ClassOutline classOutline;
 
@@ -59,7 +63,6 @@ public class Processor {
             this.classOutline = classOutline;
         }
 
-
         public void processProperty(CPropertyInfo property) {
             if (property instanceof CElementPropertyInfo) {
                 processElement((CElementPropertyInfo) property);
@@ -67,6 +70,8 @@ public class Processor {
             } else if (property instanceof CAttributePropertyInfo) {
                 processAttribute((CAttributePropertyInfo) property);
 
+            } else if (property instanceof CValuePropertyInfo) {
+                processAttribute((CValuePropertyInfo) property);
             }
         }
 
@@ -94,8 +99,10 @@ public class Processor {
             FieldAnnotator annotator =
                     new FieldAnnotator(field, options.getAnnotationFactory(), logger);
 
+            // minOccurs > 0 and required == false means the attribute is part of a <xsd:choice>
+            // and @NotNull should not be added!
             if (options.isNotNullAnnotations() && !nillable &&
-                    (minOccurs > 0 || required || property.isCollectionRequired()) ) {
+                    (required || property.isCollectionRequired())) {
                 String message = notNullMessage(classOutline, field);
                 annotator.addNotNullAnnotation(classOutline, field, message);
             }
@@ -112,25 +119,26 @@ public class Processor {
 
             // using https://github.com/jirutka/validator-collection to annotate Lists of primitives
             final XSSimpleType simpleType;
-            if (elementType instanceof XSSimpleType) {
-                // simple type
-                simpleType = elementType.asSimpleType();
-            } else {
+            final boolean isComplexType = !(elementType instanceof XSSimpleType);
+            if (isComplexType) {
                 // complex type
                 simpleType = elementType.getBaseType().asSimpleType();
+            } else {
+                // simple type
+                simpleType = elementType.asSimpleType();
             }
 
             if (simpleType != null) {
                 Facet facet = new Facet(simpleType);
 
-                if ((options.isGenerateStringListAnnotations() && property.isCollection()) ) {
+                if ((options.isGenerateStringListAnnotations() && property.isCollection()) && !isComplexType) {
                     annotator.addEachSizeAnnotation(facet.minLength(), facet.maxLength());
                     annotator.addEachDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
                     annotator.addEachDecimalMinAnnotation(facet.minInclusive(), facet.minExclusive());
                     annotator.addEachDecimalMaxAnnotation(facet.maxInclusive(), facet.maxExclusive());
                 }
 
-                processType(simpleType, field, annotator, facet);
+                processType(simpleType, isComplexType, field, annotator, facet);
             }
         }
 
@@ -159,13 +167,36 @@ public class Processor {
             }
         }
 
+        /**
+         * parses values
+         *
+         * NOTE: needed to process complexTypes extending a simpleType
+         */
+        private void processAttribute(CValuePropertyInfo property) {
+            String propertyName = property.getName(false);
+
+            XSComponent definition = property.getSchemaComponent();
+            SimpleTypeImpl particle = (SimpleTypeImpl) definition;
+            XSSimpleType simpleType = particle.asSimpleType();
+
+            JFieldVar field = classOutline.implClass.fields().get(propertyName);
+
+            if (field != null) {
+                FieldAnnotator annotator =
+                        new FieldAnnotator(field, options.getAnnotationFactory(), logger);
+
+                processType(simpleType, field, annotator);
+            }
+        }
+
         private void processType(XSSimpleType simpleType, JFieldVar field, FieldAnnotator annotator) {
             Facet facet = new Facet(simpleType);
-            processType(simpleType, field, annotator, facet);
+            processType(simpleType, false, field, annotator, facet);
         }
 
         private void processType(
                 XSSimpleType simpleType,
+                boolean isComplexType,
                 JFieldVar field,
                 FieldAnnotator annotator,
                 Facet facet) {
@@ -174,7 +205,7 @@ public class Processor {
 
             // add @Valid to complex types or custom elements with selected namespace
             if ((facet.targetNamespaceEquals(options.getTargetNamespace())) &&
-                    ((simpleType.isComplexType() || fieldHelper.isCustomType())) ) {
+                    ((isComplexType || fieldHelper.isCustomType())) ) {
                 annotator.addValidAnnotation();
             }
 
@@ -196,7 +227,8 @@ public class Processor {
                 annotator.addDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
 
                 if (options.isJpaAnnotations()) {
-                    annotator.addJpaColumnStringAnnotation(facet.totalDigits(), facet.fractionDigits());
+                    annotator.addJpaColumnStringAnnotation(facet.totalDigits(), facet
+                            .fractionDigits());
                 }
             }
 
@@ -266,7 +298,7 @@ public class Processor {
 
     static void addAllIfNotNull(List<String> dest, List<String> source) {
         if (source != null && !source.isEmpty()) {
-            for (String s: source) {
+            for (String s : source) {
                 if (s != null) {
                     dest.add(s);
                 }
@@ -294,7 +326,8 @@ public class Processor {
 
     String notNullMessage(ClassOutline classOutline, JFieldVar field) {
         final String className = classOutline.implClass.name();
-        final Class<? extends Annotation> notNullClass = options.getAnnotationFactory().getNotNullClass();
+        final Class<? extends Annotation> notNullClass = options.getAnnotationFactory()
+                .getNotNullClass();
 
         String message = null;
 
@@ -320,6 +353,5 @@ public class Processor {
 
         return message;
     }
-
 
 }

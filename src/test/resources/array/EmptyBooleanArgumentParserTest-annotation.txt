@@ -1,0 +1,5 @@
+Array
+    arrayOfBytes
+        @Column(length = 18)
+        @NotNull
+        @Size(max = 18)

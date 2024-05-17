@@ -20,7 +20,7 @@ class Facet {
 
     boolean targetNamespaceEquals(String namespace) {
         if (namespace == null || namespace.isEmpty()) {
-            return true; // default to add @Valild annotation to all elements
+            return true;
         }
         String elemNs = simpleType.getTargetNamespace();
         return elemNs.startsWith(namespace);

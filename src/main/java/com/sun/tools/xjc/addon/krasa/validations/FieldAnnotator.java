@@ -12,7 +12,7 @@ import javax.persistence.Column;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 class FieldAnnotator {
 
@@ -38,17 +38,23 @@ class FieldAnnotator {
     }
 
     void addEachSizeAnnotation(Integer minLength, Integer maxLength) {
-        xjcAnnotator.annotate(EachSize.class)
-                .param(MIN, minLength)
-                .param(MAX, maxLength)
-                .log();
+        if ((minLength != null && minLength != 0) ||
+                (maxLength != null && maxLength != 0)) {
+            xjcAnnotator.annotate(EachSize.class)
+                    .param(MIN, minLength)
+                    .param(MAX, maxLength)
+                    .log();
+        }
     }
 
     void addEachDigitsAnnotation(Integer totalDigits, Integer fractionDigits) {
-        xjcAnnotator.annotate(EachDigits.class)
-                .param(INTEGER, totalDigits, 0)
-                .param(FRACTION, fractionDigits, 0)
-                .log();
+        if ((totalDigits != null && totalDigits != 0) ||
+                (fractionDigits != null && fractionDigits != 0)) {
+            xjcAnnotator.annotate(EachDigits.class)
+                    .param(INTEGER, totalDigits, 0)
+                    .param(FRACTION, fractionDigits, 0)
+                    .log();
+        }
     }
 
     void addEachDecimalMaxAnnotation(BigDecimal maxInclusive, BigDecimal maxExclusive) {

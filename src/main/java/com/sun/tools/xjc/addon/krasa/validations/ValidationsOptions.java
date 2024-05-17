@@ -6,7 +6,7 @@ import java.util.Objects;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 public class ValidationsOptions {
     // sets default values in Builder not here
@@ -110,7 +110,7 @@ public class ValidationsOptions {
         private boolean notNullPrefixClassName = false;
         private String notNullCustomMessageText = null;
         private boolean jpaAnnotations = false;
-        private boolean generateStringListAnnotations;
+        private boolean generateStringListAnnotations = true;
         private ValidationsAnnotation annotationFactory = ValidationsAnnotation.JAVAX;
 
         private Builder() {

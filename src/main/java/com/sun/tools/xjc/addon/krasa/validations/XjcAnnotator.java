@@ -12,7 +12,7 @@ import java.util.Set;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 class XjcAnnotator {
     private final JFieldVar field;
@@ -33,7 +33,11 @@ class XjcAnnotator {
         private final Map<String,String> parameterMap = new LinkedHashMap<>();
 
         public Annotate(Class<? extends Annotation> annotation) {
-            if (!annotationSet.contains(annotation)) {
+            this(annotation, false);
+        }
+
+        public Annotate(Class<? extends Annotation> annotation, boolean multiple) {
+            if (!annotationSet.contains(annotation) || multiple) {
                 annotationUse = field.annotate(annotation);
                 annotationSet.add(annotation);
             } else {
@@ -104,8 +108,10 @@ class XjcAnnotator {
         }
 
         public void log() {
-            String annotationName = annotationUse.getAnnotationClass().name();
-            logger.addAnnotation(annotationName, parameterMap);
+            if (annotationUse != null) {
+                String annotationName = annotationUse.getAnnotationClass().name();
+                logger.addAnnotation(annotationName, parameterMap);
+            }
         }
 
         public MultipleAnnotation multipleAnnotationContainer(String paramName) {
@@ -120,8 +126,8 @@ class XjcAnnotator {
                 this.array = array;
             }
 
-            public Annotate annotate(Class<? extends Annotation> annotation) {
-                JAnnotationUse annotationUse = array.annotate(annotation);
+            public Annotate annotate(Class<? extends Annotation> annotationClass) {
+                JAnnotationUse annotationUse = array.annotate(annotationClass);
                 return new Annotate(annotationUse);
             }
 

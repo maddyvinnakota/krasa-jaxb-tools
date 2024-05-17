@@ -8,6 +8,11 @@ public class ClassNameBase extends AnnotationsMojoTestHelper {
         super("notNull", validation);
     }
 
+    @Override
+    public String getNamespace() {
+        return "a";
+    }
+
     public void test() {
         element("NotNullType")
                 .attribute("notNullString")

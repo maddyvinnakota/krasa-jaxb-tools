@@ -5,4 +5,10 @@ public class ClassNameJakartaTest extends ClassNameBase {
     public ClassNameJakartaTest() {
         super(ValidationsAnnotation.JAKARTA);
     }
+
+    @Override
+    public String getAnnotationFileName() {
+        return "ClassNameTest-JAKARTA-annotation.txt";
+    }
+
 }
