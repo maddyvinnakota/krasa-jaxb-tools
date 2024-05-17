@@ -115,6 +115,7 @@ public enum ValidationsArgument {
                 return null;
             },
             (p) -> p.getAnnotationFactory()),
+    // TODO change name to generateListAnnotation!!
     generateStringListAnnotations(
             Boolean.class,
             "generates github.com/jirutka/validator-collection annotations",
