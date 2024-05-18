@@ -100,7 +100,7 @@ public class Processor {
                     new FieldAnnotator(field, options.getAnnotationFactory(), logger);
 
             // minOccurs > 0 and required == false means the attribute is part of a <xsd:choice>
-            // and @NotNull should not be added!
+            // and @NotNull should not be added so only required quilifies to add @NotNull
             if (options.isNotNullAnnotations() && !nillable &&
                     (required || property.isCollectionRequired())) {
                 String message = notNullMessage(classOutline, field);
@@ -121,10 +121,8 @@ public class Processor {
             final XSSimpleType simpleType;
             final boolean isComplexType = !(elementType instanceof XSSimpleType);
             if (isComplexType) {
-                // complex type
                 simpleType = elementType.getBaseType().asSimpleType();
             } else {
-                // simple type
                 simpleType = elementType.asSimpleType();
             }
 
@@ -209,15 +207,13 @@ public class Processor {
                 FieldAnnotator annotator,
                 Facet facet) {
 
-            if (fieldHelper.isString() || fieldHelper.isArray()) {
+            if (fieldHelper.isArray()) {
                 annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
-            }
+                if (options.isJpaAnnotations()) {
+                    annotator.addJpaColumnAnnotation(facet.maxLength());
+                }
 
-            if (fieldHelper.isArray() && options.isJpaAnnotations()) {
-                annotator.addJpaColumnAnnotation(facet.maxLength());
-            }
-
-            if (fieldHelper.isNumber()) {
+            } else if (fieldHelper.isNumber()) {
                 annotator.addDecimalMinAnnotationInclusive(facet.minInclusive());
                 annotator.addDecimalMinAnnotationExclusive(facet.minExclusive());
 
@@ -230,9 +226,8 @@ public class Processor {
                     annotator.addJpaColumnStringAnnotation(facet.totalDigits(), facet
                             .fractionDigits());
                 }
-            }
 
-            if (fieldHelper.isString()) {
+            } else if (fieldHelper.isString()) {
                 annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
 
                 // collect REGEXP and ENUMERATION types on parents
