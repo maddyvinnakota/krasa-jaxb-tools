@@ -18,10 +18,7 @@ class Facet {
         this.simpleType = simpleType;
     }
 
-    boolean targetNamespaceEquals(String namespace) {
-        if (namespace == null || namespace.isEmpty()) {
-            return true;
-        }
+    boolean isTargetNamespace(String namespace) {
         String elemNs = simpleType.getTargetNamespace();
         return elemNs.startsWith(namespace);
     }

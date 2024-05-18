@@ -90,8 +90,8 @@ public class Processor {
 
             int minOccurs = particle.getMinOccurs().intValue();
             int maxOccurs = particle.getMaxOccurs().intValue();
-            boolean required = property.isRequired();
-            boolean nillable = element.isNillable();
+            boolean required = property.isRequired() || property.isCollectionRequired();
+            boolean nillable = element.isNillable() || property.isCollectionNillable();
 
             JFieldVar field = classOutline.implClass.fields().get(propertyName);
             XSType elementType = element.getType();
@@ -130,15 +130,23 @@ public class Processor {
 
             if (simpleType != null) {
                 Facet facet = new Facet(simpleType);
+                FieldHelper fieldHelper = new FieldHelper(field);
+                String targetNamespace = options.getTargetNamespace();
 
-                if ((options.isGenerateStringListAnnotations() && property.isCollection()) && !isComplexType) {
+                // add @Valid to complex types or custom elements with selected namespace
+                if ((targetNamespace == null || targetNamespace.isEmpty() || facet.isTargetNamespace(targetNamespace)) &&
+                        ((isComplexType || fieldHelper.isCustomType() )) ) {
+                    annotator.addValidAnnotation();
+                }
+
+                if (!isComplexType && options.isGenerateStringListAnnotations() && property.isCollection()) {
                     annotator.addEachSizeAnnotation(facet.minLength(), facet.maxLength());
                     annotator.addEachDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
                     annotator.addEachDecimalMinAnnotation(facet.minInclusive(), facet.minExclusive());
                     annotator.addEachDecimalMaxAnnotation(facet.maxInclusive(), facet.maxExclusive());
                 }
 
-                processType(simpleType, isComplexType, field, annotator, facet);
+                processType(simpleType, fieldHelper, annotator, facet);
             }
         }
 
@@ -191,30 +199,22 @@ public class Processor {
 
         private void processType(XSSimpleType simpleType, JFieldVar field, FieldAnnotator annotator) {
             Facet facet = new Facet(simpleType);
-            processType(simpleType, false, field, annotator, facet);
+            FieldHelper fieldHelper = new FieldHelper(field);
+            processType(simpleType, fieldHelper, annotator, facet);
         }
 
         private void processType(
                 XSSimpleType simpleType,
-                boolean isComplexType,
-                JFieldVar field,
+                FieldHelper fieldHelper,
                 FieldAnnotator annotator,
                 Facet facet) {
 
-            FieldHelper fieldHelper = new FieldHelper(field);
-
-            // add @Valid to complex types or custom elements with selected namespace
-            if ((facet.targetNamespaceEquals(options.getTargetNamespace())) &&
-                    ((isComplexType || fieldHelper.isCustomType())) ) {
-                annotator.addValidAnnotation();
-            }
-
             if (fieldHelper.isString() || fieldHelper.isArray()) {
                 annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
+            }
 
-                if (options.isJpaAnnotations()) {
-                    annotator.addJpaColumnAnnotation(facet.maxLength());
-                }
+            if (fieldHelper.isArray() && options.isJpaAnnotations()) {
+                annotator.addJpaColumnAnnotation(facet.maxLength());
             }
 
             if (fieldHelper.isNumber()) {
@@ -233,6 +233,10 @@ public class Processor {
             }
 
             if (fieldHelper.isString()) {
+                annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
+
+                // collect REGEXP and ENUMERATION types on parents
+                // ENUMERATION is treated as a pattern with fixed value
 
                 final List<String> patternList = facet.patternList();
                 addIfNotNull(patternList, facet.pattern());
