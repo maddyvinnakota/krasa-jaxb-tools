@@ -101,8 +101,7 @@ public class Processor {
 
             // minOccurs > 0 and required == false means the attribute is part of a <xsd:choice>
             // and @NotNull should not be added so only required quilifies to add @NotNull
-            if (options.isNotNullAnnotations() && !nillable &&
-                    (required || property.isCollectionRequired())) {
+            if (options.isNotNullAnnotations() && !nillable && required) {
                 String message = notNullMessage(classOutline, field);
                 annotator.addNotNullAnnotation(classOutline, field, message);
             }
