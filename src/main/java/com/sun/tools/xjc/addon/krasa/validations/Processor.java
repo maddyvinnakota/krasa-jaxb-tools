@@ -17,8 +17,10 @@ import com.sun.xml.xsom.impl.AttributeUseImpl;
 import com.sun.xml.xsom.impl.ElementDecl;
 import com.sun.xml.xsom.impl.SimpleTypeImpl;
 import java.lang.annotation.Annotation;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -229,62 +231,70 @@ public class Processor {
             } else if (fieldHelper.isString()) {
                 annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
 
-                // collect REGEXP and ENUMERATION types on parents
-                // ENUMERATION is treated as a pattern with fixed value
-
-                final List<String> patternList = facet.patternList();
-                addIfNotNull(patternList, facet.pattern());
-
-                final List<String> enumerationList = facet.enumerationList();
-                addIfNotNull(enumerationList, facet.enumeration());
-
-                XSSimpleType baseType = simpleType;
-                while ((baseType = baseType.getSimpleBaseType()) != null) {
-                    if (baseType instanceof XSRestrictionSimpleType) {
-                        Facet baseFacet = new Facet((XSRestrictionSimpleType) baseType);
-
-                        addIfNotNull(patternList, baseFacet.pattern());
-                        addAllIfNotNull(patternList, baseFacet.patternList());
-
-                        addIfNotNull(enumerationList, baseFacet.enumeration());
-                        addAllIfNotNull(enumerationList, baseFacet.enumerationList());
-                    }
+                Set<String> patternSet = gatherRegexpAndEnumeration(facet, simpleType);
+                switch (patternSet.size()) {
+                    case 0:
+                        // do nothing at all
+                        break;
+                    case 1:
+                        annotator.addSinglePatternAnnotation(patternSet.iterator().next());
+                        break;
+                    default:
+                        if (options.isSinglePattern()) {
+                            annotator.addAlternativePatternListAnnotation(patternSet);
+                        } else {
+                            annotator.addPatternListAnnotation(patternSet);
+                        }
                 }
 
-                if (!patternList.isEmpty() || !enumerationList.isEmpty()) {
-                    List<String> adjustedPatterns = patternList.stream()
-                            .filter(p -> isValidRegexp(p))
-                            .map(p -> replaceRegexp(p))
-                            .distinct()
-                            .collect(Collectors.toList());
+            }
+        }
 
-                    // escaped enumuerations can be treated as patterns
-                    List<String> adjustedEnumerations = enumerationList.stream()
-                            .filter(p -> p != null && !p.isEmpty())
-                            .map(p -> escapeRegexp(p))
-                            .distinct()
-                            .collect(Collectors.toList());
+        /**
+         * Collect REGEXP and ENUMERATION types on parents.
+         * ENUMERATION is treated as a pattern with fixed value
+         */
+        private Set<String> gatherRegexpAndEnumeration(Facet facet, XSSimpleType simpleType) {
 
-                    addAllIfNotNull(adjustedPatterns, adjustedEnumerations);
+            final List<String> patternList = facet.patternList();
+            addIfNotNull(patternList, facet.pattern());
 
-                    LinkedHashSet<String> patternSet = new LinkedHashSet<>(adjustedPatterns);
+            final List<String> enumerationList = facet.enumerationList();
+            addIfNotNull(enumerationList, facet.enumeration());
 
-                    switch (patternSet.size()) {
-                        case 0:
-                            // do nothing at all
-                            break;
-                        case 1:
-                            annotator.addSinglePatternAnnotation(patternSet.iterator().next());
-                            break;
-                        default:
-                            if (options.isSinglePattern()) {
-                                annotator.addAlternativePatternListAnnotation(patternSet);
-                            } else {
-                                annotator.addPatternListAnnotation(patternSet);
-                            }
-                    }
+            XSSimpleType baseType = simpleType;
+            while ((baseType = baseType.getSimpleBaseType()) != null) {
+                if (baseType instanceof XSRestrictionSimpleType) {
+                    Facet baseFacet = new Facet((XSRestrictionSimpleType) baseType);
+
+                    addIfNotNull(patternList, baseFacet.pattern());
+                    addAllIfNotNull(patternList, baseFacet.patternList());
+
+                    addIfNotNull(enumerationList, baseFacet.enumeration());
+                    addAllIfNotNull(enumerationList, baseFacet.enumerationList());
                 }
             }
+
+            if (!patternList.isEmpty() || !enumerationList.isEmpty()) {
+                List<String> adjustedPatterns = patternList.stream()
+                        .filter(p -> isValidRegexp(p))
+                        .map(p -> replaceRegexp(p))
+                        .distinct()
+                        .collect(Collectors.toList());
+
+                // escaped enumuerations can be treated as patterns
+                List<String> adjustedEnumerations = enumerationList.stream()
+                        .filter(p -> p != null && !p.isEmpty())
+                        .map(p -> escapeRegexp(p))
+                        .distinct()
+                        .collect(Collectors.toList());
+
+                addAllIfNotNull(adjustedPatterns, adjustedEnumerations);
+
+                return new LinkedHashSet<>(adjustedPatterns);
+            }
+
+            return Collections.emptySet();
         }
     }
 
