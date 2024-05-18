@@ -13,6 +13,7 @@ import java.util.function.Function;
  * @author Francesco Illuminati
  */
 public enum ValidationsArgument {
+    // TODO should remove generateXXX from argument names but I don't want to break the API
     targetNamespace(
             // type:
             String.class,
@@ -36,11 +37,12 @@ public enum ValidationsArgument {
             "uses a single javax validation @Pattern instead of @Pattern.List",
             (p, v) -> setBoolean(v, r -> p.singlePattern(r)),
             p -> p.isSinglePattern()),
+    @Deprecated // not used anymore (was enabling validation 1.1 features, now we use 2.0)
     JSR_349(
             Boolean.class,
-            "generates JSR349 compatible annotations for @DecimalMax and @DecimalMin parameters",
-            (p,v) -> setBoolean(v, r -> p.jsr349(r)),
-            (p) -> p.isJsr349()),
+            "unused (to be removeed)",
+            (p,v) -> null,
+            (p) -> null),
     generateNotNullAnnotations(
             Boolean.class,
             "adds a @NotNull when an element has minOccours not 0, is required or is not nillable",
@@ -115,12 +117,12 @@ public enum ValidationsArgument {
                 return null;
             },
             (p) -> p.getAnnotationFactory()),
-    // TODO change name to generateListAnnotation!!
+    // TODO bad name
     generateStringListAnnotations(
             Boolean.class,
             "generates github.com/jirutka/validator-collection annotations",
-            (p,v) -> setBoolean(v, r -> p.generateStringListAnnotations(r)),
-            (p) -> p.isGenerateStringListAnnotations()),
+            (p,v) -> setBoolean(v, r -> p.validationCollection(r)),
+            (p) -> p.isValidationCollection()),
     // it's just a placeholder that will be read directly by ValidSEIGenerator
     generateServiceValidationAnnotations(
             String.class,

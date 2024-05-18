@@ -31,10 +31,9 @@ public class ValidationsOptionsTest {
         ValidationsOptions options = ValidationsOptions.builder().build();
 
         assertTrue(options.isSinglePattern());
-        assertFalse(options.isJsr349());
         assertFalse(options.isVerbose());
         assertFalse(options.isJpaAnnotations());
-        assertTrue(options.isGenerateStringListAnnotations());
+        assertTrue(options.isValidationCollection());
         assertEquals(ValidationsAnnotation.JAVAX, options.getAnnotationFactory());
     }
 
@@ -63,24 +62,6 @@ public class ValidationsOptionsTest {
                 .build();
 
         assertFalse(options.isSinglePattern());
-    }
-
-    @Test
-    public void shouldSetJsr349True() {
-        ValidationsOptions options = ValidationsOptions.builder()
-                .jsr349(true)
-                .build();
-
-        assertTrue(options.isJsr349());
-    }
-
-    @Test
-    public void shouldSetJsr349False() {
-        ValidationsOptions options = ValidationsOptions.builder()
-                .jsr349(false)
-                .build();
-
-        assertFalse(options.isJsr349());
     }
 
     @Test
@@ -122,19 +103,19 @@ public class ValidationsOptionsTest {
     @Test
     public void shouldSetGenerateStringListAnnotationsTrue() {
         ValidationsOptions options = ValidationsOptions.builder()
-                .generateStringListAnnotations(true)
+                .validationCollection(true)
                 .build();
 
-        assertTrue(options.isGenerateStringListAnnotations());
+        assertTrue(options.isValidationCollection());
     }
 
     @Test
     public void shouldSetGenerateStringListAnnotationsFalse() {
         ValidationsOptions options = ValidationsOptions.builder()
-                .generateStringListAnnotations(false)
+                .validationCollection(false)
                 .build();
 
-        assertFalse(options.isGenerateStringListAnnotations());
+        assertFalse(options.isValidationCollection());
     }
 
     @Test

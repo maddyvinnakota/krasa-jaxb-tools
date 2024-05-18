@@ -138,7 +138,7 @@ public class Processor {
                     annotator.addValidAnnotation();
                 }
 
-                if (!isComplexType && options.isGenerateStringListAnnotations() && property.isCollection()) {
+                if (!isComplexType && options.isValidationCollection() && property.isCollection()) {
                     annotator.addEachSizeAnnotation(facet.minLength(), facet.maxLength());
                     annotator.addEachDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
                     annotator.addEachDecimalMinAnnotation(facet.minInclusive(), facet.minExclusive());

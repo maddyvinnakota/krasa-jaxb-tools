@@ -12,7 +12,7 @@ import org.junit.Test;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 public class ValidationsArgumentTest {
 
@@ -47,9 +47,8 @@ public class ValidationsArgumentTest {
 
         assertEquals(NAMESPACE, options.getTargetNamespace());
         assertEquals(ValidationsAnnotation.JAVAX, options.getAnnotationFactory());
-        assertTrue(options.isJsr349());
         assertTrue(options.isNotNullAnnotations());
-        assertTrue(options.isGenerateStringListAnnotations());
+        assertTrue(options.isValidationCollection());
         assertEquals(options.getNotNullCustomMessageText(), MESSAGE);
         assertTrue(options.isJpaAnnotations());
         assertTrue(options.isVerbose());

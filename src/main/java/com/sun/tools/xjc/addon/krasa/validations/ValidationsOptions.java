@@ -12,7 +12,6 @@ public class ValidationsOptions {
     // sets default values in Builder not here
     private final String targetNamespace;
     private final boolean singlePattern;
-    private final boolean jsr349;
     private final boolean verbose;
     private final boolean notNullAnnotations;
     private final boolean notNullCustomMessage;
@@ -20,7 +19,7 @@ public class ValidationsOptions {
     private final boolean notNullPrefixClassName;
     private final String notNullCustomMessageText;
     private final boolean jpaAnnotations;
-    private final boolean generateStringListAnnotations;
+    private final boolean validationCollection;
     private final ValidationsAnnotation annotationFactory;
 
     public void logActualOptions() {
@@ -59,10 +58,6 @@ public class ValidationsOptions {
         return singlePattern;
     }
 
-    public boolean isJsr349() {
-        return jsr349;
-    }
-
     public boolean isVerbose() {
         return verbose;
     }
@@ -91,8 +86,8 @@ public class ValidationsOptions {
         return jpaAnnotations;
     }
 
-    public boolean isGenerateStringListAnnotations() {
-        return generateStringListAnnotations;
+    public boolean isValidationCollection() {
+        return validationCollection;
     }
 
     public ValidationsAnnotation getAnnotationFactory() {
@@ -102,7 +97,6 @@ public class ValidationsOptions {
     public static class Builder {
         private String targetNamespace = null;
         private boolean singlePattern = true;
-        private boolean jsr349 = false;
         private boolean verbose = false;
         private boolean notNullAnnotations = true;
         private boolean notNullCustomMessage = false;
@@ -110,7 +104,7 @@ public class ValidationsOptions {
         private boolean notNullPrefixClassName = false;
         private String notNullCustomMessageText = null;
         private boolean jpaAnnotations = false;
-        private boolean generateStringListAnnotations = true;
+        private boolean validationCollection = true;
         private ValidationsAnnotation annotationFactory = ValidationsAnnotation.JAVAX;
 
         private Builder() {
@@ -163,11 +157,6 @@ public class ValidationsOptions {
             return this;
         }
 
-        public Builder jsr349(final boolean value) {
-            this.jsr349 = value;
-            return this;
-        }
-
         public Builder verbose(final boolean value) {
             this.verbose = value;
             return this;
@@ -203,8 +192,8 @@ public class ValidationsOptions {
             return this;
         }
 
-        public Builder generateStringListAnnotations(final boolean value) {
-            this.generateStringListAnnotations = value;
+        public Builder validationCollection(final boolean value) {
+            this.validationCollection = value;
             return this;
         }
 
@@ -214,10 +203,10 @@ public class ValidationsOptions {
         }
 
         public ValidationsOptions build() {
-            return new com.sun.tools.xjc.addon.krasa.validations.ValidationsOptions(targetNamespace, singlePattern, jsr349,
+            return new com.sun.tools.xjc.addon.krasa.validations.ValidationsOptions(targetNamespace, singlePattern,
                     verbose, notNullAnnotations, notNullCustomMessage, notNullPrefixFieldName,
                     notNullPrefixClassName, notNullCustomMessageText, jpaAnnotations,
-                    generateStringListAnnotations, annotationFactory);
+                    validationCollection, annotationFactory);
         }
     }
 
@@ -226,15 +215,14 @@ public class ValidationsOptions {
     }
 
     private ValidationsOptions(final String targetNamespace,
-            final boolean singlePattern, final boolean jsr349,
+            final boolean singlePattern,
             final boolean verbose, final boolean notNullAnnotations,
             final boolean notNullCustomMessage, final boolean notNullPrefixFieldName,
             final boolean notNullPrefixClassName, final String notNullCustomMessageText,
-            final boolean jpaAnnotations, final boolean generateStringListAnnotations,
+            final boolean jpaAnnotations, final boolean validationCollection,
             final ValidationsAnnotation annotationFactory) {
         this.targetNamespace = targetNamespace;
         this.singlePattern = singlePattern;
-        this.jsr349 = jsr349;
         this.verbose = verbose;
         this.notNullAnnotations = notNullAnnotations;
         this.notNullCustomMessage = notNullCustomMessage;
@@ -242,7 +230,7 @@ public class ValidationsOptions {
         this.notNullPrefixClassName = notNullPrefixClassName;
         this.notNullCustomMessageText = notNullCustomMessageText;
         this.jpaAnnotations = jpaAnnotations;
-        this.generateStringListAnnotations = generateStringListAnnotations;
+        this.validationCollection = validationCollection;
         this.annotationFactory = annotationFactory;
     }
 
