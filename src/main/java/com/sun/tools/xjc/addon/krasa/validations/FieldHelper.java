@@ -9,17 +9,13 @@ import java.util.stream.Collectors;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 class FieldHelper {
     private final JFieldVar field;
 
     public FieldHelper(JFieldVar field) {
         this.field = field;
-    }
-
-    public boolean isString() {
-        return field.type().name().equals("String");
     }
 
     public boolean isArray() {

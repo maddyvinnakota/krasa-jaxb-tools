@@ -228,7 +228,7 @@ public class Processor {
                             .fractionDigits());
                 }
 
-            } else if (fieldHelper.isString()) {
+            } else {
                 annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
 
                 Set<String> patternSet = gatherRegexpAndEnumeration(facet, simpleType);
