@@ -10,14 +10,4 @@ public class ValidBase extends AnnotationsMojoTestHelper {
         super("valid", annotation);
     }
 
-    public void test() throws ClassNotFoundException {
-        element("Redacted4")
-                .attribute("redacted7")
-                        .annotation("Size")
-                                .assertParam("min", "0")
-                                .assertParam("max", "200")
-                        .end()
-                        .annotation("Valid").assertNoValues();
-    }
-
 }

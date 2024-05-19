@@ -18,7 +18,11 @@ class Facet {
         this.simpleType = simpleType;
     }
 
-    boolean isTargetNamespace(String namespace) {
+    @Deprecated
+    boolean isTargetNamespaceOrNullOrEmpty(String namespace) {
+        if (namespace == null || namespace.isEmpty()) {
+            return true;
+        }
         String elemNs = simpleType.getTargetNamespace();
         return elemNs.startsWith(namespace);
     }

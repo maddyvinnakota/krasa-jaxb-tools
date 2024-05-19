@@ -90,13 +90,15 @@ public class Processor {
             }
             ElementDecl element = (ElementDecl) term;
 
-            int minOccurs = particle.getMinOccurs().intValue();
-            int maxOccurs = particle.getMaxOccurs().intValue();
-            boolean required = property.isRequired() || property.isCollectionRequired();
-            boolean nillable = element.isNillable() || property.isCollectionNillable();
+            final int minOccurs = particle.getMinOccurs().intValue();
+            final int maxOccurs = particle.getMaxOccurs().intValue();
+            final boolean required = property.isRequired() || property.isCollectionRequired();
+            final boolean nillable = element.isNillable() || property.isCollectionNillable();
+            final String targetNamespace = element.getOwnerSchema().getTargetNamespace();
 
-            JFieldVar field = classOutline.implClass.fields().get(propertyName);
-            XSType elementType = element.getType();
+            final JFieldVar field = classOutline.implClass.fields().get(propertyName);
+            final XSType elementType = element.getType();
+            final boolean isComplexType = !(elementType instanceof XSSimpleType);
 
             FieldAnnotator annotator =
                     new FieldAnnotator(field, options.getAnnotationFactory(), logger);
@@ -108,10 +110,13 @@ public class Processor {
                 annotator.addNotNullAnnotation(classOutline, field, message);
             }
 
-            if (property.isCollection()) {
-                // add @Valid to all collections
+            if ((property.isCollection() || isComplexType) &&
+                    isEqualsOrNull(options.getTargetNamespace(),
+                            targetNamespace))  {
                 annotator.addValidAnnotation();
+            }
 
+            if (property.isCollection()) {
                 if (maxOccurs != 0 || minOccurs != 0) {
                     // http://www.dimuthu.org/blog/2008/08/18/xml-schema-nillabletrue-vs-minoccurs0/comment-page-1/
                     annotator.addSizeAnnotation(minOccurs, maxOccurs, null);
@@ -120,7 +125,6 @@ public class Processor {
 
             // using https://github.com/jirutka/validator-collection to annotate Lists of primitives
             final XSSimpleType simpleType;
-            final boolean isComplexType = !(elementType instanceof XSSimpleType);
             if (isComplexType) {
                 simpleType = elementType.getBaseType().asSimpleType();
             } else {
@@ -130,14 +134,8 @@ public class Processor {
             if (simpleType != null) {
                 Facet facet = new Facet(simpleType);
                 FieldHelper fieldHelper = new FieldHelper(field);
-                String targetNamespace = options.getTargetNamespace();
 
-                // add @Valid to complex types or custom elements with selected namespace
-                if ((targetNamespace == null || targetNamespace.isEmpty() || facet.isTargetNamespace(targetNamespace)) &&
-                        ((isComplexType || fieldHelper.isCustomType() )) ) {
-                    annotator.addValidAnnotation();
-                }
-
+                // if it's a complexyType it might add a facet referring to only one of the possibilities 
                 if (!isComplexType && options.isValidationCollection() && property.isCollection()) {
                     annotator.addEachSizeAnnotation(facet.minLength(), facet.maxLength());
                     annotator.addEachDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
@@ -284,6 +282,15 @@ public class Processor {
 
             return Collections.emptySet();
         }
+    }
+
+    private boolean isEqualsOrNull(String optionsNamespace, String actualTargetNamespace) {
+        if (optionsNamespace == null ||
+                optionsNamespace.isEmpty() ||
+                "null".equals(optionsNamespace)) {
+            return true;
+        }
+        return actualTargetNamespace.startsWith(optionsNamespace);
     }
 
     static void addIfNotNull(List<String> list, String item) {

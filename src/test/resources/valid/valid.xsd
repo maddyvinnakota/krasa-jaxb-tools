@@ -3,29 +3,29 @@
     targetNamespace="a"
     xmlns:a="a">
 
-    <xsd:element name="message" type="a:redacted3"/>
+    <xsd:element name="message" type="a:messageType"/>
 
-    <xsd:complexType name="redacted3">
+    <xsd:complexType name="messageType">
         <xsd:sequence>
             <xsd:choice>
-                <xsd:element name="redacted2" type="a:redacted"/>
+                <xsd:element name="messageContent" type="a:messageContentType"/>
             </xsd:choice>
         </xsd:sequence>
     </xsd:complexType>
 
-    <xsd:complexType name="redacted">
+    <xsd:complexType name="messageContentType">
         <xsd:sequence>
-            <xsd:element name="redacted6" type="a:redacted4" minOccurs="0"/>
+            <xsd:element name="conentList" type="a:contentListType" minOccurs="0"/>
         </xsd:sequence>
     </xsd:complexType>
 
-    <xsd:complexType name="redacted4">
+    <xsd:complexType name="contentListType">
         <xsd:sequence>
-            <xsd:element name="redacted7" type="a:redacted5" minOccurs="0" maxOccurs="200" />
+            <xsd:element name="itemList" type="a:item" minOccurs="0" maxOccurs="200" />
         </xsd:sequence>
     </xsd:complexType>
 
-    <xsd:complexType name="redacted5">
+    <xsd:complexType name="item">
     </xsd:complexType>
 
 </xsd:schema>

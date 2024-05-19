@@ -87,12 +87,17 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
 
     // called by the JUnit reflection test running engine (it starts with test)
     public final synchronized void testCheckAnnotationsInResourceFile() {
-        String annotatonFilename = getAnnotationFileName();
-        Path filename = Paths.get(getAbsolutePath() + annotatonFilename);
+        String namespace = getNamespace();
+        String[] nsArray = namespace.split(",");
+        for (String ns : nsArray) {
+            String annotatonFilename = (nsArray.length > 1 ? ns + "-" : "") + getAnnotationFileName();
+            Path filename = Paths.get(getGeneratedDirectory().getAbsolutePath() +
+                    File.separator + annotatonFilename);
 
-        writeAllElementsTo(filename);
+            writeAllElementsTo(ns, filename);
 
-        checkAllAnnotations(filename, annotatonFilename);
+            checkAllAnnotations(filename, annotatonFilename);
+        }
     }
 
     private void checkAllAnnotations(Path filename, String annotatonFilename) throws AssertionError {
@@ -144,18 +149,18 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
                 .getOptionList();
     }
 
-    public synchronized void writeAllElementsTo(Path filename) {
+    public synchronized void writeAllElementsTo(String ns, Path filename) {
         try (BufferedWriter writer = Files.newBufferedWriter(filename, Charset.defaultCharset(),
                 StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
-            gatAllElementsAsString(writer);
+            gatAllElementsAsString(ns, writer);
             writer.close();
         } catch (IOException ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    public void gatAllElementsAsString(Appendable buf) throws IOException {
-        List<Path> fileList = allFilesInDirectory(getAbsolutePath());
+    private void gatAllElementsAsString(String ns, Appendable buf) throws IOException {
+        List<Path> fileList = allFilesInDirectory(getAbsolutePath(ns));
         Collections.sort(fileList);
         for (Path p : fileList) {
             String name = p.getFileName().toString();
@@ -163,7 +168,7 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
                     !name.startsWith("package-info") &&
                     !name.startsWith("ObjectFactory")) {
                 String filename = name.replace(".java", "");
-                ArtifactTester artifactTester = element(filename);
+                ArtifactTester artifactTester = element(ns, filename);
                 buf.append(filename).append(System.lineSeparator());
                 List<String> attributeList = artifactTester.getAllAttributes();
                 Collections.sort(attributeList);
@@ -212,16 +217,24 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
 
 
     /**
+     * Read an element using the default namespace.
      * @param elementName The name of the root element created (the java class name created by JAXB).
+     * @see #getNamespace()
      */
     public ArtifactTester element(String elementName) {
         final String filename = elementName + ".java";
-        List<String> lines = readFile(filename);
+        List<String> lines = readFile(getNamespace(), filename);
         return new ArtifactTester(filename, lines);
     }
 
-    private List<String> readFile(String filename) {
-        String absoluteName = getAbsolutePath() + filename;
+    private ArtifactTester element(String ns, String elementName) {
+        final String filename = elementName + ".java";
+        List<String> lines = readFile(ns, filename);
+        return new ArtifactTester(filename, lines);
+    }
+
+    private List<String> readFile(String ns, String filename) {
+        String absoluteName = getAbsolutePath(ns) + filename;
         Path path = Paths.get(absoluteName);
         return readFile(path);
     }
@@ -243,8 +256,7 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
         }
     }
 
-    private String getAbsolutePath() {
-        String ns = getNamespace();
+    private String getAbsolutePath(String ns) {
         if (ns == null) {
             ns = "";
         } else {

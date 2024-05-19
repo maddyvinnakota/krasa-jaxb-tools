@@ -1,9 +1,11 @@
-Redacted
-    redacted6
-Redacted3
-    redacted2
-Redacted4
-    redacted7
+ContentListType
+    itemList
         @Size(min = 0, max = 200)
         @Valid
-Redacted5
+Item
+MessageContentType
+    conentList
+        @Valid
+MessageType
+    messageContent
+        @Valid

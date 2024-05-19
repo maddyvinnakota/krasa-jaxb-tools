@@ -18,9 +18,7 @@ public enum ValidationsArgument {
             // type:
             String.class,
             // help message:
-            "adds @Valid annotation to all elements with given namespace. " +
-                    "NOTE that this not related to XSD targetNamespace option but with the 'name' " +
-                    "defined as xmlns:name=...",
+            "adds @Valid annotation to all elements with given namespace.",
             // setter:
             (p, v) -> {
                 if (v != null && !v.contains(" ")) {
