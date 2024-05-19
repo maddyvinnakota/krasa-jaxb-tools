@@ -26,9 +26,11 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.maven.project.MavenProject;
 import org.jvnet.jaxb2.maven2.AbstractXJC2Mojo;
@@ -43,6 +45,8 @@ import org.jvnet.jaxb2.maven2.test.RunXJC2Mojo;
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
 public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
+
+    private static final Set<String> executions = new HashSet<>();
 
     private final ValidationsAnnotation validationAnnotation;
 
@@ -66,15 +70,23 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
 
     // artifact creation happens before test executions!
     @Override
-    public final void setUp() throws Exception {
-        super.testExecute();
+    public synchronized final void setUp() throws Exception {
+        final String executionName = getExecutionName();
+        if (executions.add(executionName)) {
+            super.testExecute();
+        }
+    }
+
+    private String getExecutionName() {
+        return getFolderName() + "-" + getAnnotationFileName() + "-" + getAnnotation().name();
     }
 
     public final void testExecute() throws Exception {
         // override RunXJC2Mojo own method to allow tests to be executed after mojo creation
     }
 
-    public final void testWrite() {
+    // called by the JUnit reflection test running engine (it starts with test)
+    public final synchronized void testCheckAnnotationsInResourceFile() {
         String annotatonFilename = getAnnotationFileName();
         Path filename = Paths.get(getAbsolutePath() + annotatonFilename);
 
@@ -91,14 +103,15 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
         List<String> expected = readFile(annotations);
 
         if (expected.size() != actual.size()) {
-            throw new AssertionError("wrong number of annotations in " + getFolderName());
+            throw new AssertionError("wrong number of annotations in " + getExecutionName() +
+                    " expected:" + expected.size() + " actual:" + actual.size());
         }
 
         for (int i=0,l=expected.size(); i<l; i++) {
             String expectedLine = expected.get(i).trim();
             String actualLine = actual.get(i).trim();
 
-            assertEquals("annotation differs in " + getFolderName() + " " + getAnnotation().name(),
+            assertEquals("annotation differs in " + getExecutionName(),
                     expectedLine, actualLine);
         }
     }
@@ -132,9 +145,9 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
                 .getOptionList();
     }
 
-    public void writeAllElementsTo(Path filename) {
+    public synchronized void writeAllElementsTo(Path filename) {
         try (BufferedWriter writer = Files.newBufferedWriter(filename, Charset.defaultCharset(),
-                StandardOpenOption.CREATE, StandardOpenOption.APPEND)) {
+                StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
             gatAllElementsAsString(writer);
             writer.close();
         } catch (IOException ex) {
