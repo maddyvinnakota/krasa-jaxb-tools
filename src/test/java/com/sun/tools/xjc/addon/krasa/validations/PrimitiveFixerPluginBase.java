@@ -22,7 +22,6 @@ public class PrimitiveFixerPluginBase extends AnnotationsMojoTestHelper {
                 .add(ValidationsArgument.generateNotNullAnnotations, true)
                 .add(ValidationsArgument.generateStringListAnnotations, true)
                 .add(ValidationsArgument.targetNamespace, getNamespace())
-                .add(ValidationsArgument.JSR_349, true)
                 .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
                 .getOptionList();
     }

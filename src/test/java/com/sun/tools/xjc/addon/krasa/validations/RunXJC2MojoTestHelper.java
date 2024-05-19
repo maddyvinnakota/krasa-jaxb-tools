@@ -140,7 +140,6 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
                 .add(ValidationsArgument.generateNotNullAnnotations, true)
                 .add(ValidationsArgument.generateStringListAnnotations, true)
                 .add(ValidationsArgument.targetNamespace, getNamespace())
-                .add(ValidationsArgument.JSR_349, true)
                 .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
                 .getOptionList();
     }

@@ -25,7 +25,6 @@ public class ClassNameBase extends AnnotationsMojoTestHelper {
     public List<String> getArgs() {
         return ArgumentBuilder.builder()
                 .add(ValidationsArgument.notNullAnnotationsCustomMessages, "ClassName")
-                .add(ValidationsArgument.JSR_349, true)
                 .add(ValidationsArgument.generateNotNullAnnotations, true)
                 .add(ValidationsArgument.generateStringListAnnotations, true)
                 .add(ValidationsArgument.targetNamespace, getNamespace())

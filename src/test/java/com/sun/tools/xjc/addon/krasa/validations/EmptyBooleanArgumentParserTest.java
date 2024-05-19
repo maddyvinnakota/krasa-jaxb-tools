@@ -21,11 +21,9 @@ public class EmptyBooleanArgumentParserTest extends AnnotationsMojoTestHelper {
     @Override
     public List<String> getArgs() {
         return ArgumentBuilder.builder()
-                .add(ValidationsArgument.JSR_349, "")
                 .add(ValidationsArgument.generateStringListAnnotations, "")
                 .add(ValidationsArgument.generateNotNullAnnotations, "")
                 .add(ValidationsArgument.verbose, "")
-                .add(ValidationsArgument.jpa, "")
                 .add(ValidationsArgument.generateServiceValidationAnnotations, "")
                 .getOptionList();
     }

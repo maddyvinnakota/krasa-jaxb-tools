@@ -26,13 +26,11 @@ public class ValidationsArgumentTest {
 
         List<String> arguments = ArgumentBuilder.builder()
                 .add(ValidationsArgument.targetNamespace, NAMESPACE)
-                .add(ValidationsArgument.JSR_349, true)
                 .add(ValidationsArgument.generateStringListAnnotations, true)
                 .add(ValidationsArgument.validationAnnotations, ANNOTATION)
                 .add(ValidationsArgument.generateNotNullAnnotations, true)
                 .add(ValidationsArgument.generateServiceValidationAnnotations, true)
                 .add(ValidationsArgument.notNullAnnotationsCustomMessages, MESSAGE)
-                .add(ValidationsArgument.jpa, true)
                 .add(ValidationsArgument.verbose, true)
                 .getOptionList();
 
