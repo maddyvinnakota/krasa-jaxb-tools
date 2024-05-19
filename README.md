@@ -19,17 +19,17 @@ The project is bounded to support **Java 8** (**JDK 1.8**) because of some old p
 
 ## Version
 
-- `2.3.1` bug fixing release:
+- `2.3.1` bug fix release:
 
-  - `@Valid` annotation was not added by default anymore
+  - `@Valid` annotation was not added by default
 
-  - removed `singlePattern` option because `@Pattern.List` is not semantically correct
+  - remove `singlePattern` option because `@Pattern.List` is not semantically correct
 
-  - `jpa` option disabled because not really useful
+  - disable `jpa` option because not really useful
 
-  - `JSR_349` option disabled because it was referring to Validation API 1.1 while now we use 2.0
+  - disable `JSR_349` option it was referring to Validation API 1.1 while now we use 2.0
 
-  - a lot of tests added to establish a solid baseline (defaults was backported and tested on 2.2)
+  - add a lot of tests to establish a solid baseline (defaults was backported and tested on 2.2)
 
 - `2.3` A huge refactoring and fixing bugs:
 
