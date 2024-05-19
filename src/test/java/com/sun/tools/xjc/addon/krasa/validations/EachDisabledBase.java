@@ -23,6 +23,7 @@ public class EachDisabledBase extends AnnotationsMojoTestHelper {
                 .add(ValidationsArgument.generateNotNullAnnotations, true)
                 .add(ValidationsArgument.generateStringListAnnotations, false)
                 .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
-                .getOptionList();    }
+                .getOptionList();
+    }
 
 }
