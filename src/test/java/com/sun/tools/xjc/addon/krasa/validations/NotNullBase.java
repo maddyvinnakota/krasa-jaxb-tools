@@ -10,6 +10,7 @@ public class NotNullBase extends AnnotationsMojoTestHelper {
         this.notNullAnnotationsCustomMessage = notNullAnnotationsCustomMessage;
     }
 
+    @Override
     public String getAnnotationFileName() {
         return getClass().getSimpleName()
                 .replace("Test", "")
