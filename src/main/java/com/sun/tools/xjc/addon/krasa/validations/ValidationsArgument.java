@@ -97,11 +97,12 @@ public enum ValidationsArgument {
             "increases verbosity",
             (p,v) -> setBoolean(v, r -> p.verbose(r)),
             (p) -> p.isVerbose()),
+    @Deprecated
     jpa(
             Boolean.class,
-            "adds JPA @Column annotations for fields with multiplicity greater than 0",
-            (p,v) -> setBoolean(v, r -> p.jpaAnnotations(r)),
-            (p) -> p.isJpaAnnotations()),
+            "unused (to be removeed)",
+            (p,v) -> null,
+            (p) -> null),
     validationAnnotations(
             String.class,
             "selects which type of annotation to use: " + ValidationsAnnotation.getValuesAsString(),

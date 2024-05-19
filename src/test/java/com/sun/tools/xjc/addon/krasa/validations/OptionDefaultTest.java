@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Test default parameters
  *
- * @author Francesco Illuminati <fillumina@gmail.com>
+ * @author Francesco Illuminati
  */
 public class OptionDefaultTest extends OptionBase {
 

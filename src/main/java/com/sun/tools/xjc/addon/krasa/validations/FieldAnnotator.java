@@ -8,7 +8,6 @@ import cz.jirutka.validator.collection.constraints.EachDigits;
 import cz.jirutka.validator.collection.constraints.EachSize;
 import java.math.BigDecimal;
 import java.util.Set;
-import javax.persistence.Column;
 
 /**
  *
@@ -23,7 +22,6 @@ class FieldAnnotator {
     private static final String INCLUSIVE = "inclusive";
     private static final String VALUE = "value";
     private static final String MESSAGE = "message";
-    private static final String LENGTH = "length";
     private static final String SCALE = "scale";
     private static final String PRECISION = "precision";
     private static final String REGEXP = "regexp";
@@ -102,14 +100,6 @@ class FieldAnnotator {
         }
     }
 
-    void addJpaColumnAnnotation(Integer maxLength) {
-        if (maxLength != null) {
-            xjcAnnotator.annotate(Column.class)
-                    .param(LENGTH, maxLength)
-                    .log();
-        }
-    }
-
     void addDecimalMinAnnotationExclusive(BigDecimal min) {
         addDecimalMinAnnotation(min, true);
     }
@@ -152,13 +142,6 @@ class FieldAnnotator {
                     .param(FRACTION, getValueOrZeroOnNull(fractionDigits))
                     .log();
         }
-    }
-
-    void addJpaColumnStringAnnotation(Integer totalDigits, Integer fractionDigits) {
-        xjcAnnotator.annotate(Column.class)
-                .param(PRECISION, getValueOrZeroOnNull(totalDigits))
-                .param(SCALE, getValueOrZeroOnNull(fractionDigits))
-                .log();
     }
 
     /** Adds all the patterns (A, B, C) as options in a single one (A|B|C). */

@@ -74,7 +74,6 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
         // override RunXJC2Mojo own method to allow tests to be executed after mojo creation
     }
 
-
     public final void testWrite() {
         String annotatonFilename = getAnnotationFileName();
         Path filename = Paths.get(getAbsolutePath() + annotatonFilename);

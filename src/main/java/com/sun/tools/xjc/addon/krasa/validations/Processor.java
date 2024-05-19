@@ -210,9 +210,6 @@ public class Processor {
 
             if (fieldHelper.isArray()) {
                 annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
-                if (options.isJpaAnnotations()) {
-                    annotator.addJpaColumnAnnotation(facet.maxLength());
-                }
 
             } else if (fieldHelper.isNumber()) {
                 annotator.addDecimalMinAnnotationInclusive(facet.minInclusive());
@@ -222,11 +219,6 @@ public class Processor {
                 annotator.addDecimalMaxAnnotationExclusive(facet.maxExclusive());
 
                 annotator.addDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
-
-                if (options.isJpaAnnotations()) {
-                    annotator.addJpaColumnStringAnnotation(facet.totalDigits(), facet
-                            .fractionDigits());
-                }
 
             } else {
                 annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());

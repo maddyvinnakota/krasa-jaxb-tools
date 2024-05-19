@@ -18,7 +18,6 @@ public class ValidationsOptions {
     private final boolean notNullPrefixFieldName;
     private final boolean notNullPrefixClassName;
     private final String notNullCustomMessageText;
-    private final boolean jpaAnnotations;
     private final boolean validationCollection;
     private final ValidationsAnnotation annotationFactory;
 
@@ -82,10 +81,6 @@ public class ValidationsOptions {
         return notNullCustomMessageText;
     }
 
-    public boolean isJpaAnnotations() {
-        return jpaAnnotations;
-    }
-
     public boolean isValidationCollection() {
         return validationCollection;
     }
@@ -103,7 +98,6 @@ public class ValidationsOptions {
         private boolean notNullPrefixFieldName = false;
         private boolean notNullPrefixClassName = false;
         private String notNullCustomMessageText = null;
-        private boolean jpaAnnotations = false;
         private boolean validationCollection = true;
         private ValidationsAnnotation annotationFactory = ValidationsAnnotation.JAVAX;
 
@@ -187,11 +181,6 @@ public class ValidationsOptions {
             return this;
         }
 
-        public Builder jpaAnnotations(final boolean value) {
-            this.jpaAnnotations = value;
-            return this;
-        }
-
         public Builder validationCollection(final boolean value) {
             this.validationCollection = value;
             return this;
@@ -205,7 +194,7 @@ public class ValidationsOptions {
         public ValidationsOptions build() {
             return new com.sun.tools.xjc.addon.krasa.validations.ValidationsOptions(targetNamespace, singlePattern,
                     verbose, notNullAnnotations, notNullCustomMessage, notNullPrefixFieldName,
-                    notNullPrefixClassName, notNullCustomMessageText, jpaAnnotations,
+                    notNullPrefixClassName, notNullCustomMessageText,
                     validationCollection, annotationFactory);
         }
     }
@@ -219,7 +208,7 @@ public class ValidationsOptions {
             final boolean verbose, final boolean notNullAnnotations,
             final boolean notNullCustomMessage, final boolean notNullPrefixFieldName,
             final boolean notNullPrefixClassName, final String notNullCustomMessageText,
-            final boolean jpaAnnotations, final boolean validationCollection,
+            final boolean validationCollection,
             final ValidationsAnnotation annotationFactory) {
         this.targetNamespace = targetNamespace;
         this.singlePattern = singlePattern;
@@ -229,7 +218,6 @@ public class ValidationsOptions {
         this.notNullPrefixFieldName = notNullPrefixFieldName;
         this.notNullPrefixClassName = notNullPrefixClassName;
         this.notNullCustomMessageText = notNullCustomMessageText;
-        this.jpaAnnotations = jpaAnnotations;
         this.validationCollection = validationCollection;
         this.annotationFactory = annotationFactory;
     }

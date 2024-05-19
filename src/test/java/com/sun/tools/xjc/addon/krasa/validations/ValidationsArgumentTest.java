@@ -50,7 +50,6 @@ public class ValidationsArgumentTest {
         assertTrue(options.isNotNullAnnotations());
         assertTrue(options.isValidationCollection());
         assertEquals(options.getNotNullCustomMessageText(), MESSAGE);
-        assertTrue(options.isJpaAnnotations());
         assertTrue(options.isVerbose());
 
     }

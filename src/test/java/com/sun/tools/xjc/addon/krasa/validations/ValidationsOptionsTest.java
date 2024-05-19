@@ -32,7 +32,6 @@ public class ValidationsOptionsTest {
 
         assertTrue(options.isSinglePattern());
         assertFalse(options.isVerbose());
-        assertFalse(options.isJpaAnnotations());
         assertTrue(options.isValidationCollection());
         assertEquals(ValidationsAnnotation.JAVAX, options.getAnnotationFactory());
     }
@@ -80,24 +79,6 @@ public class ValidationsOptionsTest {
                 .build();
 
         assertFalse(options.isVerbose());
-    }
-
-    @Test
-    public void shouldSetJpaAnnotationsTrue() {
-        ValidationsOptions options = ValidationsOptions.builder()
-                .jpaAnnotations(true)
-                .build();
-
-        assertTrue(options.isJpaAnnotations());
-    }
-
-    @Test
-    public void shouldSetJpaAnnotationsFalse() {
-        ValidationsOptions options = ValidationsOptions.builder()
-                .jpaAnnotations(false)
-                .build();
-
-        assertFalse(options.isJpaAnnotations());
     }
 
     @Test
