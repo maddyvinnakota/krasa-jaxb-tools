@@ -232,11 +232,7 @@ public class Processor {
                         annotator.addSinglePatternAnnotation(patternSet.iterator().next());
                         break;
                     default:
-                        if (options.isSinglePattern()) {
-                            annotator.addAlternativePatternListAnnotation(patternSet);
-                        } else {
-                            annotator.addPatternListAnnotation(patternSet);
-                        }
+                        annotator.addPatternAnnotation(patternSet);
                 }
 
             }

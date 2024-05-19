@@ -32,11 +32,6 @@ public enum ValidationsArgument {
             },
             // getter:
             (p) ->  p.getTargetNamespace()),
-    singlePattern(
-            Boolean.class,
-            "uses a single javax validation @Pattern instead of @Pattern.List",
-            (p, v) -> setBoolean(v, r -> p.singlePattern(r)),
-            p -> p.isSinglePattern()),
     @Deprecated // not used anymore (was enabling validation 1.1 features, now we use 2.0)
     JSR_349(
             Boolean.class,

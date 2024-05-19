@@ -11,7 +11,6 @@ import java.util.Objects;
 public class ValidationsOptions {
     // sets default values in Builder not here
     private final String targetNamespace;
-    private final boolean singlePattern;
     private final boolean verbose;
     private final boolean notNullAnnotations;
     private final boolean notNullCustomMessage;
@@ -53,10 +52,6 @@ public class ValidationsOptions {
         return targetNamespace;
     }
 
-    public boolean isSinglePattern() {
-        return singlePattern;
-    }
-
     public boolean isVerbose() {
         return verbose;
     }
@@ -91,7 +86,6 @@ public class ValidationsOptions {
 
     public static class Builder {
         private String targetNamespace = null;
-        private boolean singlePattern = true;
         private boolean verbose = false;
         private boolean notNullAnnotations = true;
         private boolean notNullCustomMessage = false;
@@ -146,11 +140,6 @@ public class ValidationsOptions {
             return this;
         }
 
-        public Builder singlePattern(final boolean value) {
-            this.singlePattern = value;
-            return this;
-        }
-
         public Builder verbose(final boolean value) {
             this.verbose = value;
             return this;
@@ -192,7 +181,7 @@ public class ValidationsOptions {
         }
 
         public ValidationsOptions build() {
-            return new com.sun.tools.xjc.addon.krasa.validations.ValidationsOptions(targetNamespace, singlePattern,
+            return new com.sun.tools.xjc.addon.krasa.validations.ValidationsOptions(targetNamespace,
                     verbose, notNullAnnotations, notNullCustomMessage, notNullPrefixFieldName,
                     notNullPrefixClassName, notNullCustomMessageText,
                     validationCollection, annotationFactory);
@@ -204,14 +193,12 @@ public class ValidationsOptions {
     }
 
     private ValidationsOptions(final String targetNamespace,
-            final boolean singlePattern,
             final boolean verbose, final boolean notNullAnnotations,
             final boolean notNullCustomMessage, final boolean notNullPrefixFieldName,
             final boolean notNullPrefixClassName, final String notNullCustomMessageText,
             final boolean validationCollection,
             final ValidationsAnnotation annotationFactory) {
         this.targetNamespace = targetNamespace;
-        this.singlePattern = singlePattern;
         this.verbose = verbose;
         this.notNullAnnotations = notNullAnnotations;
         this.notNullCustomMessage = notNullCustomMessage;

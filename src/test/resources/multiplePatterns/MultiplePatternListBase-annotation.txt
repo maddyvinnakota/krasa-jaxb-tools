@@ -1,3 +1,0 @@
-Multipattern
-    multiplePatterns
-        @Pattern.List({@Pattern(regexp = "[0-9]"), @Pattern(regexp = "[A-B]")})

@@ -145,31 +145,13 @@ class FieldAnnotator {
     }
 
     /** Adds all the patterns (A, B, C) as options in a single one (A|B|C). */
-    void addAlternativePatternListAnnotation(Set<String> patterns) {
+    void addPatternAnnotation(Set<String> patterns) {
         StringBuilder sb = new StringBuilder();
         for (String p : patterns) {
             sb.append("(").append(p).append(")|");
         }
         String regexp = sb.substring(0, sb.length() - 1);
         addSinglePatternAnnotation(regexp);
-    }
-
-    /** Uses @Pattern.List to list all patterns. */
-    void addPatternListAnnotation(Set<String> patterns) {
-        if (patterns != null && !patterns.isEmpty()) {
-            XjcAnnotator.Annotate.MultipleAnnotation multi = xjcAnnotator
-                    .annotate(annotationFactory.getPatternListClass())
-                    .multipleAnnotationContainer(VALUE);
-
-            for (String p : patterns) {
-                if (p != null && !p.isEmpty()) {
-                    multi.annotate(annotationFactory.getPatternClass())
-                            .param(REGEXP, p)
-                            .log();
-                }
-            }
-
-        }
     }
 
     void addSinglePatternAnnotation(String pattern) {

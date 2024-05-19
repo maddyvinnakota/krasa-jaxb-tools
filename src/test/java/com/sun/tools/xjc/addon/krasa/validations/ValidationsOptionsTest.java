@@ -30,7 +30,6 @@ public class ValidationsOptionsTest {
     public void shouldGetDafaults() {
         ValidationsOptions options = ValidationsOptions.builder().build();
 
-        assertTrue(options.isSinglePattern());
         assertFalse(options.isVerbose());
         assertTrue(options.isValidationCollection());
         assertEquals(ValidationsAnnotation.JAVAX, options.getAnnotationFactory());
@@ -43,24 +42,6 @@ public class ValidationsOptionsTest {
                 .build();
 
         assertEquals("something.there", options.getTargetNamespace());
-    }
-
-    @Test
-    public void shouldSetSinglePatternTrue() {
-        ValidationsOptions options = ValidationsOptions.builder()
-                .singlePattern(true)
-                .build();
-
-        assertTrue(options.isSinglePattern());
-    }
-
-    @Test
-    public void shouldSetSinglePatternFalse() {
-        ValidationsOptions options = ValidationsOptions.builder()
-                .singlePattern(false)
-                .build();
-
-        assertFalse(options.isSinglePattern());
     }
 
     @Test
