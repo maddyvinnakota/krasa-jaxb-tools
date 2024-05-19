@@ -116,11 +116,9 @@ public class Processor {
                 annotator.addValidAnnotation();
             }
 
-            if (property.isCollection()) {
-                if (maxOccurs != 0 || minOccurs != 0) {
-                    // http://www.dimuthu.org/blog/2008/08/18/xml-schema-nillabletrue-vs-minoccurs0/comment-page-1/
-                    annotator.addSizeAnnotation(minOccurs, maxOccurs, null);
-                }
+            if (property.isCollection() && (maxOccurs != 0 || minOccurs != 0)) {
+                // http://www.dimuthu.org/blog/2008/08/18/xml-schema-nillabletrue-vs-minoccurs0/comment-page-1/
+                annotator.addSizeAnnotation(minOccurs, maxOccurs, null);
             }
 
             // using https://github.com/jirutka/validator-collection to annotate Lists of primitives
@@ -135,7 +133,7 @@ public class Processor {
                 Facet facet = new Facet(simpleType);
                 FieldHelper fieldHelper = new FieldHelper(field);
 
-                // if it's a complexyType it might add a facet referring to only one of the possibilities 
+                // if it's a complexyType it might add a facet referring to only one of the possibilities
                 if (!isComplexType && options.isValidationCollection() && property.isCollection()) {
                     annotator.addEachSizeAnnotation(facet.minLength(), facet.maxLength());
                     annotator.addEachDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
@@ -284,7 +282,7 @@ public class Processor {
         }
     }
 
-    private boolean isEqualsOrNull(String optionsNamespace, String actualTargetNamespace) {
+    static boolean isEqualsOrNull(String optionsNamespace, String actualTargetNamespace) {
         if (optionsNamespace == null ||
                 optionsNamespace.isEmpty() ||
                 "null".equals(optionsNamespace)) {

@@ -85,7 +85,7 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
         // override RunXJC2Mojo own method to allow tests to be executed after mojo creation
     }
 
-    // called by the JUnit reflection test running engine (it starts with test)
+    // called by the JUnit reflection test running engine (method name starts with test)
     public final synchronized void testCheckAnnotationsInResourceFile() {
         String namespace = getNamespace();
         String[] nsArray = namespace.split(",");
@@ -149,7 +149,7 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
                 .getOptionList();
     }
 
-    public synchronized void writeAllElementsTo(String ns, Path filename) {
+    private synchronized void writeAllElementsTo(String ns, Path filename) {
         try (BufferedWriter writer = Files.newBufferedWriter(filename, Charset.defaultCharset(),
                 StandardOpenOption.CREATE, StandardOpenOption.WRITE)) {
             gatAllElementsAsString(ns, writer);
@@ -179,7 +179,7 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
                             .map(s -> s.trim())
                             .filter(s -> !s.startsWith("@Xml"))
                             .collect(Collectors.toList());
-                    annotationList = sortCompactingArrayAnnotations(annotationList);
+                    annotationList = compactArrayAnnotations(annotationList);
                     for (String a : annotationList) {
                         buf.append("        ").append(a).append(System.lineSeparator());
                     }
@@ -192,7 +192,7 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
 //        @Pattern(regexp = "[0-9]"),
 //        @Pattern(regexp = "[A-B]")
 //    })
-    private List<String> sortCompactingArrayAnnotations(List<String> annotationList) {
+    private List<String> compactArrayAnnotations(List<String> annotationList) {
         List<String> reversedList = new ArrayList<>();
         for (int i=annotationList.size()-1; i>=0; i--) {
             String line = annotationList.get(i);
@@ -227,7 +227,7 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
         return new ArtifactTester(filename, lines);
     }
 
-    private ArtifactTester element(String ns, String elementName) {
+    public ArtifactTester element(String ns, String elementName) {
         final String filename = elementName + ".java";
         List<String> lines = readFile(ns, filename);
         return new ArtifactTester(filename, lines);
