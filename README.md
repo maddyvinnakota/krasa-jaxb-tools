@@ -75,28 +75,44 @@ Options
 
 **`@NotNull`**'s default validation message is not always helpful, so it can be customized with **-XJsr303Annotations:notNullAnnotationsCustomMessages=OPTION** where **OPTION** is one of the following:
 
-* `false` default: no custom message
-* `true` message is present but equivalent to the default: **"{javax.validation.constraints.NotNull.message}"**
-* `FieldName` field name is prefixed to the default message: **"fieldName {javax.validation.constraints.NotNull.message}"**
-* `ClassName` class and field name are prefixed to the default message: **"ClassName.fieldName {javax.validation.constraints.NotNull.message}"**
-* `other-non-empty-text` arbitrary message, with substitutable, case-sensitive parameters `{ClassName}` and `{FieldName}`: **"Class {ClassName} field {FieldName} non-null"**
+- `false` default: no custom message
+- `true` message is present but equivalent to the default: **"{javax.validation.constraints.NotNull.message}"**
+- `FieldName` field name is prefixed to the default message: **"fieldName {javax.validation.constraints.NotNull.message}"**
+- `ClassName` class and field name are prefixed to the default message: **"ClassName.fieldName {javax.validation.constraints.NotNull.message}"**
+- `other-non-empty-text` arbitrary message, with substitutable, case-sensitive parameters `{ClassName}` and `{FieldName}`: **"Class {ClassName} field {FieldName} non-null"**
 
+`generateServiceValidationAnnotations` argument
+----------------
+
+Bean validation policy can be customized with `-XJsr303Annotations:generateServiceValidationAnnotations=OPTION` where OPTION is one of the following:
+
+- `InOut` (default: validate requests and responses)
+- `In` (validate only requests)
+- `Out` (validate only responses)
+
+Using this option requires to specify krasa as front end generator (See example below)
+
+`XReplacePrimitives` argument
+----------------
+
+replaces primitive types by Objects
+**WARNING:** must be defined before XhashCode or Xequals
 
 XJsr303Annotations
 ----------------
 
 Generates:
 
-* `@Valid` annotation for all complex types, can be further restricted to generate only for types from defined schema: -XJsr303Annotations:targetNamespace=http://www.foo.com/bar
-* `@NotNull` annotation for objects that has a MinOccur value >= 1 or for attributes with required use
-* `@Size` for lists that have minOccurs > 1
-* `@Size` if there is a maxLength or minLength or length restriction
-* `@DecimalMax` for maxInclusive restriction
-* `@DecimalMin` for minInclusive restriction
-* `@DecimalMax` for maxExclusive restriction, enable new parameter (inclusive=false) with: -XJsr303Annotations:JSR_349=true
-* `@DecimalMin` for minExclusive restriction, enable new parameter (inclusive=false) with: -XJsr303Annotations:JSR_349=true
-* `@Digits` if there is a totalDigits or fractionDigits restriction.
-* `@Pattern` and `@PatternList` if there is a Pattern restriction (see `singlePattern` option)
+- `@Valid` annotation for all complex types, can be further restricted to generate only for types from defined schema: -XJsr303Annotations:targetNamespace=http://www.foo.com/bar
+- `@NotNull` annotation for objects that has a MinOccur value >= 1 or for attributes with required use
+- `@Size` for lists that have minOccurs > 1
+- `@Size` if there is a maxLength or minLength or length restriction
+- `@DecimalMax` for maxInclusive restriction
+- `@DecimalMin` for minInclusive restriction
+- `@DecimalMax` for maxExclusive restriction, enable new parameter (inclusive=false) with: -XJsr303Annotations:JSR_349=true
+- `@DecimalMin` for minExclusive restriction, enable new parameter (inclusive=false) with: -XJsr303Annotations:JSR_349=true
+- `@Digits` if there is a totalDigits or fractionDigits restriction.
+- `@Pattern` and `@PatternList` if there is a Pattern restriction (see `singlePattern` option)
 
 
 
