@@ -20,29 +20,19 @@ The project is bounded to support **Java 8** (**JDK 1.8**) because of some old p
 ## Version
 
 - `2.3.1` bug fix release:
-
   - `@Valid` annotation was not added by default
-
   - remove `singlePattern` option because `@Pattern.List` is not semantically correct
-
   - disable `jpa` option because not really useful
-
   - disable `JSR_349` option it was referring to Validation API 1.1 while now we use 2.0
-
   - add a lot of tests to establish a solid baseline (defaults was backported and tested on 2.2)
 
 - `2.3` A huge refactoring and fixing bugs:
-
   - added `singlePattern` option
-
   - fixed `generateServiceValidationAnnotations` used by `ValidSEIGenerator` to accept string parameter
-
   - dependencies updated to the latest version still supporting JDK 1.8
-
   - a maven rule has been set to force compilation with JDK 1.8
 
 - `2.2` Some new features added because of PR requests
-
   - Added `@Valid` annotation to `sequence`s to force items validation
   - Added support for `Jakarta EE 9` with parameter `validationAnnotations`
 
