@@ -90,7 +90,7 @@ Bean validation policy can be customized with `-XJsr303Annotations:generateServi
 - `In` (validate only requests)
 - `Out` (validate only responses)
 
-Using this option requires to specify krasa as front end generator (See example below)
+Using this option requires to specify krasa as front end generator (See example in https://github.com/fillumina/krasa-jaxb-tools-example )
 
 `XReplacePrimitives` argument
 ----------------
