@@ -4,10 +4,10 @@
 
 It works with (and possibly other plugins using `xjc`):
 
-- [`maven-jaxb2-plugin`](https://github.com/highsource/jaxb-tools)
-- [`jaxb2-maven-plugin`](https://github.com/mojohaus/jaxb2-maven-plugin)
-- [`cxf-codegen-plugin`](https://cxf.apache.org/docs/maven-cxf-codegen-plugin-wsdl-to-java.html)
-- [`cxf-xjc-plugin`](https://cxf.apache.org/cxf-xjc-plugin.html)
+- [`maven-jaxb2-plugin`](https://github.com/highsource/jaxb-tools) see [krasa-maven-jaxb2-plugin-example](https://github.com/fillumina/krasa-jaxb-tools-example/blob/master/krasa-maven-jaxb2-plugin-example/pom.xml)
+- [`jaxb2-maven-plugin`](https://github.com/mojohaus/jaxb2-maven-plugin) see [krasa-jaxb2-maven-plugin-example](https://github.com/fillumina/krasa-jaxb-tools-example/blob/master/krasa-jaxb2-maven-plugin-example/pom.xml)
+- [`cxf-codegen-plugin`](https://cxf.apache.org/docs/maven-cxf-codegen-plugin-wsdl-to-java.html) see: [krasa-cxf-codegen-plugin-example](https://github.com/fillumina/krasa-jaxb-tools-example/blob/master/krasa-cxf-codegen-plugin-example/pom.xml)
+- [`cxf-xjc-plugin`](https://cxf.apache.org/cxf-xjc-plugin.html) see [krasa-cxf-xjc-plugin-example](https://github.com/fillumina/krasa-jaxb-tools-example/blob/master/krasa-cxf-xjc-plugin-example/pom.xml)
 
 Refer to the [`krasa-jaxb-tools-example`](https://github.com/fillumina/krasa-jaxb-tools-example) project for usage examples.
 
