@@ -13,11 +13,13 @@ Refer to the [`krasa-jaxb-tools-example`](https://github.com/fillumina/krasa-jax
 
 
 
-## JDK 1.8 Support
+JDK 1.8 Support
+----------------
 
 The project is bounded to support **Java 8** (**JDK 1.8**) because of some old projects still requiring it. All dependencies are selected from the latest available versions still supporting that.
 
-## Version
+Version
+----------------
 
 - `2.3.1` bug fix release:
   - `@Valid` annotation was not added by default
@@ -40,7 +42,7 @@ The project is bounded to support **Java 8** (**JDK 1.8**) because of some old p
 
 - `2.0` A refactorized version of the original [krasa-jaxb-toos](https://github.com/krasa/krasa-jaxb-tools) last synced on August 2022, with some enhancements (support for `EachDigits`, `EachDecimalMin` and `EachDecimalMax` in primitive lists), improved tests and bug fixed. It is compiled using JDK 11. The `pom.xml` `groupId` has been changed to `com.fillumina`.
 
------
+
 
 Release
 ----------------
@@ -67,7 +69,9 @@ Options
 - `generateStringListAnnotations` (boolean, optional, default `false`) generates [validator-collection annotations](https://github.com/jirutka/validator-collection annotations)
 - `generateServiceValidationAnnotations` (string, accepts: `in`, `out`, `inout`, works with  `apache-cxf` only) adds `@Valid` annotations to respective message direction (in, out or both).
 
-----
+
+`notNullAnnotationsCustomMessages` argument options
+ ----------------
 
 **`@NotNull`**'s default validation message is not always helpful, so it can be customized with **-XJsr303Annotations:notNullAnnotationsCustomMessages=OPTION** where **OPTION** is one of the following:
 
@@ -77,7 +81,6 @@ Options
 * `ClassName` class and field name are prefixed to the default message: **"ClassName.fieldName {javax.validation.constraints.NotNull.message}"**
 * `other-non-empty-text` arbitrary message, with substitutable, case-sensitive parameters `{ClassName}` and `{FieldName}`: **"Class {ClassName} field {FieldName} non-null"**
 
-----
 
 XJsr303Annotations
 ----------------
@@ -95,7 +98,7 @@ Generates:
 * `@Digits` if there is a totalDigits or fractionDigits restriction.
 * `@Pattern` and `@PatternList` if there is a Pattern restriction (see `singlePattern` option)
 
-----
+
 
 Example project with tests
 ----------------
