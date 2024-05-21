@@ -76,7 +76,7 @@ Options
 - `generateServiceValidationAnnotations` (string, accepts: `in`, `out`, `inout`, works with  `apache-cxf` only) adds `@Valid` annotations to respective message direction (in, out or both).
 
 
-`notNullAnnotationsCustomMessages` argument options
+`notNullAnnotationsCustomMessages` argument
  ----------------
 
 **`@NotNull`**'s default validation message is not always helpful, so it can be customized with **-XJsr303Annotations:notNullAnnotationsCustomMessages=OPTION** where **OPTION** is one of the following:
