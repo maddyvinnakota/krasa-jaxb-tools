@@ -22,7 +22,7 @@ public class MissingBooleanArgumentParserTest extends AnnotationsMojoTestHelper 
     @Override
     public List<String> getArgs() {
         return ArgumentBuilder.builder()
-                .addWithoutValue(ValidationsArgument.generateStringListAnnotations)
+                .addWithoutValue(ValidationsArgument.generateListAnnotations)
                 .addWithoutValue(ValidationsArgument.generateNotNullAnnotations)
                 .addWithoutValue(ValidationsArgument.verbose)
                 .addWithoutValue(ValidationsArgument.generateServiceValidationAnnotations)

@@ -22,7 +22,7 @@ public class NotNullBase extends AnnotationsMojoTestHelper {
         return ArgumentBuilder.builder()
                 .add(ValidationsArgument.generateNotNullAnnotations, true)
                 .add(ValidationsArgument.notNullAnnotationsCustomMessages, notNullAnnotationsCustomMessage)
-                .add(ValidationsArgument.generateStringListAnnotations, true)
+                .add(ValidationsArgument.generateListAnnotations, true)
                 .add(ValidationsArgument.targetNamespace, getNamespace())
                 .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
                 .getOptionList();

@@ -143,7 +143,7 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
     public List<String> getArgs() {
         return ArgumentBuilder.builder()
                 .add(ValidationsArgument.generateNotNullAnnotations, true)
-                .add(ValidationsArgument.generateStringListAnnotations, true)
+                .add(ValidationsArgument.generateListAnnotations, true)
                 .add(ValidationsArgument.targetNamespace, getNamespace())
                 .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
                 .getOptionList();

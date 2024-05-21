@@ -26,7 +26,7 @@ public class ValidationsArgumentTest {
 
         List<String> arguments = ArgumentBuilder.builder()
                 .add(ValidationsArgument.targetNamespace, NAMESPACE)
-                .add(ValidationsArgument.generateStringListAnnotations, true)
+                .add(ValidationsArgument.generateListAnnotations, true)
                 .add(ValidationsArgument.validationAnnotations, ANNOTATION)
                 .add(ValidationsArgument.generateNotNullAnnotations, true)
                 .add(ValidationsArgument.generateServiceValidationAnnotations, true)

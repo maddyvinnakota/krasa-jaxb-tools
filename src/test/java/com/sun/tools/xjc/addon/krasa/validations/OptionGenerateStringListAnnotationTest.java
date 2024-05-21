@@ -20,7 +20,7 @@ public class OptionGenerateStringListAnnotationTest extends OptionBase {
         // overwrite whatever options set by RunXJC2MojoTestHelper so to keep default configuration
         return ArgumentBuilder.builder()
                 .add(ValidationsArgument.generateNotNullAnnotations, false)
-                .add(ValidationsArgument.generateStringListAnnotations, true)
+                .add(ValidationsArgument.generateListAnnotations, true)
                 .add(ValidationsArgument.targetNamespace, null)
                 .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
                 .getOptionList();

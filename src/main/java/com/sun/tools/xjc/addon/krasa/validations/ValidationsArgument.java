@@ -110,7 +110,7 @@ public enum ValidationsArgument {
             },
             (p) -> p.getAnnotationFactory()),
     // TODO bad name
-    generateStringListAnnotations(
+    generateListAnnotations(
             Boolean.class,
             "generates github.com/jirutka/validator-collection annotations",
             (p,v) -> setBoolean(v, r -> p.validationCollection(r)),

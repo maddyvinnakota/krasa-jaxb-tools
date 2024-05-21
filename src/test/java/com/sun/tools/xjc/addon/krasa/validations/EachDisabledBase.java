@@ -21,7 +21,7 @@ public class EachDisabledBase extends AnnotationsMojoTestHelper {
     public List<String> getArgs() {
         return ArgumentBuilder.builder()
                 .add(ValidationsArgument.generateNotNullAnnotations, true)
-                .add(ValidationsArgument.generateStringListAnnotations, false)
+                .add(ValidationsArgument.generateListAnnotations, false)
                 .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
                 .getOptionList();
     }

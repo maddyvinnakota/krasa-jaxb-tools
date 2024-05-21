@@ -92,7 +92,7 @@ public class ValidationsOptions {
         private boolean notNullPrefixFieldName = false;
         private boolean notNullPrefixClassName = false;
         private String notNullCustomMessageText = null;
-        private boolean validationCollection = true;
+        private boolean validationCollection = false;
         private ValidationsAnnotation annotationFactory = ValidationsAnnotation.JAVAX;
 
         private Builder() {

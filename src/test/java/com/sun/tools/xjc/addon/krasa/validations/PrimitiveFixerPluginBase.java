@@ -20,7 +20,7 @@ public class PrimitiveFixerPluginBase extends AnnotationsMojoTestHelper {
         return ArgumentBuilder.builder()
                 .add("-" + PrimitiveFixerPlugin.PLUGIN_NAME)
                 .add(ValidationsArgument.generateNotNullAnnotations, true)
-                .add(ValidationsArgument.generateStringListAnnotations, true)
+                .add(ValidationsArgument.generateListAnnotations, true)
                 .add(ValidationsArgument.targetNamespace, getNamespace())
                 .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
                 .getOptionList();

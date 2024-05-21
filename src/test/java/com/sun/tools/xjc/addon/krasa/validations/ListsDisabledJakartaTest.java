@@ -16,7 +16,7 @@ public class ListsDisabledJakartaTest extends AnnotationsMojoTestHelper {
     @Override
     public List<String> getArgs() {
         return ArgumentBuilder.builder()
-                .add(ValidationsArgument.generateStringListAnnotations, false)
+                .add(ValidationsArgument.generateListAnnotations, false)
                 .add(ValidationsArgument.targetNamespace, getNamespace())
                 .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
                 .getOptionList();

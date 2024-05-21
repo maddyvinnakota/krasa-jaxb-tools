@@ -16,7 +16,7 @@ public class EachBase extends AnnotationsMojoTestHelper {
     public List<String> getArgs() {
         return ArgumentBuilder.builder()
                 .add(ValidationsArgument.generateNotNullAnnotations, true)
-                .add(ValidationsArgument.generateStringListAnnotations, true)
+                .add(ValidationsArgument.generateListAnnotations, true)
                 .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
                 .getOptionList();    }
 

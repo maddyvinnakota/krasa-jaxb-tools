@@ -19,14 +19,14 @@ public class ArgumentBuilderTest {
     public void shouldBuildArguments() {
         List<String> list = ArgumentBuilder.builder()
                 .add(ValidationsArgument.targetNamespace, NAMESPACE)
-                .add(ValidationsArgument.generateStringListAnnotations, true)
+                .add(ValidationsArgument.generateListAnnotations, true)
                 .add(ValidationsArgument.validationAnnotations, ANNOTATION)
                 .getOptionList();
 
         Iterator<String> it = list.iterator();
         assertEquals(JaxbValidationsPlugin.PLUGIN_OPTION_NAME, it.next());
         assertEquals(ValidationsArgument.targetNamespace.withValue(NAMESPACE), it.next());
-        assertEquals(ValidationsArgument.generateStringListAnnotations.withValue("true"), it.next());
+        assertEquals(ValidationsArgument.generateListAnnotations.withValue("true"), it.next());
         assertEquals(ValidationsArgument.validationAnnotations.withValue(ANNOTATION), it.next());
     }
 
