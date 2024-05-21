@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<xsd:schema
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="a"
+    xmlns:a="a"
+    elementFormDefault="qualified">
+
+  <xsd:element name="ProcessContainer">
+    <xsd:complexType>
+        <xsd:sequence>
+          <xsd:element name="Process" type="a:ProcessType"/>
+          <xsd:element name="SupplierGln" type="a:GlnType"/>
+        </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+
+  <xsd:simpleType name="ProcessType">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="Invoice"/>
+      <xsd:enumeration value="Credit"/>
+      <xsd:enumeration value="Complaint"/>
+      <xsd:maxLength value="9"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="GlnType">
+    <xsd:restriction base="xsd:string">
+      <xsd:maxLength value="14"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>

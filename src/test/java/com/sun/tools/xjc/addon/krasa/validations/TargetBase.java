@@ -31,7 +31,7 @@ public class TargetBase extends AnnotationsMojoTestHelper {
     public List<String> getArgs() {
         return ArgumentBuilder.builder()
                 .add(ValidationsArgument.generateNotNullAnnotations, false)
-                .add(ValidationsArgument.generateStringListAnnotations, false)
+                .add(ValidationsArgument.generateStringListAnnotations, true)
                 .add(ValidationsArgument.targetNamespace, targetNamespace)
                 .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
                 .getOptionList();

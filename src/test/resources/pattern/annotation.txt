@@ -1,0 +1,7 @@
+ProcessContainer
+    process
+        @NotNull
+    supplierGln
+        @NotNull
+        @Size(max = 14)
+ProcessType

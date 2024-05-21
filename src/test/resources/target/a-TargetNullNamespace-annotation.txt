@@ -1,4 +1,5 @@
 AContainer
     aListOfString
+        @EachSize(min = 1, max = 500)
         @Size(min = 0, max = 5)
         @Valid

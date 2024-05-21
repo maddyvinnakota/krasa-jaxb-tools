@@ -216,21 +216,17 @@ public class Processor {
 
                 annotator.addDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
 
-            } else {
+            } else if (fieldHelper.isString()) {
                 annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
 
                 Set<String> patternSet = gatherRegexpAndEnumeration(facet, simpleType);
-                switch (patternSet.size()) {
-                    case 0:
-                        // do nothing at all
-                        break;
-                    case 1:
-                        annotator.addSinglePatternAnnotation(patternSet.iterator().next());
-                        break;
-                    default:
-                        annotator.addPatternAnnotation(patternSet);
-                }
+                annotator.addPatterns(patternSet);
 
+            } else if (fieldHelper.isStringList() && options.isValidationCollection()) {
+                annotator.addEachSizeAnnotation(facet.minLength(), facet.maxLength());
+
+                Set<String> patternSet = gatherRegexpAndEnumeration(facet, simpleType);
+                annotator.addEachPatterns(patternSet);
             }
         }
 

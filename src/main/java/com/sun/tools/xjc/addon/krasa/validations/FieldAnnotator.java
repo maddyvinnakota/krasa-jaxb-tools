@@ -5,7 +5,9 @@ import com.sun.tools.xjc.outline.ClassOutline;
 import cz.jirutka.validator.collection.constraints.EachDecimalMax;
 import cz.jirutka.validator.collection.constraints.EachDecimalMin;
 import cz.jirutka.validator.collection.constraints.EachDigits;
+import cz.jirutka.validator.collection.constraints.EachPattern;
 import cz.jirutka.validator.collection.constraints.EachSize;
+import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 import java.util.Set;
 
@@ -144,18 +146,39 @@ class FieldAnnotator {
         }
     }
 
+    void addPatterns(Set<String> patternSet) {
+        addPatternAnnotations(annotationFactory.getPatternClass(), patternSet);
+    }
+
+    void addEachPatterns(Set<String> patternSet) {
+        addPatternAnnotations(EachPattern.class, patternSet);
+    }
+
+    private void addPatternAnnotations(Class<? extends Annotation> annotation, Set<String> patternSet) {
+        switch (patternSet.size()) {
+            case 0:
+                // do nothing at all
+                break;
+            case 1:
+                addSinglePatternAnnotation(annotation, patternSet.iterator().next());
+                break;
+            default:
+                addPatternAnnotation(annotation, patternSet);
+        }
+    }
+
     /** Adds all the patterns (A, B, C) as options in a single one (A|B|C). */
-    void addPatternAnnotation(Set<String> patterns) {
+    private void addPatternAnnotation(Class<? extends Annotation> annotation, Set<String> patterns) {
         StringBuilder sb = new StringBuilder();
         for (String p : patterns) {
             sb.append("(").append(p).append(")|");
         }
         String regexp = sb.substring(0, sb.length() - 1);
-        addSinglePatternAnnotation(regexp);
+        addSinglePatternAnnotation(annotation, regexp);
     }
 
-    void addSinglePatternAnnotation(String pattern) {
-        xjcAnnotator.annotate(annotationFactory.getPatternClass())
+    private void addSinglePatternAnnotation(Class<? extends Annotation> annotation, String pattern) {
+        xjcAnnotator.annotate(annotation)
                 .param(REGEXP, pattern)
                 .log();
     }

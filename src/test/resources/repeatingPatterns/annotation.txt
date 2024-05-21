@@ -1,5 +1,5 @@
 RepeatingPatternListType
     repeatingPatterns
-        @Pattern(regexp = "[0-9]")
+        @EachPattern(regexp = "[0-9]")
         @Size(min = 0, max = 10)
         @Valid

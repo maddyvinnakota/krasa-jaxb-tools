@@ -29,9 +29,12 @@ public class ValidationsOptionsTest {
     @Test
     public void shouldGetDafaults() {
         ValidationsOptions options = ValidationsOptions.builder().build();
-
+        assertFalse(options.isNotNullCustomMessage());
+        assertFalse(options.isNotNullPrefixClassName());
+        assertFalse(options.isNotNullPrefixFieldName());
+        assertTrue(options.isNotNullAnnotations());
         assertFalse(options.isVerbose());
-        assertTrue(options.isValidationCollection());
+        assertFalse(options.isValidationCollection());
         assertEquals(ValidationsAnnotation.JAVAX, options.getAnnotationFactory());
     }
 

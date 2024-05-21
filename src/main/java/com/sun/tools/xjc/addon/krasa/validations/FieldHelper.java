@@ -18,6 +18,14 @@ class FieldHelper {
         this.field = field;
     }
 
+    public boolean isString() {
+        return field.type().name().equals("String");
+    }
+
+    public boolean isStringList() {
+        return field.type().name().equals("List<String>");
+    }
+
     public boolean isArray() {
         return field.type().isArray();
     }
