@@ -23,8 +23,8 @@ Version
 
 - `2.3.2` another bug fix release:
   - fix `@Pattern` added to wrong fields (regression from 2.2)
-  - add `@EachPattern` when needed for `List<Strring>` fields
-  - renamed `generateStringListAnnotations` option to `generateListAnnotations` because it is not limited to list of strings
+  - add `@EachPattern` when needed for `List<String>` fields
+  - rename `generateStringListAnnotations` option to `generateListAnnotations` because it is not limited to list of strings
   - disable `generateListAnnotations` by default (was enabled)
 
 - `2.3.1` bug fix release:
