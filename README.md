@@ -21,6 +21,12 @@ The project is bounded to support **Java 8** (**JDK 1.8**) because of some old p
 Version
 ----------------
 
+- `2.3.2` another bug fix release:
+  - fix `@Pattern` added to wrong fields (regression from 2.2)
+  - add `@EachPattern` when needed for `List<Strring>` fields
+  - renamed `generateStringListAnnotations` option to `generateListAnnotations` because it is not limited to list of strings
+  - disable `generateListAnnotations` by default (was enabled)
+
 - `2.3.1` bug fix release:
   - `@Valid` annotation was not added by default
   - remove `singlePattern` option because `@Pattern.List` is not semantically correct
