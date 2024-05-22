@@ -48,7 +48,9 @@ public class AnnotationTester {
 
     public AttributeTester assertNoValues() {
         if (!valueMap.isEmpty()) {
-            throw new AssertionError("annotation " + annotation + " of attribute " + parent.attributeName + " in " + parent.filename + " not empty: " + valueMap);
+            throw new AssertionError("annotation " + annotation +
+                    " of attribute " + parent.attributeName +
+                    " in " + parent.filename + " not empty: " + valueMap);
         }
         return parent;
     }
@@ -62,13 +64,18 @@ public class AnnotationTester {
         Objects.requireNonNull(value, "parameter " + name + " value cannot be null");
         String v = valueMap.get(name);
         if (v == null) {
-            throw new AssertionError("annotation " + annotation + " of attribute " + parent.attributeName + " in " + parent.filename + " not found: " + valueMap);
+            throw new AssertionError("annotation " + annotation +
+                    " of attribute " + parent.attributeName +
+                    " in " + parent.filename + " not found: " + valueMap);
         }
         while (v.startsWith("\"")) {
             v = v.substring(1, v.length() - 1);
         }
         if (!v.equals(value.toString())) {
-            throw new AssertionError("annotation " + annotation + " of attribute " + parent.attributeName + " in " + parent.filename + " mismatched value, expected: " + value + " found " + v);
+            throw new AssertionError("annotation " + annotation +
+                    " of attribute " + parent.attributeName +
+                    " in " + parent.filename +
+                    " mismatched value, expected: " + value + " found " + v);
         }
         return this;
     }
