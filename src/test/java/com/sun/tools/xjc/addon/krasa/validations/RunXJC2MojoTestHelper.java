@@ -25,11 +25,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.maven.project.MavenProject;
@@ -284,13 +281,13 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
     public ArtifactTester element(String elementName) {
         final String filename = elementName + ".java";
         List<String> lines = readFile(getNamespace(), filename);
-        return new ArtifactTester(filename, lines);
+        return new ArtifactTester(filename, lines, this);
     }
 
     public ArtifactTester element(String ns, String elementName) {
         final String filename = elementName + ".java";
         List<String> lines = readFile(ns, filename);
-        return new ArtifactTester(filename, lines);
+        return new ArtifactTester(filename, lines, this);
     }
 
     private List<String> readFile(String ns, String filename) {
@@ -323,247 +320,6 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
             ns = File.separator + (ns.trim().isEmpty() ? "generated" : ns);
         }
         return getGeneratedDirectory().getAbsolutePath() + ns + File.separator;
-    }
-
-    public class ArtifactTester {
-
-        private final String filename;
-        private final List<String> lines;
-
-        private ArtifactTester(String filename, List<String> lines) {
-            this.filename = filename;
-            this.lines = lines;
-        }
-
-        public ArtifactTester annotationSimpleName(String simpleName) throws ClassNotFoundException {
-            String canonicalName = validationAnnotation.getCanonicalClassName(simpleName);
-            return annotationCanonicalName(canonicalName);
-        }
-
-        public ArtifactTester annotationCanonicalName(String canonicalName) {
-            Objects.requireNonNull(canonicalName);
-            lines.stream()
-                    .filter(s -> s.contains(canonicalName))
-                    .findAny()
-                    .orElseThrow(() -> new AssertionError("annotation not found: " + canonicalName));
-            return this;
-        }
-
-        public AttributeTester classAnnotations() {
-            final String clazzName = filename.replace(".java", "");
-            int line = getLineForClass(clazzName);
-            List<String> annotationList = getAnnotations(clazzName, line);
-            String definition = lines.get(line);
-            return new AttributeTester(this, filename, clazzName,
-                    definition, annotationList);
-        }
-
-        public AttributeTester attribute(String attributeName) {
-            int line = getLineForAttribute(attributeName);
-            List<String> annotationList = getAnnotations(attributeName, line);
-            String definition = lines.get(line);
-            return new AttributeTester(this, filename, attributeName,
-                    definition, annotationList);
-        }
-
-        public List<String> getAnnotations(String attributeName) {
-            int line = getLineForAttribute(attributeName);
-            return getAnnotations(attributeName, line);
-        }
-
-        private List<String> getAnnotations(String attributeName, int line) {
-            int prevAttribute = prevAttributeLine(attributeName, line);
-            List<String> annotationList = lines.subList(prevAttribute, line);
-            return annotationList;
-        }
-
-        public RunXJC2MojoTestHelper end() {
-            return RunXJC2MojoTestHelper.this;
-        }
-
-        private int getLineForClass(String className) {
-            for (int i = 0, l = lines.size(); i < l; i++) {
-                String line = lines.get(i).trim();
-                if (line.startsWith("public class " + className)) {
-                    return i;
-                }
-            }
-            throw new AssertionError(
-                    "attribute " + className + " not found in file " + filename);
-        }
-
-        private List<String> getAllAttributes() {
-            List<String> list = new ArrayList<>();
-            for (int i = 0, l = lines.size(); i < l; i++) {
-                String line = lines.get(i).trim();
-                if (line.startsWith("protected ") && line.endsWith(";")) {
-                    int idx = line.lastIndexOf(' ') + 1;
-                    String attrName = line.substring(idx, line.length() - 1);
-                    list.add(attrName);
-                }
-            }
-            return list;
-        }
-
-        private int getLineForAttribute(String attributeName) {
-            for (int i = 0, l = lines.size(); i < l; i++) {
-                String line = lines.get(i).trim();
-                if (line.startsWith("protected ") && line.endsWith(attributeName + ";")) {
-                    return i;
-                }
-            }
-            throw new AssertionError(
-                    "attribute " + attributeName + " not found in file " + filename);
-        }
-
-        private int prevAttributeLine(String attributeName, int attributeLine) {
-            for (int i = attributeLine - 1; i >= 0; i--) {
-                String line = lines.get(i).trim();
-                if (line.trim().isEmpty() ||
-                        line.startsWith("public ") ||
-                        line.startsWith("protected ")) {
-                    return i + 1;
-                }
-            }
-            throw new AssertionError(
-                    "cannot extract validatitions for " + attributeName + " in file " + filename);
-        }
-    }
-
-    public static class AttributeTester {
-
-        private final ArtifactTester parent;
-        private final String filename;
-        private final String attributeName;
-        private final String definition;
-        private final List<String> annotationList;
-
-        public AttributeTester(ArtifactTester parent, String filename, String attributeName,
-                String definition, List<String> annotationList) {
-            this.parent = parent;
-            this.filename = filename;
-            this.attributeName = attributeName;
-            this.definition = definition;
-            this.annotationList = annotationList;
-        }
-
-        public ArtifactTester end() {
-            return parent;
-        }
-
-        public AttributeTester assertClass(Class<?> clazz) {
-            String className = clazz.getSimpleName();
-            if (!definition.contains(className + " ")) {
-                throw new AssertionError("attribute " + attributeName +
-                            " in " + filename + " expected of class " + clazz.getName() +
-                        " but is: " + definition);
-            }
-            return this;
-        }
-
-        public AttributeTester assertAnnotationNotPresent(String annotation) {
-            long counter = annotationList.stream()
-                    .filter(l -> l.trim().startsWith("@" + annotation))
-                    .count();
-            if (counter != 0) {
-                throw new AssertionError("annotation " + annotation + " of attribute " +
-                    attributeName + " in " + filename + " found");
-            }
-            return this;
-        }
-
-        public AnnotationTester annotation(String annotation) {
-            String line = annotationList.stream()
-                    .filter(l -> l.trim().startsWith("@" + annotation))
-                    .findFirst()
-                    .orElseThrow(() -> new AssertionError(
-                            "annotation " + annotation + " of attribute " + attributeName +
-                            " in " + filename + " not found "));
-            return new AnnotationTester(this, line, annotation);
-        }
-
-        public AttributeTester assertNoAnnotationsPresent() {
-            if (!annotationList.isEmpty()) {
-                throw new AssertionError(
-                        "attribute " + attributeName +
-                        " in " + filename + " contains annotations: " + annotationList.toString());
-            }
-            return this;
-        }
-    }
-
-    public static class AnnotationTester {
-
-        private final AttributeTester parent;
-        private final String line;
-        private final String annotation;
-        private final Map<String, String> valueMap = new HashMap<>();
-
-        public AnnotationTester(AttributeTester parent, String line, String annotationName) {
-            this.parent = parent;
-            this.line = line;
-            this.annotation = annotationName;
-
-            parseAnnotationValues(line);
-        }
-
-        private void parseAnnotationValues(String line) {
-            String values = "";
-            if (line.contains("(")) {
-                int start = line.indexOf("(");
-                values = line.substring(start + 1, line.length() - 1);
-            }
-            if (!values.trim().isEmpty()) {
-                if (line.contains("=")) {
-                    String[] pairs = values.split(",");
-                    for (String p : pairs) {
-                        String[] kv = p.split("=");
-                        valueMap.put(kv[0].trim(), kv[1].trim());
-                    }
-                } else {
-                    valueMap.put("value", values);
-                }
-            }
-        }
-
-        public AttributeTester end() {
-            return parent;
-        }
-
-        public AttributeTester assertNoValues() {
-            if (!valueMap.isEmpty()) {
-                throw new AssertionError("annotation " + annotation +
-                        " of attribute " + parent.attributeName +
-                        " in " + parent.filename + " not empty: " + valueMap);
-            }
-            return parent;
-        }
-
-        public AttributeTester assertValue(Object value) {
-            assertParam("value", value);
-            return parent;
-        }
-
-        public AnnotationTester assertParam(String name, Object value) {
-            Objects.requireNonNull(value, "parameter " + name + " value cannot be null");
-            String v = valueMap.get(name);
-            if (v == null) {
-                throw new AssertionError("annotation " + annotation +
-                        " of attribute " + parent.attributeName +
-                        " in " + parent.filename + " not found: " + valueMap);
-            }
-            while (v.startsWith("\"")) {
-                v = v.substring(1, v.length()-1);
-            }
-            if (!v.equals(value.toString())) {
-                throw new AssertionError("annotation " + annotation +
-                        " of attribute " + parent.attributeName +
-                        " in " + parent.filename + " mismatched value, expected: " + value +
-                        " found " + v);
-            }
-            return this;
-        }
-
     }
 
 }
