@@ -7,13 +7,11 @@ import java.util.List;
  *
  * @author Francesco Illuminati
  */
-public class OptionDefaultTest extends OptionBase {
+public class OptionDefaultTest extends RunXJC2MojoTestHelper {
 
-    @Override
-    public String getAnnotationFileName() {
-        return "default-annotation.txt";
+    public OptionDefaultTest() {
+        super("options", "a");
     }
-
 
     @Override
     public List<String> getArgs() {

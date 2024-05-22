@@ -48,49 +48,137 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
 
     private static final Set<String> executions = new HashSet<>();
 
-    private final ValidationsAnnotation validationAnnotation;
+    private final String folderName;
+    private final String namespace;
+    private final boolean separateAnnotation;
+    private ValidationsAnnotation validationAnnotation;
 
-    public RunXJC2MojoTestHelper(ValidationsAnnotation validation) {
-        this.validationAnnotation = validation;
+    public RunXJC2MojoTestHelper(String folderName, String namespace) {
+        this(folderName, namespace, false);
     }
 
-    public abstract String getFolderName();
-
-    public String getNamespace() {
-        return "";
+    public RunXJC2MojoTestHelper(String folderName, String namespace, boolean separateAnnotation) {
+        this.folderName = folderName;
+        this.namespace = namespace;
+        this.separateAnnotation = separateAnnotation;
     }
 
-    public ValidationsAnnotation getAnnotation() {
-        return ValidationsAnnotation.JAVAX;
+    /** Override to test JAVAX annotated code generation */
+    public void checkJavax() throws Exception {}
+
+    /** Override to test JAKARTA annotated code generation */
+    public void checkJakarta() throws Exception {}
+
+    @Override
+    public File getGeneratedDirectory() {
+        return new File(getBaseDir(), "target/generated-sources/" + getFolderName());
     }
 
-    public String getAnnotationFileName() {
-        return "annotation.txt";
+    @Override
+    public File getSchemaDirectory() {
+        return new File(getBaseDir(), "src/test/resources/" + getFolderName());
+    }
+
+    @Override
+    protected void configureMojo(AbstractXJC2Mojo mojo) {
+        super.configureMojo(mojo);
+        mojo.setProject(new MavenProject());
+        mojo.setForceRegenerate(true);
+        mojo.setExtension(true);
+    }
+
+    // TODO should be taken out
+    @Override
+    public List<String> getArgs() {
+        return ArgumentBuilder.builder()
+                .add(ValidationsArgument.generateNotNullAnnotations, true)
+                .add(ValidationsArgument.generateListAnnotations, true)
+                .add(ValidationsArgument.targetNamespace, getNamespace())
+                .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
+                .getOptionList();
     }
 
     // artifact creation happens before test executions!
     @Override
     public synchronized final void setUp() throws Exception {
-        final String executionName = getExecutionName();
-        if (executions.add(executionName)) {
+        generateAndCheckJakarta();
+        generateAndCheckJavax();
+    }
+
+    public final String getFolderName() {
+        return folderName;
+    }
+
+    /** @return comma seperated values or a single one */
+    public final String getNamespace() {
+        return namespace;
+    }
+
+    public final ValidationsAnnotation getAnnotation() {
+        return validationAnnotation;
+    }
+
+    protected final String getAnnotationLibraryName() {
+        return getAnnotation().name().toLowerCase();
+    }
+
+    private String getAnnotationFileName(String ns) {
+        final String className = getClass().getSimpleName()
+                .replace("Test", "");
+        final String annotationName = separateAnnotation ? getAnnotationLibraryName() : null;
+        return className + option(ns) + option(annotationName) + "-annotation.txt";
+    }
+
+    private String option(String opt) {
+        return opt == null || opt.isEmpty() ? "" : "-" + opt;
+    }
+
+    private void generateClasses() throws Exception {
+        if (executions.add(getExecutionName())) {
             super.testExecute();
         }
     }
 
+
     private String getExecutionName() {
-        return getFolderName() + "-" + getAnnotationFileName() + "-" + getAnnotation().name();
+        return getFolderName() + "-" +
+                getNamespace() + "-" +
+                getClass().getSimpleName() + "-" +
+                getAnnotation().name();
     }
 
     public final void testExecute() throws Exception {
         // override RunXJC2Mojo own method to allow tests to be executed after mojo creation
     }
 
+    private void generateAndCheckJakarta() {
+        validationAnnotation = ValidationsAnnotation.JAKARTA;
+        try {
+            generateClasses();
+            checkAnnotationsInResourceFile();
+            checkJakarta();
+        } catch (Exception ex) {
+            throw new AssertionError(ex);
+        }
+    }
+
+    private void generateAndCheckJavax() {
+        validationAnnotation = ValidationsAnnotation.JAVAX;
+        try {
+            generateClasses();
+            checkAnnotationsInResourceFile();
+            checkJavax();
+        } catch (Exception ex) {
+            throw new AssertionError(ex);
+        }
+    }
+
     // called by the JUnit reflection test running engine (method name starts with test)
-    public final synchronized void testCheckAnnotationsInResourceFile() {
+    private final synchronized void checkAnnotationsInResourceFile() {
         String namespace = getNamespace();
         String[] nsArray = namespace.split(",");
         for (String ns : nsArray) {
-            String annotatonFilename = (nsArray.length > 1 ? ns + "-" : "") + getAnnotationFileName();
+            String annotatonFilename = getAnnotationFileName(ns);
             Path filename = Paths.get(getGeneratedDirectory().getAbsolutePath() +
                     File.separator + annotatonFilename);
 
@@ -119,34 +207,6 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
             assertEquals("annotation differs in " + getExecutionName(),
                     expectedLine, actualLine);
         }
-    }
-
-    @Override
-    public File getGeneratedDirectory() {
-        return new File(getBaseDir(), "target/generated-sources/" + getFolderName());
-    }
-
-    @Override
-    public File getSchemaDirectory() {
-        return new File(getBaseDir(), "src/test/resources/" + getFolderName());
-    }
-
-    @Override
-    protected void configureMojo(AbstractXJC2Mojo mojo) {
-        super.configureMojo(mojo);
-        mojo.setProject(new MavenProject());
-        mojo.setForceRegenerate(true);
-        mojo.setExtension(true);
-    }
-
-    @Override
-    public List<String> getArgs() {
-        return ArgumentBuilder.builder()
-                .add(ValidationsArgument.generateNotNullAnnotations, true)
-                .add(ValidationsArgument.generateListAnnotations, true)
-                .add(ValidationsArgument.targetNamespace, getNamespace())
-                .add(ValidationsArgument.validationAnnotations, getAnnotation().name())
-                .getOptionList();
     }
 
     private synchronized void writeAllElementsTo(String ns, Path filename) {

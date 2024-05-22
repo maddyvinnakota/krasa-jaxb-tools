@@ -1,0 +1,47 @@
+package com.sun.tools.xjc.addon.krasa.validations;
+
+public class ComplexTest extends RunXJC2MojoTestHelper {
+
+    public ComplexTest() {
+        super("abase", "", false);
+    }
+
+    public void testNotNullAndSizeMax() {
+        element("AddressType")
+                .attribute("name")
+                        .annotation("Size").assertParam("max", 50).end()
+                        .annotation("NotNull").assertNoValues();
+    }
+
+    public void testNotNullAndSizeMinAndMax() {
+        element("AddressType")
+                .attribute("countryCode")
+                        .annotation("NotNull").assertNoValues()
+                        .annotation("Size")
+                                .assertParam("min", 2)
+                                .assertParam("max", 2);
+    }
+
+    public void testValidAndSizeMinMax() {
+        element("AddressType")
+                .attribute("phoneNumber")
+                        .annotation("Valid").assertNoValues()
+                        .annotation("Size")
+                                .assertParam("min", 0)
+                                .assertParam("max", 3);
+    }
+
+    public void testAnnotationNotPresent() {
+        element("AddressType")
+                .attribute("isDefaultOneClick")
+                        .assertNoAnnotationsPresent();
+    }
+
+    public void testPattern() {
+        element("EmailAddressType")
+                .attribute("preferredFormat")
+                        .annotation("Pattern")
+                                .assertParam("regexp",
+                                        "(\\\\QTextOnly\\\\E)|(\\\\QHTML\\\\E)");
+    }
+}

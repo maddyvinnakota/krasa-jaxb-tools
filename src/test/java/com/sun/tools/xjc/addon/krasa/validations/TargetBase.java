@@ -6,25 +6,12 @@ import java.util.List;
  *
  * @author Francesco Illuminati <fillumina@gmail.com>
  */
-public class TargetBase extends AnnotationsMojoTestHelper {
+public class TargetBase extends RunXJC2MojoTestHelper {
     private final String targetNamespace;
 
-    public TargetBase(ValidationsAnnotation annotation, String targetNamespace) {
-        super("target", annotation);
+    public TargetBase(String targetNamespace) {
+        super("target", "a,b");
         this.targetNamespace = targetNamespace;
-    }
-
-    @Override
-    public String getNamespace() {
-        return "a,b";
-    }
-
-    public String getAnnotationFileName() {
-        return getClass().getSimpleName()
-                .replace("Test", "")
-                .replace("Javax", "")
-                .replace("Jakarta", "")
-                + "-annotation.txt";
     }
 
     @Override

@@ -7,7 +7,7 @@ package com.sun.tools.xjc.addon.krasa.validations;
 public class TargetNullNamespaceJakartaTest extends TargetBase {
 
     public TargetNullNamespaceJakartaTest() {
-        super(ValidationsAnnotation.JAKARTA, null);
+        super(null);
     }
 
 }

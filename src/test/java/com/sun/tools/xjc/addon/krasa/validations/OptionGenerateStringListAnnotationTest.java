@@ -7,13 +7,11 @@ import java.util.List;
  *
  * @author Francesco Illuminati
  */
-public class OptionGenerateStringListAnnotationTest extends OptionBase {
+public class OptionGenerateStringListAnnotationTest extends RunXJC2MojoTestHelper {
 
-    @Override
-    public String getAnnotationFileName() {
-        return "generateNotNullAnnotations-annotation.txt";
+    public OptionGenerateStringListAnnotationTest() {
+        super("options", "a");
     }
-
 
     @Override
     public List<String> getArgs() {

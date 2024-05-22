@@ -10,17 +10,7 @@ import java.util.List;
 public class DefaultOptionTest extends RunXJC2MojoTestHelper {
 
     public DefaultOptionTest() {
-        super(ValidationsAnnotation.JAVAX);
-    }
-
-    @Override
-    public String getFolderName() {
-        return "abase";
-    }
-
-    @Override
-    public String getAnnotationFileName() {
-        return "ABaseDefaultTest-annotation.txt";
+        super("abase", "");
     }
 
     @Override

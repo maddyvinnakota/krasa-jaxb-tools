@@ -6,17 +6,11 @@ import java.util.List;
  *
  * @author Francesco Illuminati
  */
-public class MissingBooleanArgumentParserTest extends AnnotationsMojoTestHelper {
+public class MissingBooleanArgumentParserTest extends RunXJC2MojoTestHelper {
 
     // using an existing parsed XSD
     public MissingBooleanArgumentParserTest() {
-        super("array", ValidationsAnnotation.JAVAX);
-    }
-
-
-    @Override
-    public String getAnnotationFileName() {
-        return "MissingBooleanArgumentParserTest-annotation.txt";
+        super("array", "a");
     }
 
     @Override
