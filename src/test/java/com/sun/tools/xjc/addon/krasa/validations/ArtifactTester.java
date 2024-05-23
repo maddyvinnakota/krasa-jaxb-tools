@@ -6,7 +6,7 @@ import java.util.Objects;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 public class ArtifactTester {
 
@@ -20,15 +20,30 @@ public class ArtifactTester {
         this.lines = lines;
     }
 
-    public ArtifactTester annotationSimpleName(String simpleName) throws ClassNotFoundException {
+    /**
+     * Check if the given simple annotation name is present in the include statement.
+     *
+     * @param simpleName the simple name of the class to check (i.e. 'Valid').
+     * @return a tester
+     */
+    public ArtifactTester assertImportSimpleName(String simpleName) throws ClassNotFoundException {
         String canonicalName = outer.getAnnotation().getCanonicalClassName(simpleName);
-        return annotationCanonicalName(canonicalName);
+        return assertImportCanonicalName(canonicalName);
     }
 
-    public ArtifactTester annotationCanonicalName(String canonicalName) {
+    /**
+     * Check if the given canonical name for the annotation is present in the import statement.
+     *
+     * @param canonicalName the canonical name of the class to check (i.e. 'javax.validation.constraints.DecimalMin')
+     * @return a tester
+     */
+    public ArtifactTester assertImportCanonicalName(String canonicalName) {
         Objects.requireNonNull(canonicalName);
+        if (!canonicalName.contains(".")) {
+            throw new AssertionError("the name passed doesn't seem to be a canonical name: " + canonicalName);
+        }
         lines.stream()
-                .filter(s -> s.contains(canonicalName)).findAny()
+                .filter(s -> s.contains("import " + canonicalName + ";")).findAny()
                 .orElseThrow(() -> new AssertionError("annotation not found: " + canonicalName));
         return this;
     }

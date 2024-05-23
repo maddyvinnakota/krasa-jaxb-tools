@@ -15,8 +15,8 @@ public class InvoiceTest extends RunXJC2MojoTestHelper {
 
     public void test() throws ClassNotFoundException {
         element("Invoice")
-                .annotationSimpleName("DecimalMin")
-                .annotationSimpleName("NotNull")
+                .assertImportSimpleName("DecimalMin")
+                .assertImportSimpleName("NotNull")
                 .attribute("amount")
                         .annotation("DecimalMin")
                             .assertParam("value", 0)

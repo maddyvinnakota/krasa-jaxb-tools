@@ -12,8 +12,8 @@ public class StringsTest extends RunXJC2MojoTestHelper {
 
     public void test() throws ClassNotFoundException {
         element("Strings")
-                .annotationSimpleName("Size")
-                .annotationSimpleName("NotNull")
+                .assertImportSimpleName("Size")
+                .assertImportSimpleName("NotNull")
                 .attribute("address")
                         .annotation("Size")
                                 .assertParam("min", "21")

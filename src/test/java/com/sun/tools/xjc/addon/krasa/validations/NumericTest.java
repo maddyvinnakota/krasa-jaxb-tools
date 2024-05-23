@@ -15,9 +15,9 @@ public class NumericTest extends RunXJC2MojoTestHelper {
 
     public void test() throws ClassNotFoundException {
         element("Numeric")
-                .annotationSimpleName("NotNull")
-                .annotationSimpleName("DecimalMin")
-                .annotationSimpleName("DecimalMax")
+                .assertImportSimpleName("NotNull")
+                .assertImportSimpleName("DecimalMin")
+                .assertImportSimpleName("DecimalMax")
                 .attribute("abyte")
                         .assertClass(byte.class)
                         .annotation("NotNull").assertNoValues()

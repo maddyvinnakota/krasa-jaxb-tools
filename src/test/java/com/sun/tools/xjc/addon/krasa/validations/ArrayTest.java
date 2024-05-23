@@ -8,8 +8,8 @@ public class ArrayTest extends RunXJC2MojoTestHelper {
 
     public void test() throws ClassNotFoundException {
         element("Array")
-                .annotationSimpleName("Size")
-                .annotationSimpleName("NotNull")
+                .assertImportSimpleName("Size")
+                .assertImportSimpleName("NotNull")
                 .attribute("arrayOfBytes")
                         .annotation("Size").assertParam("max", 18).end()
                         .annotation("NotNull").assertNoValues();

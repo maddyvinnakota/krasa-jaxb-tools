@@ -16,9 +16,9 @@ public class ListsTest extends RunXJC2MojoTestHelper {
 
     public void testContainer() throws ClassNotFoundException {
         element("Container")
-                .annotationSimpleName("Valid")
-                .annotationCanonicalName("Size")
-                .annotationCanonicalName("NotNull")
+                .assertImportSimpleName("Valid")
+                .assertImportSimpleName("Size")
+                .assertImportSimpleName("NotNull")
                 .attribute("listOfString")
                         .annotation("Valid").assertNoValues()
                         .annotation("Size")

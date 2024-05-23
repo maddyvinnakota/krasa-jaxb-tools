@@ -28,9 +28,9 @@ public class PrimitiveFixerPluginTest extends RunXJC2MojoTestHelper {
 
     public void test() throws ClassNotFoundException {
         element("Primitive")
-                .annotationSimpleName("NotNull")
-                .annotationSimpleName("DecimalMin")
-                .annotationSimpleName("DecimalMax")
+                .assertImportSimpleName("NotNull")
+                .assertImportSimpleName("DecimalMin")
+                .assertImportSimpleName("DecimalMax")
                 .attribute("abyte")
                         .assertClass(Byte.class)
                         .annotation("NotNull").assertNoValues()

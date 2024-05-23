@@ -13,7 +13,7 @@ public class EnumerationTest extends RunXJC2MojoTestHelper {
 
     public void test() throws ClassNotFoundException {
         element("NaturalPerson")
-                .annotationSimpleName("Pattern")
+                .assertImportSimpleName("Pattern")
                 .attribute("sex")
                         .annotation("Pattern")
                                 .assertParam("regexp", "(\\\\Qf\\\\E)|(\\\\Qm\\\\E)")

@@ -15,10 +15,10 @@ public class NumbersTest extends RunXJC2MojoTestHelper {
 
     public void test() throws ClassNotFoundException {
         element("Numbers")
-                .annotationSimpleName("NotNull")
-                .annotationSimpleName("DecimalMax")
-                .annotationSimpleName("DecimalMin")
-                .annotationSimpleName("Digits")
+                .assertImportSimpleName("NotNull")
+                .assertImportSimpleName("DecimalMax")
+                .assertImportSimpleName("DecimalMin")
+                .assertImportSimpleName("Digits")
                 .attribute("decimalValue")
                         .assertClass(BigDecimal.class)
                         .annotation("NotNull").assertNoValues().end()
