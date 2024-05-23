@@ -11,8 +11,6 @@ It works with (and possibly other plugins using `xjc`):
 
 Refer to the [`krasa-jaxb-tools-example`](https://github.com/fillumina/krasa-jaxb-tools-example) project for usage examples.
 
-
-
 JDK 1.8 Support
 ----------------
 
@@ -22,33 +20,35 @@ Version
 ----------------
 
 - `2.3.2` another bug fix release:
+  
   - fix `@Pattern` added to wrong fields (regression from 2.2)
   - add `@EachPattern` when needed for `List<String>` fields
   - rename `generateStringListAnnotations` option to `generateListAnnotations` because it is not limited to list of strings
   - disable `generateListAnnotations` by default (was enabled)
 
 - `2.3.1` bug fix release:
+  
   - `@Valid` annotation was not added by default
   - remove `singlePattern` option because `@Pattern.List` is not semantically correct
   - disable `jpa` option because not really useful
   - disable `JSR_349` option it was referring to Validation API 1.1 while now we use 2.0
   - add a lot of tests to establish a solid baseline (defaults was backported and tested on 2.2)
 
-- `2.3` A huge refactoring and fixing bugs:
+- `2.3` A huge refactoring and bug fixing:
+  
   - added `singlePattern` option
   - fixed `generateServiceValidationAnnotations` used by `ValidSEIGenerator` to accept string parameter
   - dependencies updated to the latest version still supporting JDK 1.8
   - a maven rule has been set to force compilation with JDK 1.8
 
 - `2.2` Some new features added because of PR requests
+  
   - Added `@Valid` annotation to `sequence`s to force items validation
   - Added support for `Jakarta EE 9` with parameter `validationAnnotations`
 
 - `2.1` Revert back to Java 1.8 (sorry folks!).
 
 - `2.0` A refactorized version of the original [krasa-jaxb-toos](https://github.com/krasa/krasa-jaxb-tools) last synced on August 2022, with some enhancements (support for `EachDigits`, `EachDecimalMin` and `EachDecimalMax` in primitive lists), improved tests and bug fixed. It is compiled using JDK 11. The `pom.xml` `groupId` has been changed to `com.fillumina`.
-
-
 
 Release
 ----------------
@@ -64,20 +64,21 @@ Release
 Options
 ----------------
 
-- `verbose` (boolean, optional, default=`false`) print verbose messages to output
-- `singlePattern`  uses a single javax validation `@Pattern(A|B)` instead of `@Pattern.List( @Pattern(A), @Pattern(B) )`
-- `validationAnnotations` (`javax` | `jakarta`, optional, default=`javax`): selects the library to use for annotations
-- `targetNamespace` (string, optional): adds @Valid annotation to all elements with given namespace
-- `generateNotNullAnnotations` (boolean, optional, default=`true`): adds a `@NotNull` annotation if an element has `minOccours` not 0, is `required` or is not `nillable`.
-- `notNullAnnotationsCustomMessages` (boolean or string, optional, default=`false`): values are `true`, `FieldName`, `ClassName`, or an *actual message* (see further explanation down below).
-- `JSR_349` (boolean, optional, defalut=`false`) generates [JSR349](https://beanvalidation.org/1.1/) compatible annotations for `@DecimalMax` and `@DecimalMin` inclusive parameter
-- `jpa` (boolean, optional, default `false`) adds JPA `@Column` annotation for fields with multiplicity greater than 0
-- `generateStringListAnnotations` (boolean, optional, default `false`) generates [validator-collection annotations](https://github.com/jirutka/validator-collection) annotations
+- `verbose` (boolean, default=`false`) print verbose messages to output
+- `validationAnnotations` (`javax` | `jakarta`, default=`javax`): selects the library to use for annotations
+- `targetNamespace` (string): adds @Valid annotation to all elements with given namespace
+- `generateNotNullAnnotations` (boolean, default=`true`): adds a `@NotNull` annotation if an element has `minOccours` not 0, is `required` or is not `nillable`.
+- `notNullAnnotationsCustomMessages` (boolean or string, default=`false`): values are `true`, `FieldName`, `ClassName`, or an *actual message* (see further explanation down below).
+- `generateListAnnotations` (boolean, optional, default `false`) generates [validator-collection annotations](https://github.com/jirutka/validator-collection) annotations
 - `generateServiceValidationAnnotations` (string, accepts: `in`, `out`, `inout`, works with  `apache-cxf` only) adds `@Valid` annotations to respective message direction (in, out or both).
 
+#### Notes
 
-`notNullAnnotationsCustomMessages` argument
- ----------------
+- Arguments accepting booleans can either be given the `true` value as with `verbose=true` or simply be left without value that will be interpteted as being `true` as with just `verbose`.
+
+- All arguments are optional.
+
+### `notNullAnnotationsCustomMessages` argument
 
 **`@NotNull`**'s default validation message is not always helpful, so it can be customized with **-XJsr303Annotations:notNullAnnotationsCustomMessages=OPTION** where **OPTION** is one of the following:
 
@@ -87,8 +88,7 @@ Options
 - `ClassName` class and field name are prefixed to the default message: **"ClassName.fieldName {javax.validation.constraints.NotNull.message}"**
 - `other-non-empty-text` arbitrary message, with substitutable, case-sensitive parameters `{ClassName}` and `{FieldName}`: **"Class {ClassName} field {FieldName} non-null"**
 
-`generateServiceValidationAnnotations` argument
-----------------
+### `generateServiceValidationAnnotations` argument
 
 Bean validation policy can be customized with `-XJsr303Annotations:generateServiceValidationAnnotations=OPTION` where OPTION is one of the following:
 
@@ -98,8 +98,7 @@ Bean validation policy can be customized with `-XJsr303Annotations:generateServi
 
 Using this option requires to specify krasa as front end generator (See example in https://github.com/fillumina/krasa-jaxb-tools-example )
 
-`XReplacePrimitives` argument
-----------------
+### `XReplacePrimitives` argument
 
 replaces primitive types by Objects
 **WARNING:** must be defined before XhashCode or Xequals
@@ -119,8 +118,6 @@ Generates:
 - `@DecimalMin` for minExclusive restriction, enable new parameter (inclusive=false) with: -XJsr303Annotations:JSR_349=true
 - `@Digits` if there is a totalDigits or fractionDigits restriction.
 - `@Pattern` and `@PatternList` if there is a Pattern restriction (see `singlePattern` option)
-
-
 
 Example project with tests
 ----------------
