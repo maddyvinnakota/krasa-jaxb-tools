@@ -74,7 +74,7 @@ Options
 
 #### Notes
 
-- Arguments accepting booleans can either be given the `true` value as with `verbose=true` or simply be left without value that will be interpteted as being `true` as with just `verbose`.
+- Arguments accepting booleans can either be given `true` value as with `verbose=true` or simply be left without a value at all and that will be interpteted as being `true`  (you can omit the `=` too).
 
 - All arguments are optional.
 
@@ -100,8 +100,8 @@ Using this option requires to specify krasa as front end generator (See example 
 
 ### `XReplacePrimitives` argument
 
-replaces primitive types by Objects
-**WARNING:** must be defined before XhashCode or Xequals
+That is a different plugin within this same packakge and replaces primitive types with boxed ones. It's enabled in the [krasa-cxf-codegen-plugin-example](https://github.com/fillumina/krasa-jaxb-tools-example/blob/master/krasa-cxf-codegen-plugin-example/pom.xml) project as an example.
+**WARNING:** must be defined before XhashCode or Xequals.
 
 XJsr303Annotations
 ----------------
