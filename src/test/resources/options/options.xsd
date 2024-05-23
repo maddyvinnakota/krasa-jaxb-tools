@@ -53,12 +53,16 @@ limitations under the License.
           <xsd:enumeration value="AA"/>
           <xsd:enumeration value="BB"/>
           <xsd:enumeration value="CC"/>
+          <!-- duplicated enumeration, ignored -->
+          <xsd:enumeration value="CC"/>
       </xsd:restriction>
   </xsd:simpleType>
 
   <xsd:simpleType name="MultiPatternType">
       <xsd:restriction base="xsd:string">
           <xsd:pattern value="\w{3}-\w{7}-\w{7}"/>
+          <xsd:pattern value="\w{2}-\w{2}"/>
+          <!-- duplicated pattern, ignored -->
           <xsd:pattern value="\w{2}-\w{2}"/>
           <xsd:pattern value="none"/>
       </xsd:restriction>

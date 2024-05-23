@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * Add annotations with parameters to a {@link JFieldVar} making it sure there aren't
+ * duplications.
  *
  * @author Francesco Illuminati
  */
@@ -40,7 +42,7 @@ class XjcAnnotator {
         }
 
         public Annotate paramIf(boolean condition, String name, Integer value) {
-            if (condition && annotationUse != null && value != null) {
+            if (condition && annotationUse != null && value != null && !parameterMap.containsKey(name)) {
                 annotationUse.param(name, value);
                 parameterMap.put(name, value.toString());
             }
@@ -48,7 +50,7 @@ class XjcAnnotator {
         }
 
         public Annotate param(String name, Integer value) {
-            if (annotationUse != null && value != null) {
+            if (annotationUse != null && value != null && !parameterMap.containsKey(name)) {
                 annotationUse.param(name, value);
                 parameterMap.put(name, value.toString());
             }
@@ -56,7 +58,7 @@ class XjcAnnotator {
         }
 
         public Annotate param(String name, Boolean value) {
-            if (annotationUse != null && value != null) {
+            if (annotationUse != null && value != null && !parameterMap.containsKey(name)) {
                 annotationUse.param(name, value);
                 parameterMap.put(name, value.toString());
             }
@@ -64,7 +66,7 @@ class XjcAnnotator {
         }
 
         public Annotate param(String name, BigDecimal value) {
-            if (annotationUse != null && value != null) {
+            if (annotationUse != null && value != null && !parameterMap.containsKey(name)) {
                 annotationUse.param(name, value.toString());
                 parameterMap.put(name, value.toString());
             }
@@ -72,7 +74,7 @@ class XjcAnnotator {
         }
 
         public Annotate param(String name, String value) {
-            if (annotationUse != null && value != null) {
+            if (annotationUse != null && value != null && !parameterMap.containsKey(name)) {
                 annotationUse.param(name, value);
                 parameterMap.put(name, value);
             }
@@ -80,7 +82,7 @@ class XjcAnnotator {
         }
 
         public Annotate param(String name, String value, String defaultValue) {
-            if (annotationUse != null) {
+            if (annotationUse != null && !parameterMap.containsKey(name)) {
                 String v = value == null ? defaultValue : value;
                 annotationUse.param(name, v);
                 parameterMap.put(name, v);
@@ -89,7 +91,7 @@ class XjcAnnotator {
         }
 
         public Annotate param(String name, Integer value, Integer defaultValue) {
-            if (annotationUse != null) {
+            if (annotationUse != null && !parameterMap.containsKey(name)) {
                 Integer v = value == null ? defaultValue : value;
                 annotationUse.param(name, v);
                 parameterMap.put(name, v.toString());

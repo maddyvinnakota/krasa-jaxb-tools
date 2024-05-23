@@ -98,7 +98,6 @@ public enum ValidationsArgument {
                 return null;
             },
             (p) -> p.getAnnotationFactory()),
-    // TODO bad name
     generateListAnnotations(
             Boolean.class,
             "generates github.com/jirutka/validator-collection annotations",
@@ -117,7 +116,7 @@ public enum ValidationsArgument {
     // help text
     private final String help;
 
-    // set the value and return null if ok or a text with the error
+    // set the value into the builder and return null if ok or a text with the error
     private final BiFunction<ValidationsOptions.Builder, String, String> setter;
 
     // get the value
