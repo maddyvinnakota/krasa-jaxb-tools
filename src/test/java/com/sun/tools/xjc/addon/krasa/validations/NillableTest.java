@@ -10,7 +10,7 @@ public class NillableTest extends RunXJC2MojoTestHelper {
         withElement("Nillable")
                 .assertImportSimpleName("NotNull")
                 .withField("notNullable")
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                 .end()
                 .withField("nullable")
                         .assertNoAnnotationsPresent();

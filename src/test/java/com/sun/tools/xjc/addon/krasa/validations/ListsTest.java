@@ -17,7 +17,7 @@ public class ListsTest extends RunXJC2MojoTestHelper {
                 .assertImportSimpleName("Size")
                 .assertImportSimpleName("NotNull")
                 .withField("listOfString")
-                        .withAnnotation("Valid").assertNoValues()
+                        .withAnnotation("Valid").assertNoParameters()
                         .withAnnotation("Size")
                             .assertParam("min", 0)
                             .assertParam("max", 5).end()
@@ -29,11 +29,11 @@ public class ListsTest extends RunXJC2MojoTestHelper {
                         .withAnnotation("Size")
                             .assertParam("min", 3)
                             .assertParam("max", 7).end()
-                        .withAnnotation("NotNull").assertNoValues()
-                        .withAnnotation("Valid").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
+                        .withAnnotation("Valid").assertNoParameters()
                         .end()
                 .withField("listOfPercentage")
-                        .withAnnotation("Valid").assertNoValues()
+                        .withAnnotation("Valid").assertNoParameters()
                         .withAnnotation("Size")
                             .assertParam("min", 2)
                             .assertParam("max", 4).end()
@@ -46,13 +46,13 @@ public class ListsTest extends RunXJC2MojoTestHelper {
                         .withAnnotation("EachDecimalMax")
                             .assertParam("value", "100.00")
                             .assertParam("inclusive", true).end()
-                        .withAnnotation("NotNull").assertNoValues();
+                        .withAnnotation("NotNull").assertNoParameters();
     }
 
     public void testAddressType() {
         withElement("AddressType")
                 .withField("name")
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                         .end()
                 .withField("formalTitle")
                         .withAnnotation("Size")

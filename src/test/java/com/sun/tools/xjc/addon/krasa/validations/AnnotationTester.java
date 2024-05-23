@@ -6,14 +6,14 @@ import java.util.Objects;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 public class AnnotationTester {
 
     private final ClassTester parent;
     private final String line;
     private final String annotation;
-    private final Map<String, String> valueMap = new HashMap<>();
+    private final Map<String, String> parameterMap = new HashMap<>();
 
     public AnnotationTester(ClassTester parent, String line,
             String annotationName) {
@@ -34,10 +34,10 @@ public class AnnotationTester {
                 String[] pairs = values.split(",");
                 for (String p : pairs) {
                     String[] kv = p.split("=");
-                    valueMap.put(kv[0].trim(), kv[1].trim());
+                    parameterMap.put(kv[0].trim(), kv[1].trim());
                 }
             } else {
-                valueMap.put("value", values);
+                parameterMap.put("value", values);
             }
         }
     }
@@ -46,11 +46,11 @@ public class AnnotationTester {
         return parent;
     }
 
-    public ClassTester assertNoValues() {
-        if (!valueMap.isEmpty()) {
+    public ClassTester assertNoParameters() {
+        if (!parameterMap.isEmpty()) {
             throw new AssertionError("annotation " + annotation +
                     " of attribute " + parent.attributeName +
-                    " in " + parent.filename + " not empty: " + valueMap);
+                    " in " + parent.filename + " not empty: " + parameterMap);
         }
         return parent;
     }
@@ -62,11 +62,11 @@ public class AnnotationTester {
 
     public AnnotationTester assertParam(String name, Object value) {
         Objects.requireNonNull(value, "parameter " + name + " value cannot be null");
-        String v = valueMap.get(name);
+        String v = parameterMap.get(name);
         if (v == null) {
             throw new AssertionError("annotation " + annotation +
                     " of attribute " + parent.attributeName +
-                    " in " + parent.filename + " not found: " + valueMap);
+                    " in " + parent.filename + " not found: " + parameterMap);
         }
         while (v.startsWith("\"")) {
             v = v.substring(1, v.length() - 1);

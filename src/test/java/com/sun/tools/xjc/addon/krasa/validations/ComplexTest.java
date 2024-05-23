@@ -10,13 +10,13 @@ public class ComplexTest extends RunXJC2MojoTestHelper {
         withElement("AddressType")
                 .withField("name")
                         .withAnnotation("Size").assertParam("max", 50).end()
-                        .withAnnotation("NotNull").assertNoValues();
+                        .withAnnotation("NotNull").assertNoParameters();
     }
 
     public void testNotNullAndSizeMinAndMax() {
         withElement("AddressType")
                 .withField("countryCode")
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                         .withAnnotation("Size")
                                 .assertParam("min", 2)
                                 .assertParam("max", 2);
@@ -25,7 +25,7 @@ public class ComplexTest extends RunXJC2MojoTestHelper {
     public void testValidAndSizeMinMax() {
         withElement("AddressType")
                 .withField("phoneNumber")
-                        .withAnnotation("Valid").assertNoValues()
+                        .withAnnotation("Valid").assertNoParameters()
                         .withAnnotation("Size")
                                 .assertParam("min", 0)
                                 .assertParam("max", 3);

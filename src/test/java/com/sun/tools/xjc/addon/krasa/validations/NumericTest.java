@@ -20,7 +20,7 @@ public class NumericTest extends RunXJC2MojoTestHelper {
                 .assertImportSimpleName("DecimalMax")
                 .withField("abyte")
                         .assertClass(byte.class)
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                         .withAnnotation("DecimalMin")
                                 .assertParam("value", -128)
                                 .assertParam("inclusive", true)
@@ -33,22 +33,22 @@ public class NumericTest extends RunXJC2MojoTestHelper {
 
                 .withField("adecimal")
                         .assertClass(BigDecimal.class)
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                         .end()
 
                 .withField("aint")
                         .assertClass(int.class)
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                         .end()
 
                 .withField("ainteger")
                         .assertClass(BigInteger.class)
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                         .end()
 
                 .withField("along")
                         .assertClass(long.class)
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                         .end()
 
                 .withField("anegativeInteger")
@@ -57,7 +57,7 @@ public class NumericTest extends RunXJC2MojoTestHelper {
                                 .assertParam("value", -1)
                                 .assertParam("inclusive", true)
                                 .end()
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                         .end()
 
                 .withField("anonNegativeInteger")
@@ -66,7 +66,7 @@ public class NumericTest extends RunXJC2MojoTestHelper {
                                 .assertParam("value", 0)
                                 .assertParam("inclusive", true)
                                 .end()
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                         .end()
 
                 .withField("anonPositiveInteger")
@@ -75,7 +75,7 @@ public class NumericTest extends RunXJC2MojoTestHelper {
                             .assertParam("value", 0)
                             .assertParam("inclusive", true)
                             .end()
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                         .end()
 
                 .withField("apositiveInteger")
@@ -83,7 +83,7 @@ public class NumericTest extends RunXJC2MojoTestHelper {
                             .assertParam("value", 1)
                             .assertParam("inclusive", true)
                             .end()
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                         .end()
 
                 .withField("ashort")
@@ -96,7 +96,7 @@ public class NumericTest extends RunXJC2MojoTestHelper {
                             .assertParam("value", 32767)
                             .assertParam("inclusive", true)
                             .end()
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                         .end()
 
                 .withField("aunsignedLong")
@@ -109,7 +109,7 @@ public class NumericTest extends RunXJC2MojoTestHelper {
                             .assertParam("value", new BigDecimal("18446744073709551615"))
                             .assertParam("inclusive", true)
                             .end()
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                         .end()
 
                 .withField("aunsignedInt")
@@ -122,12 +122,12 @@ public class NumericTest extends RunXJC2MojoTestHelper {
                             .assertParam("value", 4294967295L)
                             .assertParam("inclusive", true)
                             .end()
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                         .end()
 
                 .withField("aunsignedShort")
                         .assertClass(int.class)
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                         .end()
 
                 .withField("aunsignedByte")
@@ -140,7 +140,7 @@ public class NumericTest extends RunXJC2MojoTestHelper {
                             .assertParam("value", 255)
                             .assertParam("inclusive", true)
                             .end()
-                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("NotNull").assertNoParameters()
                         .end();
     }
 

@@ -12,7 +12,7 @@ public class ArrayTest extends RunXJC2MojoTestHelper {
                 .assertImportSimpleName("NotNull")
                 .withField("arrayOfBytes")
                         .withAnnotation("Size").assertParam("max", 18).end()
-                        .withAnnotation("NotNull").assertNoValues();
+                        .withAnnotation("NotNull").assertNoParameters();
     }
 
 }

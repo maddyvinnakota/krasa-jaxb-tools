@@ -22,7 +22,7 @@ public class InvoiceTest extends RunXJC2MojoTestHelper {
                             .assertParam("value", 0)
                             .assertParam("inclusive", false)
                             .end()
-                        .withAnnotation("NotNull").assertNoValues();
+                        .withAnnotation("NotNull").assertNoParameters();
     }
 
 }

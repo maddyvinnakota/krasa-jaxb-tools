@@ -19,7 +19,7 @@ public class StringsTest extends RunXJC2MojoTestHelper {
                                 .assertParam("min", "21")
                                 .assertParam("max", "43")
                         .end()
-                        .withAnnotation("NotNull").assertNoValues();
+                        .withAnnotation("NotNull").assertNoParameters();
     }
 
 }
