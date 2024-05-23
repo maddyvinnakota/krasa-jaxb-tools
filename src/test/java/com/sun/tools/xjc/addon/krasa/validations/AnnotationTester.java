@@ -10,12 +10,12 @@ import java.util.Objects;
  */
 public class AnnotationTester {
 
-    private final AttributeTester parent;
+    private final ClassTester parent;
     private final String line;
     private final String annotation;
     private final Map<String, String> valueMap = new HashMap<>();
 
-    public AnnotationTester(AttributeTester parent, String line,
+    public AnnotationTester(ClassTester parent, String line,
             String annotationName) {
         this.parent = parent;
         this.line = line;
@@ -42,11 +42,11 @@ public class AnnotationTester {
         }
     }
 
-    public AttributeTester end() {
+    public ClassTester end() {
         return parent;
     }
 
-    public AttributeTester assertNoValues() {
+    public ClassTester assertNoValues() {
         if (!valueMap.isEmpty()) {
             throw new AssertionError("annotation " + annotation +
                     " of attribute " + parent.attributeName +
@@ -55,7 +55,7 @@ public class AnnotationTester {
         return parent;
     }
 
-    public AttributeTester assertValue(Object value) {
+    public ClassTester assertValue(Object value) {
         assertParam("value", value);
         return parent;
     }

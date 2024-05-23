@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * Check an XJC generated class for annotations, field types and annotation parameters.
  *
  * @author Francesco Illuminati
  */
@@ -48,32 +49,54 @@ public class ArtifactTester {
         return this;
     }
 
-    public AttributeTester classAnnotations() {
+    /**
+     * Check annotations relative to the class.
+     */
+    public ClassTester classAnnotations() {
         final String clazzName = filename.replace(".java", "");
         int line = getLineForClass(clazzName);
-        List<String> annotationList = getAnnotations(clazzName, line);
+        List<String> annotationList = getFieldAnnotations(clazzName, line);
         String definition = lines.get(line);
-        return new AttributeTester(this, filename, clazzName, definition, annotationList);
+        return new ClassTester(this, filename, clazzName, definition, annotationList);
     }
 
-    public AttributeTester attribute(String attributeName) {
-        int line = getLineForAttribute(attributeName);
-        List<String> annotationList = getAnnotations(attributeName, line);
+    /** Check a specific field. */
+    public ClassTester withField(String fieldName) {
+        int line = getLineForField(fieldName);
+        List<String> annotationList = getFieldAnnotations(fieldName, line);
         String definition = lines.get(line);
-        return new AttributeTester(this, filename, attributeName, definition, annotationList);
+        return new ClassTester(this, filename, fieldName, definition, annotationList);
     }
 
-    public List<String> getAnnotations(String attributeName) {
-        int line = getLineForAttribute(attributeName);
-        return getAnnotations(attributeName, line);
+    /**
+     * @param fieldName
+     * @return the annotations relative to the given field
+     */
+    public List<String> getFieldAnnotations(String fieldName) {
+        int line = getLineForField(fieldName);
+        return getFieldAnnotations(fieldName, line);
     }
 
-    private List<String> getAnnotations(String attributeName, int line) {
-        int prevAttribute = prevAttributeLine(attributeName, line);
+    List<String> getAllFields() {
+        List<String> list = new ArrayList<>();
+        for (int i = 0, l = lines.size(); i < l; i++) {
+            String line = lines.get(i).trim();
+            if (line.startsWith("protected ") && line.endsWith(";")) {
+                int idx = line.lastIndexOf(' ') + 1;
+                String fieldName = line.substring(idx, line.length() - 1);
+                list.add(fieldName);
+            }
+        }
+        return list;
+    }
+
+    private List<String> getFieldAnnotations(String fieldName, int line) {
+        int prevAttribute = prevFieldLine(fieldName, line);
         List<String> annotationList = lines.subList(prevAttribute, line);
         return annotationList;
     }
 
+    /** Allows for fluid interface: go back to test helper. */
     public RunXJC2MojoTestHelper end() {
         return outer;
     }
@@ -88,37 +111,24 @@ public class ArtifactTester {
         throw new AssertionError("attribute " + className + " not found in file " + filename);
     }
 
-    List<String> getAllAttributes() {
-        List<String> list = new ArrayList<>();
+    private int getLineForField(String fieldName) {
         for (int i = 0, l = lines.size(); i < l; i++) {
             String line = lines.get(i).trim();
-            if (line.startsWith("protected ") && line.endsWith(";")) {
-                int idx = line.lastIndexOf(' ') + 1;
-                String attrName = line.substring(idx, line.length() - 1);
-                list.add(attrName);
-            }
-        }
-        return list;
-    }
-
-    private int getLineForAttribute(String attributeName) {
-        for (int i = 0, l = lines.size(); i < l; i++) {
-            String line = lines.get(i).trim();
-            if (line.startsWith("protected ") && line.endsWith(attributeName + ";")) {
+            if (line.startsWith("protected ") && line.endsWith(fieldName + ";")) {
                 return i;
             }
         }
-        throw new AssertionError("attribute " + attributeName + " not found in file " + filename);
+        throw new AssertionError("attribute " + fieldName + " not found in file " + filename);
     }
 
-    private int prevAttributeLine(String attributeName, int attributeLine) {
-        for (int i = attributeLine - 1; i >= 0; i--) {
+    private int prevFieldLine(String fieldName, int fieldLine) {
+        for (int i = fieldLine - 1; i >= 0; i--) {
             String line = lines.get(i).trim();
             if (line.trim().isEmpty() || line.startsWith("public ") || line.startsWith("protected ")) {
                 return i + 1;
             }
         }
-        throw new AssertionError("cannot extract validatitions for " + attributeName + " in file " + filename);
+        throw new AssertionError("cannot extract validatitions for " + fieldName + " in file " + filename);
     }
 
 }

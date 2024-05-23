@@ -10,18 +10,18 @@ public class ClassNameTest extends RunXJC2MojoTestHelper {
 
     @Override
     public void checkJavax() {
-        element("NotNullType")
-                .attribute("notNullString")
-                .annotation("NotNull")
+        withElement("NotNullType")
+                .withField("notNullString")
+                .withAnnotation("NotNull")
                 .assertParam("message",
                         "NotNullType.notNullString {javax.validation.constraints.NotNull.message}");
     }
 
     @Override
     public void checkJakarta() {
-        element("NotNullType")
-                .attribute("notNullString")
-                .annotation("NotNull")
+        withElement("NotNullType")
+                .withField("notNullString")
+                .withAnnotation("NotNull")
                 .assertParam("message",
                         "NotNullType.notNullString {jakarta.validation.constraints.NotNull.message}");
     }

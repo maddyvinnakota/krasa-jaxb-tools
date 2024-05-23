@@ -34,9 +34,10 @@ import org.jvnet.jaxb2.maven2.AbstractXJC2Mojo;
 import org.jvnet.jaxb2.maven2.test.RunXJC2Mojo;
 
 /**
- * Testing helper for generated classes.
+ * Testing helper for generated classes. It uses XJC to compile the given XSD into java classes
+ * (but doesn't compile them) that can be tested.
  *
- * We cannot use reflection here because RunXJC2Mojo acts on the generation phase and the
+ * NOTE: We cannot use reflection here because RunXJC2Mojo acts on the generation phase and the
  * generated artifacts are not compiled.
  *
  * @author Francesco Illuminati
@@ -68,12 +69,12 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
 
     @Override
     public File getGeneratedDirectory() {
-        return new File(getBaseDir(), "target/generated-sources/" + getFolderName());
+        return new File(getBaseDir(), "target/generated-sources/" + folderName);
     }
 
     @Override
     public File getSchemaDirectory() {
-        return new File(getBaseDir(), "src/test/resources/" + getFolderName());
+        return new File(getBaseDir(), "src/test/resources/" + folderName);
     }
 
     @Override
@@ -84,7 +85,7 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
         mojo.setExtension(true);
     }
 
-    // TODO should be taken out
+    // test with all options enabled.
     @Override
     public List<String> getArgs() {
         return ArgumentBuilder.builder()
@@ -102,19 +103,22 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
         generateAndCheckJavax();
     }
 
-    public final String getFolderName() {
-        return folderName;
-    }
-
-    /** @return comma seperated values or a single one */
+    /** @return comma separated values or a single one */
     public final String getNamespace() {
         return namespace;
     }
 
+    /** @return the evaluated annotation. */
     public final ValidationsAnnotation getAnnotation() {
         return validationAnnotation;
     }
 
+    /**
+     * Return the evaluated annotation name.
+     *
+     * @return either 'javax' or 'jakarta' (in lowercase).
+     * @see ValidationsAnnotation
+     */
     protected final String getAnnotationLibraryName() {
         return getAnnotation().name().toLowerCase();
     }
@@ -130,20 +134,7 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
         return opt == null || opt.isEmpty() ? "" : "-" + opt;
     }
 
-    private void generateClasses() throws Exception {
-        if (executions.add(getExecutionName())) {
-            super.testExecute();
-        }
-    }
-
-
-    private String getExecutionName() {
-        return getFolderName() + "-" +
-                getNamespace() + "-" +
-                getClass().getSimpleName() + "-" +
-                getAnnotation().name();
-    }
-
+    /** Must be overwritten to avoid starting the default test. */
     public final void testExecute() throws Exception {
         // override RunXJC2Mojo own method to allow tests to be executed after mojo creation
     }
@@ -170,7 +161,12 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
         }
     }
 
-    // called by the JUnit reflection test running engine (method name starts with test)
+    private void generateClasses() throws Exception {
+        if (executions.add(getExecutionName())) {
+            super.testExecute();
+        }
+    }
+
     private final synchronized void checkAnnotationsInResourceFile() {
         String namespace = getNamespace();
         String[] nsArray = namespace.split(",");
@@ -187,7 +183,7 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
 
     private void checkAllAnnotations(Path filename, String annotatonFilename) throws AssertionError {
         List<String> actual = readFile(filename);
-        String annotationFilename = getBaseDir() + "/src/test/resources/" + getFolderName() + "/" +
+        String annotationFilename = getBaseDir() + "/src/test/resources/" + folderName + "/" +
                 annotatonFilename;
         Path annotations = Paths.get(annotationFilename);
         List<String> expected = readFile(annotations);
@@ -225,13 +221,13 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
                     !name.startsWith("package-info") &&
                     !name.startsWith("ObjectFactory")) {
                 String filename = name.replace(".java", "");
-                ArtifactTester artifactTester = element(ns, filename);
+                ArtifactTester artifactTester = withElement(ns, filename);
                 buf.append(filename).append(System.lineSeparator());
-                List<String> attributeList = artifactTester.getAllAttributes();
+                List<String> attributeList = artifactTester.getAllFields();
                 Collections.sort(attributeList);
                 for (String attribute : attributeList) {
                     buf.append("    ").append(attribute).append(System.lineSeparator());
-                    List<String> annotationList = artifactTester.getAnnotations(attribute)
+                    List<String> annotationList = artifactTester.getFieldAnnotations(attribute)
                             .stream()
                             .map(s -> s.trim())
                             .filter(s -> !s.startsWith("@Xml"))
@@ -245,10 +241,19 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
         }
     }
 
-//    @Pattern.List({
-//        @Pattern(regexp = "[0-9]"),
-//        @Pattern(regexp = "[A-B]")
-//    })
+    /**
+     * Parses annotations eventually spanning multiple lines and put them in a single line to
+     * get them easier to test:
+     *
+     * <pre>
+     * {@code
+     * @Pattern.List({
+     *     @Pattern(regexp = "[0-9]"),
+     *     @Pattern(regexp = "[A-B]")
+     * })
+     * }
+     * </pre>
+     */
     private List<String> compactArrayAnnotations(List<String> annotationList) {
         List<String> reversedList = new ArrayList<>();
         for (int i=annotationList.size()-1; i>=0; i--) {
@@ -272,21 +277,35 @@ public abstract class RunXJC2MojoTestHelper extends RunXJC2Mojo {
         return reversedList;
     }
 
+    private String getExecutionName() {
+        return folderName + "-" +
+                getNamespace() + "-" +
+                getClass().getSimpleName() + "-" +
+                getAnnotation().name();
+    }
 
     /**
-     * Read an element using the default namespace.
+     * Get a tester for the specified element in the XSD.
+     *
      * @param elementName The name of the root element created (the java class name created by JAXB).
      * @see #getNamespace()
      */
-    public ArtifactTester element(String elementName) {
+    public ArtifactTester withElement(String elementName) {
         final String filename = elementName + ".java";
         List<String> lines = readFile(getNamespace(), filename);
         return new ArtifactTester(filename, lines, this);
     }
 
-    public ArtifactTester element(String ns, String elementName) {
+    /**
+     * Get a tester for the specified element in the XSD.
+     *
+     * @param namespace the namespace as in <namespace:elementname param='...'/>
+     * @param elementName the name of the element without the namespace part
+     * @return a tester
+     */
+    public ArtifactTester withElement(String namespace, String elementName) {
         final String filename = elementName + ".java";
-        List<String> lines = readFile(ns, filename);
+        List<String> lines = readFile(namespace, filename);
         return new ArtifactTester(filename, lines, this);
     }
 

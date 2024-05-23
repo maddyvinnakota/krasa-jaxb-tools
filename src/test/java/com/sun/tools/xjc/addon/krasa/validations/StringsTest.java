@@ -11,15 +11,15 @@ public class StringsTest extends RunXJC2MojoTestHelper {
     }
 
     public void test() throws ClassNotFoundException {
-        element("Strings")
+        withElement("Strings")
                 .assertImportSimpleName("Size")
                 .assertImportSimpleName("NotNull")
-                .attribute("address")
-                        .annotation("Size")
+                .withField("address")
+                        .withAnnotation("Size")
                                 .assertParam("min", "21")
                                 .assertParam("max", "43")
                         .end()
-                        .annotation("NotNull").assertNoValues();
+                        .withAnnotation("NotNull").assertNoValues();
     }
 
 }

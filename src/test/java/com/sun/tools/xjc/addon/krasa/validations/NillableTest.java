@@ -7,12 +7,12 @@ public class NillableTest extends RunXJC2MojoTestHelper {
     }
 
     public void test() throws ClassNotFoundException {
-        element("Nillable")
+        withElement("Nillable")
                 .assertImportSimpleName("NotNull")
-                .attribute("notNullable")
-                        .annotation("NotNull").assertNoValues()
+                .withField("notNullable")
+                        .withAnnotation("NotNull").assertNoValues()
                 .end()
-                .attribute("nullable")
+                .withField("nullable")
                         .assertNoAnnotationsPresent();
     }
 

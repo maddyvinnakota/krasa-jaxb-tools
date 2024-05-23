@@ -10,9 +10,9 @@ public class MultiplePatternsWithBaseTest extends RunXJC2MojoTestHelper {
     }
 
     public void test() throws ClassNotFoundException {
-        List<String> annotations = element("MultiPatternWithBase")
+        List<String> annotations = withElement("MultiPatternWithBase")
                 .assertImportSimpleName("Pattern")
-                .getAnnotations("multiplePatternsWithBase");
+                .getFieldAnnotations("multiplePatternsWithBase");
 
         assertFalse(annotations.isEmpty());
 

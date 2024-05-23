@@ -12,15 +12,15 @@ public class EnumerationTest extends RunXJC2MojoTestHelper {
     }
 
     public void test() throws ClassNotFoundException {
-        element("NaturalPerson")
+        withElement("NaturalPerson")
                 .assertImportSimpleName("Pattern")
-                .attribute("sex")
-                        .annotation("Pattern")
+                .withField("sex")
+                        .withAnnotation("Pattern")
                                 .assertParam("regexp", "(\\\\Qf\\\\E)|(\\\\Qm\\\\E)")
                         .end()
                 .end()
-                .attribute("age")
-                        .annotation("Pattern")
+                .withField("age")
+                        .withAnnotation("Pattern")
                                 .assertParam("regexp",
                                         "(\\\\Q0 (toddler)\\\\E)|(\\\\Q1-5\\\\E)|" +
                                         "(\\\\Q5-12\\\\E)|(\\\\Q12-18\\\\E)|(\\\\Q18+\\\\E)");

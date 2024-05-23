@@ -7,40 +7,40 @@ public class ComplexTest extends RunXJC2MojoTestHelper {
     }
 
     public void testNotNullAndSizeMax() {
-        element("AddressType")
-                .attribute("name")
-                        .annotation("Size").assertParam("max", 50).end()
-                        .annotation("NotNull").assertNoValues();
+        withElement("AddressType")
+                .withField("name")
+                        .withAnnotation("Size").assertParam("max", 50).end()
+                        .withAnnotation("NotNull").assertNoValues();
     }
 
     public void testNotNullAndSizeMinAndMax() {
-        element("AddressType")
-                .attribute("countryCode")
-                        .annotation("NotNull").assertNoValues()
-                        .annotation("Size")
+        withElement("AddressType")
+                .withField("countryCode")
+                        .withAnnotation("NotNull").assertNoValues()
+                        .withAnnotation("Size")
                                 .assertParam("min", 2)
                                 .assertParam("max", 2);
     }
 
     public void testValidAndSizeMinMax() {
-        element("AddressType")
-                .attribute("phoneNumber")
-                        .annotation("Valid").assertNoValues()
-                        .annotation("Size")
+        withElement("AddressType")
+                .withField("phoneNumber")
+                        .withAnnotation("Valid").assertNoValues()
+                        .withAnnotation("Size")
                                 .assertParam("min", 0)
                                 .assertParam("max", 3);
     }
 
     public void testAnnotationNotPresent() {
-        element("AddressType")
-                .attribute("isDefaultOneClick")
+        withElement("AddressType")
+                .withField("isDefaultOneClick")
                         .assertNoAnnotationsPresent();
     }
 
     public void testPattern() {
-        element("EmailAddressType")
-                .attribute("preferredFormat")
-                        .annotation("Pattern")
+        withElement("EmailAddressType")
+                .withField("preferredFormat")
+                        .withAnnotation("Pattern")
                                 .assertParam("regexp",
                                         "(\\\\QTextOnly\\\\E)|(\\\\QHTML\\\\E)");
     }

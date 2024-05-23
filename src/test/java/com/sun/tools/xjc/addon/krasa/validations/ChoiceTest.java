@@ -7,16 +7,16 @@ public class ChoiceTest extends RunXJC2MojoTestHelper {
     }
 
     public void test() {
-        element("Choices")
-                .attribute("tea")
-                        .annotation("XmlElement")
+        withElement("Choices")
+                .withField("tea")
+                        .withAnnotation("XmlElement")
                                 .assertParam("name", "Tea")
                         .end()
                         // a member of a <xsd:choice> cannot be @NotNull
                         .assertAnnotationNotPresent("NotNull")
                 .end()
-                .attribute("coffee")
-                        .annotation("XmlElement")
+                .withField("coffee")
+                        .withAnnotation("XmlElement")
                                 .assertParam("name", "Coffee")
                         .end()
                         // a member of a <xsd:choice> cannot be @NotNull

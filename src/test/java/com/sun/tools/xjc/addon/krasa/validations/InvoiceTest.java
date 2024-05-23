@@ -14,15 +14,15 @@ public class InvoiceTest extends RunXJC2MojoTestHelper {
     }
 
     public void test() throws ClassNotFoundException {
-        element("Invoice")
+        withElement("Invoice")
                 .assertImportSimpleName("DecimalMin")
                 .assertImportSimpleName("NotNull")
-                .attribute("amount")
-                        .annotation("DecimalMin")
+                .withField("amount")
+                        .withAnnotation("DecimalMin")
                             .assertParam("value", 0)
                             .assertParam("inclusive", false)
                             .end()
-                        .annotation("NotNull").assertNoValues();
+                        .withAnnotation("NotNull").assertNoValues();
     }
 
 }

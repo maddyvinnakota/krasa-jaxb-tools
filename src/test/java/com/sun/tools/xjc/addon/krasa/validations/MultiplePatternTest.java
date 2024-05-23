@@ -7,10 +7,10 @@ public class MultiplePatternTest extends RunXJC2MojoTestHelper {
     }
 
     public void test() throws ClassNotFoundException {
-        element("Multipattern")
+        withElement("Multipattern")
                 .assertImportSimpleName("Pattern")
-                .attribute("multiplePatterns")
-                    .annotation("Pattern")
+                .withField("multiplePatterns")
+                    .withAnnotation("Pattern")
                         .assertParam("regexp", "([0-9])|([A-B])");
     }
 
