@@ -1,9 +1,6 @@
 package com.sun.tools.xjc.addon.krasa.validations;
 
 /**
- * Unfortunately there isn't a way to add JSR349 validation to a generic in JAXB
- * (as far as I know) so I had to use a project that allows to add annotations
- * intended for the content of a collection.
  *
  * @see https://github.com/jirutka/validator-collection
  * @author Francesco Illuminati
