@@ -29,11 +29,6 @@ public enum ValidationsArgument {
             },
             // getter:
             (p) ->  p.getTargetNamespace()),
-    @Deprecated // not used anymore (was enabling validation 1.1 features, now we use 2.0)
-    JSR_349(
-            Boolean.class, "unused (to be removed)",
-            (p,v) -> null,
-            (p) -> null),
     generateNotNullAnnotations(
             Boolean.class,
             "adds a @NotNull when an element has minOccours not 0, is required or is not nillable",
@@ -88,11 +83,6 @@ public enum ValidationsArgument {
             "increases verbosity",
             (p,v) -> setBoolean(v, r -> p.verbose(r)),
             (p) -> p.isVerbose()),
-    @Deprecated
-    jpa(
-            Boolean.class, "unused (to be removed)",
-            (p,v) -> null,
-            (p) -> null),
     validationAnnotations(
             String.class,
             "selects which type of annotation to use: " + ValidationsAnnotation.getValuesAsString(),
