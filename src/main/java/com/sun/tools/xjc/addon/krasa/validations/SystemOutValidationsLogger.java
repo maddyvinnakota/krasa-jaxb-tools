@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 /**
  *
- * @author Francesco Illuminati 
+ * @author Francesco Illuminati
  */
 class SystemOutValidationsLogger implements ValidationsLogger {
     private final String className;
@@ -18,11 +18,14 @@ class SystemOutValidationsLogger implements ValidationsLogger {
 
     @Override
     public void addAnnotation(String annotationName, Map<String, String> parameterMap) {
-        String params = parameterMap.entrySet().stream()
-                .map(e -> e.getKey() + "=" + e.getValue())
-                .collect(Collectors.joining(", "));
-        if (!params.isEmpty()) {
-            params = "(" + params + ")";
+        String params = "";
+        if (!parameterMap.isEmpty()) {
+            params = parameterMap.entrySet().stream()
+                    .map(e -> e.getKey() + "=" + e.getValue())
+                    .collect(Collectors.joining(", "));
+            if (!params.isEmpty()) {
+                params = "(" + params + ")";
+            }
         }
         log("adding @" + annotationName + params + " to " + className + "." + propertyName);
     }

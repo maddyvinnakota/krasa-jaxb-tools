@@ -13,7 +13,6 @@ import java.util.function.Function;
  * @author Francesco Illuminati
  */
 public enum ValidationsArgument {
-    // TODO should remove generateXXX from argument names but I don't want to break the API
     targetNamespace(
             // type:
             String.class,

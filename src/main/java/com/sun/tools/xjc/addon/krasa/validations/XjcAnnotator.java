@@ -32,20 +32,11 @@ class XjcAnnotator {
         private final Map<String,String> parameterMap = new LinkedHashMap<>();
 
         public Annotate(Class<? extends Annotation> annotation) {
-            this(annotation, false);
-        }
-
-        public Annotate(Class<? extends Annotation> annotation, boolean multiple) {
-            if (!annotationSet.contains(annotation) || multiple) {
+            if (annotationSet.add(annotation)) {
                 annotationUse = field.annotate(annotation);
-                annotationSet.add(annotation);
             } else {
                 this.annotationUse = null;
             }
-        }
-
-        private Annotate(JAnnotationUse annotationUse) {
-            this.annotationUse = annotationUse;
         }
 
         public Annotate paramIf(boolean condition, String name, Integer value) {

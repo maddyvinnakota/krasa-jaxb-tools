@@ -9,7 +9,7 @@ import java.util.Objects;
  * @author Francesco Illuminati
  */
 public class ValidationsOptions {
-    // sets default values in Builder not here
+    // set default values in Builder not here
     private final String targetNamespace;
     private final boolean verbose;
     private final boolean notNullAnnotations;
@@ -99,8 +99,7 @@ public class ValidationsOptions {
         }
 
         /** @return 1 if the argument is referring to this plugin, 0 otherwise. */
-        public int parseArgument(String option)
-                throws BadCommandLineException {
+        public int parseArgument(String option) throws BadCommandLineException {
             if (option.startsWith(JaxbValidationsPlugin.PLUGIN_OPTION_NAME)) {
                 int idx = option.indexOf("=");
                 if (idx != -1) {

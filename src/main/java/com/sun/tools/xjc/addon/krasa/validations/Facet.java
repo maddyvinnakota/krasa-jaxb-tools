@@ -18,15 +18,6 @@ class Facet {
         this.simpleType = simpleType;
     }
 
-    @Deprecated
-    boolean isTargetNamespaceOrNullOrEmpty(String namespace) {
-        if (namespace == null || namespace.isEmpty()) {
-            return true;
-        }
-        String elemNs = simpleType.getTargetNamespace();
-        return elemNs.startsWith(namespace);
-    }
-
     Integer minLength() {
         return getIntegerFacet(XSFacet.FACET_MINLENGTH);
     }

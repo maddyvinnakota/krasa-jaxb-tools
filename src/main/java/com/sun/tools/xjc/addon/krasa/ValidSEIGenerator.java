@@ -18,7 +18,7 @@ import org.apache.cxf.tools.wsdlto.frontend.jaxws.generators.SEIGenerator;
 import org.apache.cxf.tools.wsdlto.frontend.jaxws.processor.WSDLToJavaProcessor;
 
 /**
- * Performs validation on fields annotated with {@link Valid} annotation.
+ * Performs validation on fields annotated with @{@link Valid} annotation.
  *
  * It works with the cxf-codegen-plugin, please see the krasa-jaxb-tools-example module
  * in the krasa-jaxb-tools-example project for an example.

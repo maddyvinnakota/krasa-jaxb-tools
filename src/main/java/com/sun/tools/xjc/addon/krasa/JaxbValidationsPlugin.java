@@ -13,8 +13,8 @@ import java.util.List;
 import org.xml.sax.ErrorHandler;
 
 /**
- *
- * NOTE: fractionDigits fixed attribute cannot be translated into a meaningful Validation.
+ * Add <a href="https://jcp.org/en/jsr/detail?id=380">JSR 380 Bean Validation 2.0 Annotations</a>
+ * to a  Java™ Architecture for XML Binding (JAXB) XJC generated classes.
  *
  * @author Francesco Illuminati
  * @author Vojtěch Krása

@@ -9,7 +9,7 @@
   <name>krasa-jaxb-tools</name>
 
   <description>
-    JAXB plugin to generate Bean Validation Annotations (JSR-303) from XSDs
+    JAXB plugin to generate Bean Validation Annotations 2.0 (JSR-380) from XSDs
   </description>
 
   <url>https://github.com/fillumina/krasa-jaxb-tools/</url>

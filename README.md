@@ -1,6 +1,6 @@
 ![Maven Central](https://img.shields.io/maven-central/v/com.fillumina/krasa-jaxb-tools.svg)
 
-# Plugin to generate Bean Validation Annotations ([JSR-303](https://beanvalidation.org/1.0/spec/))
+# Plugin to generate Bean Validation Annotations 2.0 ([JSR-380](https://jcp.org/en/jsr/detail?id=380))
 
 It works with (and possibly other plugins using `xjc`):
 

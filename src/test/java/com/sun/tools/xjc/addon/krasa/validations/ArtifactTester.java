@@ -6,7 +6,7 @@ import java.util.Objects;
 
 /**
  *
- * @author Francesco Illuminati <fillumina@gmail.com>
+ * @author Francesco Illuminati 
  */
 public class ArtifactTester {
 

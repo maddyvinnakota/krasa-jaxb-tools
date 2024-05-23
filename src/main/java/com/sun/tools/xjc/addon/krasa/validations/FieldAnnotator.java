@@ -24,8 +24,6 @@ class FieldAnnotator {
     private static final String INCLUSIVE = "inclusive";
     private static final String VALUE = "value";
     private static final String MESSAGE = "message";
-    private static final String SCALE = "scale";
-    private static final String PRECISION = "precision";
     private static final String REGEXP = "regexp";
 
     private final ValidationsAnnotation annotationFactory;
