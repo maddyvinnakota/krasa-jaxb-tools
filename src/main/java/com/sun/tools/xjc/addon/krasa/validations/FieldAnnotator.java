@@ -125,7 +125,6 @@ class FieldAnnotator {
         addDecimalMaxAnnotation(max, false);
     }
 
-    //TODO minExclusive=0, fractionDigits=2 wrong annotation https://github.com/krasa/krasa-jaxb-tools/issues/38
     private void addDecimalMaxAnnotation(BigDecimal max, boolean exclusive) {
         if (max != null && isValidValue(max)) {
             xjcAnnotator.annotate(annotationFactory.getDecimalMaxClass())
@@ -165,7 +164,7 @@ class FieldAnnotator {
         }
     }
 
-    /** Adds all the patterns (A, B, C) as options in a single one (A|B|C). */
+    /** Add all the patterns (A, B, C) as options in a single one (A|B|C). */
     private void addPatternAnnotation(Class<? extends Annotation> annotation, Set<String> patterns) {
         StringBuilder sb = new StringBuilder();
         for (String p : patterns) {
