@@ -20,14 +20,14 @@ Version
 ----------------
 
 - `2.3.2` another bug fix release:
-  
+
   - fix `@Pattern` added to wrong fields (regression from 2.2)
   - add `@EachPattern` when needed for `List<String>` fields
   - rename `generateStringListAnnotations` option to `generateListAnnotations` because it is not limited to list of strings
   - disable `generateListAnnotations` by default (was enabled)
 
 - `2.3.1` bug fix release:
-  
+
   - `@Valid` annotation was not added by default
   - remove `singlePattern` option because `@Pattern.List` is not semantically correct
   - disable `jpa` option because not really useful
@@ -35,14 +35,14 @@ Version
   - add a lot of tests to establish a solid baseline (defaults was backported and tested on 2.2)
 
 - `2.3` A huge refactoring and bug fixing:
-  
+
   - added `singlePattern` option
   - fixed `generateServiceValidationAnnotations` used by `ValidSEIGenerator` to accept string parameter
   - dependencies updated to the latest version still supporting JDK 1.8
   - a maven rule has been set to force compilation with JDK 1.8
 
 - `2.2` Some new features added because of PR requests
-  
+
   - Added `@Valid` annotation to `sequence`s to force items validation
   - Added support for `Jakarta EE 9` with parameter `validationAnnotations`
 
@@ -57,7 +57,7 @@ Release
 <dependency>
     <groupId>com.fillumina</groupId>
     <artifactId>krasa-jaxb-tools</artifactId>
-    <version>2.3.1</version>
+    <version>2.3.2</version>
 </dependency>
 ```
 
