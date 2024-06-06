@@ -63,7 +63,7 @@ Release
 <dependency>
     <groupId>com.fillumina</groupId>
     <artifactId>krasa-jaxb-tools</artifactId>
-    <version>2.3.2</version>
+    <version>2.3.3</version>
 </dependency>
 ```
 
