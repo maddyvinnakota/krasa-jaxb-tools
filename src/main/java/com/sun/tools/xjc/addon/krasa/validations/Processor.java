@@ -152,21 +152,23 @@ public class Processor {
             String propertyName = property.getName(false);
 
             XSComponent definition = property.getSchemaComponent();
-            AttributeUseImpl particle = (AttributeUseImpl) definition;
-            XSSimpleType type = particle.getDecl().getType();
+            if (definition instanceof AttributeUseImpl) {
+                AttributeUseImpl particle = (AttributeUseImpl) definition;
+                XSSimpleType type = particle.getDecl().getType();
 
-            JFieldVar field = classOutline.implClass.fields().get(propertyName);
+                JFieldVar field = classOutline.implClass.fields().get(propertyName);
 
-            if (field != null) {
-                FieldAnnotator annotator =
-                        new FieldAnnotator(field, options.getAnnotationFactory(), logger);
+                if (field != null) {
+                    FieldAnnotator annotator =
+                            new FieldAnnotator(field, options.getAnnotationFactory(), logger);
 
-                if (particle.isRequired()) {
-                    String message = notNullMessage(classOutline, field);
-                    annotator.addNotNullAnnotation(classOutline, field, message);
+                    if (particle.isRequired()) {
+                        String message = notNullMessage(classOutline, field);
+                        annotator.addNotNullAnnotation(classOutline, field, message);
+                    }
+
+                    processType(type, field, annotator);
                 }
-
-                processType(type, field, annotator);
             }
         }
 
@@ -179,16 +181,18 @@ public class Processor {
             String propertyName = property.getName(false);
 
             XSComponent definition = property.getSchemaComponent();
-            SimpleTypeImpl particle = (SimpleTypeImpl) definition;
-            XSSimpleType simpleType = particle.asSimpleType();
+            if (definition instanceof SimpleTypeImpl) {
+                SimpleTypeImpl particle = (SimpleTypeImpl) definition;
+                XSSimpleType simpleType = particle.asSimpleType();
 
-            JFieldVar field = classOutline.implClass.fields().get(propertyName);
+                JFieldVar field = classOutline.implClass.fields().get(propertyName);
 
-            if (field != null) {
-                FieldAnnotator annotator =
-                        new FieldAnnotator(field, options.getAnnotationFactory(), logger);
+                if (field != null) {
+                    FieldAnnotator annotator =
+                            new FieldAnnotator(field, options.getAnnotationFactory(), logger);
 
-                processType(simpleType, field, annotator);
+                    processType(simpleType, field, annotator);
+                }
             }
         }
 
