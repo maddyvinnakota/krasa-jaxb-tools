@@ -19,6 +19,12 @@ The project is bounded to support **Java 8** (**JDK 1.8**) because of some old p
 Version
 ----------------
 
+- `2.3.3` bug fix release:
+
+  - fix [Issue #13](https://github.com/fillumina/krasa-jaxb-tools/issues/13) where it's been wrongly assumed that:
+    `SimpleTypeImpl particle = (SimpleTypeImpl) definition` was always true.
+    A check has beed added to prevent the `ClassCastException`.
+
 - `2.3.2` another bug fix release:
 
   - fix `@Pattern` added to wrong fields (regression from 2.2)
