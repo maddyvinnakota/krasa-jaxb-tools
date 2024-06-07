@@ -16,6 +16,8 @@ JDK 1.8 Support
 
 The project is bounded to support **Java 8** (**JDK 1.8**) because of some old projects still requiring it. All dependencies are selected from the latest available versions still supporting that.
 
+Check [krasa-issue13](https://github.com/fillumina/krasa-issue13) if you need an example of a project using `krasa-jaxb-tools` with `JDK 21`, `cxf-codegen-plugin` 4.0.4 and all the latest dependencies.
+
 Version
 ----------------
 
