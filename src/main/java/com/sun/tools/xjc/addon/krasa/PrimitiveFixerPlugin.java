@@ -20,6 +20,17 @@ public class PrimitiveFixerPlugin extends Plugin {
 
     public static final String PLUGIN_NAME = "XReplacePrimitives";
 
+    private static final HashMap<String, Class> NUMERIC_TYPE_MAP = new HashMap<String, Class>();
+    static {
+        NUMERIC_TYPE_MAP.put("int", Integer.class);
+        NUMERIC_TYPE_MAP.put("long", Long.class);
+        NUMERIC_TYPE_MAP.put("boolean", Boolean.class);
+        NUMERIC_TYPE_MAP.put("double", Double.class);
+        NUMERIC_TYPE_MAP.put("float", Float.class);
+        NUMERIC_TYPE_MAP.put("byte", Byte.class);
+        NUMERIC_TYPE_MAP.put("short", Short.class);
+    }
+
     @Override
     public String getOptionName() {
         return PLUGIN_NAME;
@@ -36,16 +47,6 @@ public class PrimitiveFixerPlugin extends Plugin {
     public boolean run(Outline outline, Options opt, ErrorHandler errorHandler) throws SAXException {
         for (ClassOutline co : outline.getClasses()) {
 
-            // TODO make this map static 
-            HashMap<String, Class> hashMap = new HashMap<String, Class>();
-            hashMap.put("int", Integer.class);
-            hashMap.put("long", Long.class);
-            hashMap.put("boolean", Boolean.class);
-            hashMap.put("double", Double.class);
-            hashMap.put("float", Float.class);
-            hashMap.put("byte", Byte.class);
-            hashMap.put("short", Short.class);
-
             Map<String, JFieldVar> fields = co.implClass.fields();
 
             for (Map.Entry<String, JFieldVar> stringJFieldVarEntry : fields.entrySet()) {
@@ -61,7 +62,7 @@ public class PrimitiveFixerPlugin extends Plugin {
                 }
 
                 if (type.isPrimitive()) {
-                    Class o = hashMap.get(type.name());
+                    Class o = NUMERIC_TYPE_MAP.get(type.name());
                     if (o != null) {
                         JCodeModel jCodeModel = new JCodeModel();
                         JClass newType = jCodeModel.ref(o);
