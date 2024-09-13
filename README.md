@@ -22,7 +22,7 @@ Version
 ----------------
 
 - `2.3.4` bug fix release:
-  - fix [Issue #17] where `@DecimalMin` and `@DecimalMax` superfluous annotations were added to
+  - fix [Issue #17](https://github.com/fillumina/krasa-jaxb-tools/issues/17) where `@DecimalMin` and `@DecimalMax` superfluous annotations were added to
     numeric java types. A new argument has been created `generateAllNumericConstraints` in case
     all constraints would be needed (even superflous ones).
 
