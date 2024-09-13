@@ -21,6 +21,11 @@ Check [krasa-issue13](https://github.com/fillumina/krasa-issue13) if you need an
 Version
 ----------------
 
+- `2.3.4` bug fix release:
+  - fix [Issue #17] where `@DecimalMin` and `@DecimalMax` superfluous annotations were added to
+    numeric java types. A new argument has been created `generateAllNumericConstraints` in case
+    all constraints would be needed (even superflous ones).
+
 - `2.3.3` bug fix release:
 
   - fix [Issue #13](https://github.com/fillumina/krasa-jaxb-tools/issues/13) where it's been wrongly assumed that:
@@ -79,6 +84,7 @@ Options
 - `notNullAnnotationsCustomMessages` (boolean or string, default=`false`): values are `true`, `FieldName`, `ClassName`, or an *actual message* (see further explanation down below).
 - `generateListAnnotations` (boolean, optional, default `false`) generates [validator-collection annotations](https://github.com/jirutka/validator-collection) annotations
 - `generateServiceValidationAnnotations` (string, accepts: `in`, `out`, `inout`, works with  `apache-cxf` only) adds `@Valid` annotations to respective message direction (in, out or both).
+- `generateAllNumericConstraints` (boolean, defaults to `false`) generates all `@DecimalMin` and `@DecimalMax` even those regarding the natural boudaries of the referred java type.
 
 #### Notes
 
