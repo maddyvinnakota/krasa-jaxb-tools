@@ -4,9 +4,9 @@
     xmlns:a="a"
     elementFormDefault="qualified">
 
-    <xsd:element name="numeric" type="a:Numeric"/>
+    <xsd:element name="numeric" type="a:NumericAllConstraints"/>
 
-    <xsd:complexType name="Numeric">
+    <xsd:complexType name="NumericAllConstraints">
         <xsd:sequence>
             <xsd:element name="abyte" type="xsd:byte"/>
             <xsd:element name="adecimal" type="xsd:decimal"/>

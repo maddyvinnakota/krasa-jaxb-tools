@@ -29,6 +29,11 @@ public enum ValidationsArgument {
             },
             // getter:
             (p) ->  p.getTargetNamespace()),
+    generateAllNumericConstraints(
+            Boolean.class,
+            "adds @DecinalMin and @DecimalMax annotations even if within the range of the java type",
+            (p,v) -> setBoolean(v, r -> p.allNumericConstraints(r)),
+            (p) -> p.isAllNumericConstraints()),
     generateNotNullAnnotations(
             Boolean.class,
             "adds a @NotNull when an element has minOccours not 0, is required or is not nillable",

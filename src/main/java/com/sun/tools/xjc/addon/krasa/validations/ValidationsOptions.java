@@ -12,6 +12,7 @@ public class ValidationsOptions {
     // set default values in Builder not here
     private final String targetNamespace;
     private final boolean verbose;
+    private final boolean allNumericConstraints;
     private final boolean notNullAnnotations;
     private final boolean notNullCustomMessage;
     private final boolean notNullPrefixFieldName;
@@ -56,6 +57,10 @@ public class ValidationsOptions {
         return verbose;
     }
 
+    public boolean isAllNumericConstraints() {
+        return allNumericConstraints;
+    }
+
     public boolean isNotNullAnnotations() {
         return notNullAnnotations;
     }
@@ -87,6 +92,7 @@ public class ValidationsOptions {
     public static class Builder {
         private String targetNamespace = null;
         private boolean verbose = false;
+        private boolean allNumericConstraints = false;
         private boolean notNullAnnotations = true;
         private boolean notNullCustomMessage = false;
         private boolean notNullPrefixFieldName = false;
@@ -149,6 +155,11 @@ public class ValidationsOptions {
             return this;
         }
 
+        public Builder allNumericConstraints(final boolean value) {
+            this.allNumericConstraints = value;
+            return this;
+        }
+
         public Builder notNullCustomMessage(final boolean value) {
             this.notNullCustomMessage = value;
             return this;
@@ -181,8 +192,8 @@ public class ValidationsOptions {
 
         public ValidationsOptions build() {
             return new com.sun.tools.xjc.addon.krasa.validations.ValidationsOptions(targetNamespace,
-                    verbose, notNullAnnotations, notNullCustomMessage, notNullPrefixFieldName,
-                    notNullPrefixClassName, notNullCustomMessageText,
+                    verbose, allNumericConstraints, notNullAnnotations, notNullCustomMessage,
+                    notNullPrefixFieldName, notNullPrefixClassName, notNullCustomMessageText,
                     validationCollection, annotationFactory);
         }
     }
@@ -191,14 +202,15 @@ public class ValidationsOptions {
         return new ValidationsOptions.Builder();
     }
 
-    private ValidationsOptions(final String targetNamespace,
-            final boolean verbose, final boolean notNullAnnotations,
+    private ValidationsOptions(final String targetNamespace, final boolean verbose,
+            final boolean allNumericConstraints, final boolean notNullAnnotations,
             final boolean notNullCustomMessage, final boolean notNullPrefixFieldName,
             final boolean notNullPrefixClassName, final String notNullCustomMessageText,
             final boolean validationCollection,
             final ValidationsAnnotation annotationFactory) {
         this.targetNamespace = targetNamespace;
         this.verbose = verbose;
+        this.allNumericConstraints = allNumericConstraints;
         this.notNullAnnotations = notNullAnnotations;
         this.notNullCustomMessage = notNullCustomMessage;
         this.notNullPrefixFieldName = notNullPrefixFieldName;

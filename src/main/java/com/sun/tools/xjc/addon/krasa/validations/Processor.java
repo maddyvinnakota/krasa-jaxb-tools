@@ -212,11 +212,18 @@ public class Processor {
                 annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
 
             } else if (fieldHelper.isNumber()) {
-                annotator.addDecimalMinAnnotationInclusive(facet.minInclusive());
-                annotator.addDecimalMinAnnotationExclusive(facet.minExclusive());
+                if (options.isAllNumericConstraints()) {
+                    annotator.addDecimalMinAnnotationInclusive(facet.minInclusive());
+                    annotator.addDecimalMinAnnotationExclusive(facet.minExclusive());
+                    annotator.addDecimalMaxAnnotationInclusive(facet.maxInclusive());
+                    annotator.addDecimalMaxAnnotationExclusive(facet.maxExclusive());
 
-                annotator.addDecimalMaxAnnotationInclusive(facet.maxInclusive());
-                annotator.addDecimalMaxAnnotationExclusive(facet.maxExclusive());
+                } else {
+                    annotator.addDecimalMinAnnotationInclusive(fieldHelper.validValue(facet.minInclusive()));
+                    annotator.addDecimalMinAnnotationExclusive(fieldHelper.validValue(facet.minExclusive()));
+                    annotator.addDecimalMaxAnnotationInclusive(fieldHelper.validValue(facet.maxInclusive()));
+                    annotator.addDecimalMaxAnnotationExclusive(fieldHelper.validValue(facet.maxExclusive()));
+                }
 
                 annotator.addDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
 

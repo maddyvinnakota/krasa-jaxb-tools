@@ -1,7 +1,5 @@
 Numeric
     abyte
-        @DecimalMax(value = "127", inclusive = true)
-        @DecimalMin(value = "-128", inclusive = true)
         @NotNull
     adecimal
         @NotNull
@@ -24,8 +22,6 @@ Numeric
         @DecimalMin(value = "1", inclusive = true)
         @NotNull
     ashort
-        @DecimalMax(value = "32767", inclusive = true)
-        @DecimalMin(value = "-32768", inclusive = true)
         @NotNull
     aunsignedByte
         @DecimalMax(value = "255", inclusive = true)
@@ -40,4 +36,6 @@ Numeric
         @DecimalMin(value = "0", inclusive = true)
         @NotNull
     aunsignedShort
+        @DecimalMax(value = "65535", inclusive = true)
+        @DecimalMin(value = "0", inclusive = true)
         @NotNull

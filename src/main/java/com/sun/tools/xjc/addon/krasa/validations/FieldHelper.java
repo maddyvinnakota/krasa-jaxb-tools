@@ -18,6 +18,14 @@ class FieldHelper {
         this.field = field;
     }
 
+    public BigDecimal validValue(BigDecimal value) {
+        if (value != null) {
+            String typeName = field.type().boxify().fullName();
+            return NumericRange.valid(typeName, value);
+        }
+        return null;
+    }
+
     public boolean isString() {
         return field.type().name().equals("String");
     }
@@ -47,7 +55,7 @@ class FieldHelper {
             .collect(Collectors.toSet());
 
     public boolean isNumber() {
-        return isFieldTypeNameNumber(field.type().name()) ||
+        return isFieldTypeNameNumber(field.type().boxify().name()) ||
                 isFieldTypeFullNameNumber(field.type().fullName());
     }
 

@@ -109,7 +109,7 @@ class FieldAnnotator {
     }
 
     private void addDecimalMinAnnotation(BigDecimal min, boolean exclusive) {
-        if (min != null && isValidValue(min)) {
+        if (min != null) {
             xjcAnnotator.annotate(annotationFactory.getDecimalMinClass())
                     .param(VALUE, min.toString())
                     .param(INCLUSIVE, !exclusive)
@@ -126,7 +126,7 @@ class FieldAnnotator {
     }
 
     private void addDecimalMaxAnnotation(BigDecimal max, boolean exclusive) {
-        if (max != null && isValidValue(max)) {
+        if (max != null) {
             xjcAnnotator.annotate(annotationFactory.getDecimalMaxClass())
                     .param(VALUE, max.toString())
                     .param(INCLUSIVE, (!exclusive))
@@ -186,17 +186,6 @@ class FieldAnnotator {
 
     static Integer getValueOrZeroOnNull(Integer value) {
         return value == null ? Integer.valueOf(0) : value;
-    }
-
-    /**
-     * cxf-codegen puts max and min as value when there is not anything defined in wsdl.
-     */
-    static boolean isValidValue(BigDecimal value) {
-        if (value == null) {
-            return false;
-        }
-        long lvalue = value.longValue();
-        return lvalue != Long.MIN_VALUE && lvalue != Long.MAX_VALUE;
     }
 
 }

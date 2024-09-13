@@ -36,6 +36,7 @@ public class PrimitiveFixerPlugin extends Plugin {
     public boolean run(Outline outline, Options opt, ErrorHandler errorHandler) throws SAXException {
         for (ClassOutline co : outline.getClasses()) {
 
+            // TODO make this map static 
             HashMap<String, Class> hashMap = new HashMap<String, Class>();
             hashMap.put("int", Integer.class);
             hashMap.put("long", Long.class);
