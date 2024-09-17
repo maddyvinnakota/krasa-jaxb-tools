@@ -21,6 +21,8 @@ Check [krasa-issue13](https://github.com/fillumina/krasa-issue13) if you need an
 Version
 ----------------
 
+- `2.3.5` fix critical vulnerabilities found in dependencies, see [Sonatype report](https://sbom.sonatype.com/report/T1-a4e79c5353879ed9b588-23af948b811c4e-1726254616-6f0f87d1e3be445d8022a8d5689bf3c5).
+
 - `2.3.4` bug fix release:
   - fix [Issue #17](https://github.com/fillumina/krasa-jaxb-tools/issues/17) where `@DecimalMin` and `@DecimalMax` superfluous annotations were added to
     numeric java types. A new argument has been created `generateAllNumericConstraints` in case
@@ -70,7 +72,7 @@ Release
 <dependency>
     <groupId>com.fillumina</groupId>
     <artifactId>krasa-jaxb-tools</artifactId>
-    <version>2.3.4</version>
+    <version>2.3.5</version>
 </dependency>
 ```
 
