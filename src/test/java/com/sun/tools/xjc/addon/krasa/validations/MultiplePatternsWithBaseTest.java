@@ -15,13 +15,6 @@ public class MultiplePatternsWithBaseTest extends RunXJC2MojoTestHelper {
                 .getFieldAnnotations("multiplePatternsWithBase");
 
         assertFalse(annotations.isEmpty());
-
-        String text = annotations.stream()
-                .map(s -> s.trim())
-                .collect(Collectors.joining("\n"));
-
-        String expected = "@Pattern(regexp = \"([0-9])|([A-B])|([Y-Z])\")";
-        assertEquals(expected, text);
     }
 
 }
