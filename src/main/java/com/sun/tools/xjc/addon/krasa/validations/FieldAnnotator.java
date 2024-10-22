@@ -1,5 +1,6 @@
 package com.sun.tools.xjc.addon.krasa.validations;
 
+import com.sun.codemodel.JAnnotationArrayMember;
 import com.sun.codemodel.JFieldVar;
 import com.sun.tools.xjc.outline.ClassOutline;
 import cz.jirutka.validator.collection.constraints.EachDecimalMax;
@@ -146,6 +147,23 @@ class FieldAnnotator {
     void addPatterns(Set<String> patternSet) {
         addPatternAnnotations(annotationFactory.getPatternClass(), patternSet);
     }
+    void addPatternList(Set<String> patternSetList) {
+        switch (patternSetList.size()) {
+            case 0:
+                // do nothing at all
+                break;
+            case 1:
+                addPatterns(patternSetList);
+                break;
+            default:
+                //first add PatternList
+                XjcAnnotator.Annotate patternListAnnotation = xjcAnnotator.annotate(annotationFactory.getPatternListClass());
+                JAnnotationArrayMember listValue = patternListAnnotation.paramArray("value");
+                patternSetList.forEach(p ->
+                    listValue.annotate(annotationFactory.getPatternClass()).param("regexp", p));
+                patternListAnnotation.log();
+        }
+    }
 
     void addEachPatterns(Set<String> patternSet) {
         addPatternAnnotations(EachPattern.class, patternSet);
@@ -166,12 +184,19 @@ class FieldAnnotator {
 
     /** Add all the patterns (A, B, C) as options in a single one (A|B|C). */
     private void addPatternAnnotation(Class<? extends Annotation> annotation, Set<String> patterns) {
+        String regexp = joinPatternsInOR(patterns);
+        addSinglePatternAnnotation(annotation, regexp);
+    }
+
+    public static String joinPatternsInOR(Set<String> patterns) {
+        if(patterns.size() == 1){
+            return patterns.iterator().next();
+        }
         StringBuilder sb = new StringBuilder();
         for (String p : patterns) {
             sb.append("(").append(p).append(")|");
         }
-        String regexp = sb.substring(0, sb.length() - 1);
-        addSinglePatternAnnotation(annotation, regexp);
+        return sb.substring(0, sb.length() - 1);
     }
 
     private void addSinglePatternAnnotation(Class<? extends Annotation> annotation, String pattern) {

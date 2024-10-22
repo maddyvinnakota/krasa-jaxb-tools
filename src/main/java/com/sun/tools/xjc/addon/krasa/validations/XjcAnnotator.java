@@ -1,13 +1,19 @@
 package com.sun.tools.xjc.addon.krasa.validations;
 
+import com.sun.codemodel.JAnnotationArrayMember;
 import com.sun.codemodel.JAnnotationUse;
+import com.sun.codemodel.JClass;
 import com.sun.codemodel.JFieldVar;
+import com.sun.codemodel.JFormatter;
+
+import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Add annotations with parameters to a {@link JFieldVar} making it sure there aren't
@@ -101,11 +107,43 @@ class XjcAnnotator {
 
         public void log() {
             if (annotationUse != null) {
-                String annotationName = annotationUse.getAnnotationClass().name();
-                logger.addAnnotation(annotationName, parameterMap);
+                JClass annotationClass = annotationUse.getAnnotationClass();
+                StringBuilder annotationName = new StringBuilder(annotationClass.name());
+                while(annotationClass.outer() != null){
+                    annotationClass=annotationClass.outer();
+                    annotationName.insert(0, annotationClass.name() + ".");
+                }
+                logger.addAnnotation(annotationName.toString(), parameterMap);
+                if(annotationUse.getAnnotationMembers() != null) {
+                    annotationUse.getAnnotationMembers().forEach((key, value) ->
+                    {
+                        if( value instanceof JAnnotationArrayMember ){
+                            ((JAnnotationArrayMember)value).annotations().forEach(
+                                    mem -> {
+                                        logger.addAnnotation(mem.getAnnotationClass().name(), mem.getAnnotationMembers().entrySet()
+                                                .stream().collect(Collectors.toMap(Map.Entry::getKey,
+                                                        e -> {
+                                                            StringWriter stringWriter = new StringWriter();
+                                                            JFormatter formatter = new JFormatter(stringWriter);
+                                                            e.getValue().generate(formatter);
+                                                            return stringWriter.toString();
+                                                })));
+                                    }
+                            );
+                        }
+
+                    });
+                }
             }
         }
 
+        public JAnnotationArrayMember paramArray(String value) {
+            if (annotationUse != null && value != null) {
+                parameterMap.put(annotationUse.toString(), value);
+                return annotationUse.paramArray(value);
+            }
+            return null;
+        }
     }
 
 }

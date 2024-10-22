@@ -17,6 +17,7 @@ import com.sun.xml.xsom.impl.AttributeUseImpl;
 import com.sun.xml.xsom.impl.ElementDecl;
 import com.sun.xml.xsom.impl.SimpleTypeImpl;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -211,7 +212,7 @@ public class Processor {
             if (fieldHelper.isArray()) {
                 annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
 
-            } else if (fieldHelper.isNumber()) {
+            } else if (fieldHelper.isNumber() || fieldHelper.isString()) {
                 if (options.isAllNumericConstraints()) {
                     annotator.addDecimalMinAnnotationInclusive(facet.minInclusive());
                     annotator.addDecimalMinAnnotationExclusive(facet.minExclusive());
@@ -227,12 +228,12 @@ public class Processor {
 
                 annotator.addDigitsAnnotation(facet.totalDigits(), facet.fractionDigits());
 
-            } else if (fieldHelper.isString()) {
-                annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
+                if (fieldHelper.isString()) {
+                    annotator.addSizeAnnotation(facet.minLength(), facet.maxLength(), facet.length());
 
-                Set<String> patternSet = gatherRegexpAndEnumeration(facet, simpleType);
-                annotator.addPatterns(patternSet);
-
+                    Set<String> patternSet = gatherRegexpAndEnumeration(facet, simpleType);
+                    annotator.addPatternList(patternSet);
+                }
             } else if (fieldHelper.isStringList() && options.isValidationCollection()) {
                 annotator.addEachSizeAnnotation(facet.minLength(), facet.maxLength());
 
@@ -253,40 +254,53 @@ public class Processor {
             final List<String> enumerationList = facet.enumerationList();
             addIfNotNull(enumerationList, facet.enumeration());
 
+            final List<Set<String>> patternListAll = new ArrayList<>();
+            if(!patternList.isEmpty() || !enumerationList.isEmpty()){
+                Set<String> adjustedPatterns = mergePatterns(patternList, enumerationList);
+                patternListAll.add(adjustedPatterns);
+            }
             XSSimpleType baseType = simpleType;
             while ((baseType = baseType.getSimpleBaseType()) != null) {
                 if (baseType instanceof XSRestrictionSimpleType) {
-                    Facet baseFacet = new Facet((XSRestrictionSimpleType) baseType);
+                    Facet baseFacet = new Facet(baseType);
 
-                    addIfNotNull(patternList, baseFacet.pattern());
-                    addAllIfNotNull(patternList, baseFacet.patternList());
+                    final List<String> patternListParent = new ArrayList<>();
+                    final List<String> enumerationListParent = new ArrayList<>();
 
-                    addIfNotNull(enumerationList, baseFacet.enumeration());
-                    addAllIfNotNull(enumerationList, baseFacet.enumerationList());
+                    addIfNotNull(patternListParent, baseFacet.pattern());
+                    addAllIfNotNull(patternListParent, baseFacet.patternList());
+
+                    addIfNotNull(enumerationListParent, baseFacet.enumeration());
+                    addAllIfNotNull(enumerationListParent, baseFacet.enumerationList());
+                    if (!patternListParent.isEmpty() || !enumerationListParent.isEmpty()) {
+                        Set<String> adjustedPatternsParent = mergePatterns(patternListParent, enumerationListParent);
+                        patternListAll.add(adjustedPatternsParent);
+                    }
                 }
             }
 
-            if (!patternList.isEmpty() || !enumerationList.isEmpty()) {
-                List<String> adjustedPatterns = patternList.stream()
-                        .filter(p -> isValidRegexp(p))
-                        .map(p -> replaceRegexp(p))
-                        .distinct()
-                        .collect(Collectors.toList());
-
-                // escaped enumuerations can be treated as patterns
-                List<String> adjustedEnumerations = enumerationList.stream()
-                        .filter(p -> p != null && !p.isEmpty())
-                        .map(p -> escapeRegexp(p))
-                        .distinct()
-                        .collect(Collectors.toList());
-
-                addAllIfNotNull(adjustedPatterns, adjustedEnumerations);
-
-                return new LinkedHashSet<>(adjustedPatterns);
-            }
-
-            return Collections.emptySet();
+            Collections.reverse(patternListAll);
+            return patternListAll.stream().map(FieldAnnotator::joinPatternsInOR)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
         }
+    }
+
+    private static Set<String> mergePatterns(List<String> patternList, List<String> enumerationList) {
+        List<String> adjustedPatterns = patternList.stream()
+                .filter(p -> isValidRegexp(p))
+                .map(p -> replaceRegexp(p))
+                .distinct()
+                .collect(Collectors.toList());
+
+        // escaped enumuerations can be treated as patterns
+        List<String> adjustedEnumerations = enumerationList.stream()
+                .filter(p -> p != null && !p.isEmpty())
+                .map(p -> escapeRegexp(p))
+                .distinct()
+                .collect(Collectors.toList());
+
+        addAllIfNotNull(adjustedPatterns, adjustedEnumerations);
+        return new LinkedHashSet<>(adjustedPatterns);
     }
 
     static boolean isEqualsOrNull(String optionsNamespace, String actualTargetNamespace) {
@@ -315,7 +329,7 @@ public class Processor {
     }
 
     /*
-	 * \Q indicates begin of quoted regex text, \E indicates end of quoted regex text
+     * \Q indicates begin of quoted regex text, \E indicates end of quoted regex text
      */
     static String escapeRegexp(String pattern) {
         return java.util.regex.Pattern.quote(pattern);
@@ -329,7 +343,8 @@ public class Processor {
     static String replaceRegexp(String pattern) {
         return pattern
                 .replace("\\i", "[_:A-Za-z]")
-                .replace("\\c", "[-._:A-Za-z0-9]");
+                .replace("\\c", "[-._:A-Za-z0-9]")
+                .replace("{IsBasicLatin}", "{InBasicLatin}");
     }
 
     String notNullMessage(ClassOutline classOutline, JFieldVar field) {
